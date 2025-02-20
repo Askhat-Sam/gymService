@@ -2,12 +2,14 @@ package dev.gymService.model;
 
 import java.util.Date;
 
-public class Trainee {
+public class Trainee extends User {
     private Date dateOfBirth;
     private String address;
     private String userId;
 
-    public Trainee(Date dateOfBirth, String address, String userId) {
+
+    public Trainee(String firstName, String lastName, String userName, String password, Boolean isActive, Date dateOfBirth, String address, String userId) {
+        super(firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.userId = userId;

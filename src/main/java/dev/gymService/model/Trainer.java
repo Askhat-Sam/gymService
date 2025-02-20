@@ -1,10 +1,11 @@
 package dev.gymService.model;
 
-public class Trainer {
+public class Trainer extends User{
     private String specialization;
     private String userId;
 
-    public Trainer(String specialization, String userId) {
+    public Trainer(String firstName, String lastName, String userName, String password, Boolean isActive, String specialization, String userId) {
+        super(firstName, lastName, userName, password, isActive);
         this.specialization = specialization;
         this.userId = userId;
     }

@@ -5,10 +5,10 @@ import java.util.Date;
 public class Trainee extends User {
     private Date dateOfBirth;
     private String address;
-    private String userId;
+    private Long userId;
 
 
-    public Trainee(String firstName, String lastName, String userName, String password, Boolean isActive, Date dateOfBirth, String address, String userId) {
+    public Trainee(String firstName, String lastName, String userName, String password, Boolean isActive, Date dateOfBirth, String address, Long userId) {
         super(firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;
@@ -31,11 +31,11 @@ public class Trainee extends User {
         this.address = address;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

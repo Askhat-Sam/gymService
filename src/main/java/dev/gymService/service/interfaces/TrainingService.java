@@ -1,4 +1,4 @@
-package dev.gymService.service;
+package dev.gymService.service.interfaces;
 
 import dev.gymService.model.Training;
 import dev.gymService.model.TrainingType;

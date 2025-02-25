@@ -1,25 +1,26 @@
 package dev.gymService.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Trainee extends User {
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String address;
     private Long userId;
 
 
-    public Trainee(String firstName, String lastName, String userName, String password, Boolean isActive, Date dateOfBirth, String address, Long userId) {
+    public Trainee(String firstName, String lastName, String userName, String password, Boolean isActive, LocalDate dateOfBirth, String address, Long userId) {
         super(firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.userId = userId;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -42,9 +43,14 @@ public class Trainee extends User {
     @Override
     public String toString() {
         return "Trainee{" +
-                "dateOfBirth=" + dateOfBirth +
-                ", address='" + address + '\'' +
-                ", userId='" + userId + '\'' +
+                "firstName='" + super.getFirstName() +
+                "', lastName='" + super.getLastName() +
+                "', userName='" + super.getUserName() +
+                "', password='" + super.getPassword() +
+                "', isActive='" + super.getActive() +
+                "', dateOfBirth=" + dateOfBirth +
+                "', address='" + address + '\'' +
+                "', userId='" + userId + '\'' +
                 '}';
     }
 }

@@ -5,6 +5,9 @@ import dev.gymService.storage.InMemoryStorage;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 @Component
 public class TraineeDAO implements Dao{
@@ -30,18 +33,16 @@ public class TraineeDAO implements Dao{
         String password = (String) inMemoryStorage.getInMemoryStorage().get("trainees").get(id).get(3);
 
         //Get if Active
-        Boolean isActive = (Boolean) inMemoryStorage.getInMemoryStorage().get("trainees").get(id).get(4);
+        Boolean isActive = Boolean.valueOf(String.valueOf(inMemoryStorage.getInMemoryStorage().get("trainees").get(id).get(4)));
 
         //Get birth date
-        Date birthDate = (Date) inMemoryStorage.getInMemoryStorage().get("trainees").get(id).get(5);
+        LocalDate birthDate = LocalDate.parse(String.valueOf(inMemoryStorage.getInMemoryStorage().get("trainees").get(id).get(5)).trim());
+
 
         //Get adress
         String address = (String) inMemoryStorage.getInMemoryStorage().get("trainees").get(id).get(6);
 
-        //Get user id
-        Long userId = (Long) inMemoryStorage.getInMemoryStorage().get("trainees").get(id).get(6);
-
-        return new Trainee(firstName, lastName, userName, password, isActive, birthDate, address, userId);
+        return new Trainee(firstName, lastName, userName, password, isActive, birthDate, address, id);
     }
 
     @Override

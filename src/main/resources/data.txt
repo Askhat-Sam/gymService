@@ -1,3 +1,3 @@
-trainees, 1, Ivan, Ivanov, Ivan.Ivanov, 12345678, true, 12.01.1990, Furmanova 1
-trainees, 2, Sergey, Sergeyev, Sergey.Sergeyev, 123456789, true, 20.02.1992, Akhmetova 4a
-trainees, 3,Peter, Petrov, Peter.Petrov,  12345678, true, 23.05.1990, Mailina 16
+trainees,1,Ivan,Ivanov,Ivan.Ivanov,12345678,true,1993-09-22,Furmanova 1
+trainees,2,Sergey,Sergeyev,Sergey.Sergeyev,123456789,true,1992-02-20,Akhmetova 4a
+trainees,3,Peter,Petrov,Peter.Petrov,12345678,true,1992-01-20,Mailina 16

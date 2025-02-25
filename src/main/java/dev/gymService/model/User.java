@@ -1,7 +1,5 @@
 package dev.gymService.model;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 public class User {
     private String firstName;
     private String lastName;

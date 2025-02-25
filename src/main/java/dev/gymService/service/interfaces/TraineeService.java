@@ -9,5 +9,5 @@ public interface TraineeService {
                           Date dateOfBirth, String address, String userId);
     void updateTrainee(String userId);
     void deleteTrainee(String userId);
-    Trainee selectTrainee(String userId);
+    Trainee selectTrainee(Long userId);
 }

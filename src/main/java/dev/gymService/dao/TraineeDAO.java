@@ -1,6 +1,7 @@
 package dev.gymService.dao;
 
 import dev.gymService.model.Trainee;
+import dev.gymService.storage.InMemoryStorage;
 
 import java.util.Date;
 

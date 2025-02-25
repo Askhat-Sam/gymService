@@ -2,9 +2,11 @@ package dev.gymService.dao;
 
 import dev.gymService.model.Trainee;
 import dev.gymService.storage.InMemoryStorage;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
-
+@Component
 public class TraineeDAO implements Dao{
 
     private InMemoryStorage inMemoryStorage;

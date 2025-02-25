@@ -2,8 +2,10 @@ package dev.gymService.storage;
 
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+@Component
 public class InMemoryStorage {
     private final Map<String, Map<Long, List>> inMemoryStorage = new HashMap<>();
 

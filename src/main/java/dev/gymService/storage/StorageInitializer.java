@@ -1,6 +1,7 @@
 package dev.gymService.storage;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Properties;
-
+@Component
 public class StorageInitializer {
     private final InMemoryStorage storage;
 

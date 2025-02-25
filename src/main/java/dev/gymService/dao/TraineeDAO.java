@@ -1,15 +1,16 @@
 package dev.gymService.dao;
 
 import dev.gymService.model.Trainee;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 
-@Repository
 public class TraineeDAO implements Dao{
-    @Autowired
-    private InMemoryStorage inMemoryStorage = new InMemoryStorage();
+
+    private InMemoryStorage inMemoryStorage;
+
+    public TraineeDAO(InMemoryStorage inMemoryStorage) {
+        this.inMemoryStorage = inMemoryStorage;
+    }
 
     @Override
     public Trainee getById(Long id) {

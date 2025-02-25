@@ -3,7 +3,6 @@ package dev.gymService.dao;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-@Component
 public class InMemoryStorage {
     private final Map<String, Map<Long, List>> inMemoryStorage = new HashMap<>();
 

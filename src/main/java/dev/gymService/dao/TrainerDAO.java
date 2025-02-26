@@ -12,10 +12,10 @@ import java.util.logging.Logger;
 
 @Repository
 public class TrainerDAO {
-    private final InMemoryStorage inMemoryStorage;
+    private InMemoryStorage inMemoryStorage;
     private static final Logger logger = FileLogger.getLogger(TrainerDAO.class);
 
-    public TrainerDAO(InMemoryStorage inMemoryStorage) {
+    public void setInMemoryStorage(InMemoryStorage inMemoryStorage){
         this.inMemoryStorage = inMemoryStorage;
     }
 

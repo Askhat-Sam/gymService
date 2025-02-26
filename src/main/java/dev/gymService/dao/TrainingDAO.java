@@ -11,10 +11,10 @@ import java.util.logging.Logger;
 
 @Repository
 public class TrainingDAO {
-    private final InMemoryStorage inMemoryStorage;
+    private InMemoryStorage inMemoryStorage;
     private static final Logger logger = FileLogger.getLogger(TrainingDAO.class);
 
-    public TrainingDAO(InMemoryStorage inMemoryStorage) {
+    public void setInMemoryStorage(InMemoryStorage inMemoryStorage){
         this.inMemoryStorage = inMemoryStorage;
     }
 

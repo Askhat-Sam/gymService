@@ -11,10 +11,9 @@ import java.util.logging.Logger;
 
 @Component
 public class TraineeDAO {
-    private final InMemoryStorage inMemoryStorage;
+    private InMemoryStorage inMemoryStorage;
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
-
-    public TraineeDAO(InMemoryStorage inMemoryStorage) {
+    public void setInMemoryStorage(InMemoryStorage inMemoryStorage){
         this.inMemoryStorage = inMemoryStorage;
     }
 

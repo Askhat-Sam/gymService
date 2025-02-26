@@ -1,13 +1,14 @@
 package dev.gymService.service.implementations;
 
 import dev.gymService.dao.TrainingDAO;
-import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.service.interfaces.TrainingService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class TrainingServiceImpl implements TrainingService {
+    @Autowired
     private final TrainingDAO trainingDAO;
 
     public TrainingServiceImpl(TrainingDAO trainingDAO) {

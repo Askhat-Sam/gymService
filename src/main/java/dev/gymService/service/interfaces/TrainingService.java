@@ -1,11 +1,18 @@
 package dev.gymService.service.interfaces;
 
+import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
-import dev.gymService.model.TrainingType;
 
-import java.util.Date;
+import java.util.List;
 
 public interface TrainingService {
-    Training createTraining(Long traineeId, Long trainerId, String trainingName, TrainingType trainingType,
-                            Date trainingDate, Long trainingDuration);
+    void createTraining(Training training);
+
+    void updateTraining(Training training);
+
+    void deleteTraining(Long id);
+
+    Trainer getTrainingById(Long id);
+
+    List<Trainer> getAllTrainings();
 }

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 public class Training {
-    private Long traineeId;
+    private Long trainingId;
     private Long trainerId;
     private String trainingName;
     private TrainingType trainingType;
@@ -13,7 +13,7 @@ public class Training {
 
     public Training(Long traineeId, Long trainerId, String trainingName, TrainingType trainingType,
                     LocalDate trainingDate, Long trainingDuration) {
-        this.traineeId = traineeId;
+        this.trainingId = traineeId;
         this.trainerId = trainerId;
         this.trainingName = trainingName;
         this.trainingType = trainingType;
@@ -21,12 +21,12 @@ public class Training {
         this.trainingDuration = trainingDuration;
     }
 
-    public Long getTraineeId() {
-        return traineeId;
+    public Long getTrainingId() {
+        return trainingId;
     }
 
-    public void setTraineeId(Long traineeId) {
-        this.traineeId = traineeId;
+    public void setTrainingId(Long traineeId) {
+        this.trainingId = traineeId;
     }
 
     public Long getTrainerId() {
@@ -72,7 +72,7 @@ public class Training {
     @Override
     public String toString() {
         return "Training{" +
-                "traineeId=" + traineeId +
+                "traineeId=" + trainingId +
                 ", trainerId=" + trainerId +
                 ", trainingName='" + trainingName + '\'' +
                 ", trainingType=" + trainingType +

@@ -2,11 +2,11 @@ package dev.gymService.service.implementations;
 
 import dev.gymService.dao.TrainerDAO;
 import dev.gymService.model.Trainer;
-import dev.gymService.service.interfaces.TraineeService;
+import dev.gymService.service.interfaces.TrainerService;
 
 import java.util.List;
 
-public class TrainerServiceImpl implements TraineeService {
+public class TrainerServiceImpl implements TrainerService {
     private final TrainerDAO trainerDAO;
 
     public TrainerServiceImpl(TrainerDAO trainerDAO) {

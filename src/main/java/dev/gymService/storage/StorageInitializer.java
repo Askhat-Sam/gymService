@@ -8,6 +8,7 @@ import dev.gymService.model.TrainingType;
 import dev.gymService.utills.FileLogger;
 import dev.gymService.utills.UserInformationUtility;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
 public class StorageInitializer {
     private InMemoryStorage storage;
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
-
+    @Autowired
     public void setStorageInitializer(InMemoryStorage storage){
         this.storage = storage;
     }
@@ -44,29 +45,34 @@ public class StorageInitializer {
                 if (fields[0].equals("trainee")) {
                     long traineeId = UserInformationUtility.generateTraineeId();
                     String traineePassword = UserInformationUtility.generatePassword();
-                    String traineeUserName = UserInformationUtility.generateUserName(fields[2], fields[3], traineeId);
+                    String traineeUserName = UserInformationUtility.generateUserName(fields[1], fields[2], traineeId);
                     storage.getTraineeStorage().put(traineeId, new Trainee(traineeId,
-                            fields[2], fields[3], traineeUserName, traineePassword, Boolean.valueOf(fields[6]),
-                            LocalDate.parse(fields[7]), fields[8]));
+                            fields[1], fields[2], traineeUserName, traineePassword, Boolean.valueOf(fields[3]),
+                            LocalDate.parse(fields[4]), fields[5]));
                     logger.log(Level.INFO, "New trainee with id [" + traineeId + "] has been added to trainees DB");
                 } else if (fields[0].equals("trainer")) {
                     long trainerId = UserInformationUtility.generateTrainerId();
                     String trainerPassword = UserInformationUtility.generatePassword();
-                    String trainerUserName = UserInformationUtility.generateUserName(fields[2], fields[3], trainerId);
-                    storage.getTrainerStorage().put(trainerId, new Trainer(trainerId, fields[3],
-                            fields[4], trainerUserName, trainerPassword, Boolean.valueOf(fields[7]), fields[8]));
+                    String trainerUserName = UserInformationUtility.generateUserName(fields[1], fields[2], trainerId);
+                    storage.getTrainerStorage().put(trainerId, new Trainer(trainerId, fields[1],fields[2],
+                            trainerUserName, trainerPassword, Boolean.valueOf(fields[3]), fields[4]));
                     logger.log(Level.INFO, "New trainer with id [" + trainerId + "] has been added to trainers DB");
                 } else if (fields[0].equals("training")) {
                     long trainingId = UserInformationUtility.generateTrainingId();
                     storage.getTrainingStorage().put(trainingId, new Training(trainingId,
-                            Long.parseLong(fields[3]), fields[4], new TrainingType(fields[5]), LocalDate.parse(fields[6]),
-                            Long.parseLong(fields[7])));
+                            Long.parseLong(fields[1]), fields[2], new TrainingType(fields[3]), LocalDate.parse(fields[4]),
+                            Long.parseLong(fields[5])));
                     logger.log(Level.INFO, "New training with id [" + trainingId + "] has been added to trainings DB");
                 }
+
+
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "IOException has been thrown while working with file initialData.txt");
             throw new RuntimeException(e.getMessage());
         }
+        System.out.println("Trainees:" + storage.getTraineeStorage());
+        System.out.println("Trainers:" + storage.getTrainerStorage());
+        System.out.println("Trainings:" + storage.getTrainingStorage());
     }
 }

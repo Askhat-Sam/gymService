@@ -35,7 +35,7 @@ public class TraineeServiceImpl implements TraineeService {
         traineeDAO.delete(id);
     }
 
-    public List<Trainee> getAlTrainee() {
+    public List<Trainee> getAllTrainee() {
         logger.log(Level.INFO, "Calling traineeDAO.getAll method");
         return traineeDAO.getAll();
     }

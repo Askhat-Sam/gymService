@@ -1,37 +1,27 @@
 package dev.gymService.storage;
 
+import dev.gymService.model.Trainee;
+import dev.gymService.model.Trainer;
+import dev.gymService.model.Training;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 @Component
 public class InMemoryStorage {
-    private final Map<String, Map<Long, List>> inMemoryStorage = new HashMap<>();
+    private final Map<Long, Trainee> traineeMap = new HashMap<>();
+    private final Map<Long, Trainer> trainerMap = new HashMap<>();
+    private final Map<Long, Training> trainingMap = new HashMap<>();
 
-    public InMemoryStorage() {
-        Map<Long, List> trainees = new HashMap<>();
+    public Map<Long, Trainee> getTraineeStorage() {
+        return traineeMap;
     }
 
-    public Map<String, Map<Long, List>> getInMemoryStorage() {
-        return inMemoryStorage;
+    public Map<Long, Trainer> getTrainerStorage() {
+        return trainerMap;
     }
 
-    public void add(String namespace, Long id, List list) {
-        // Add if namespace exist
-        if (inMemoryStorage.containsKey(namespace)) {
-            inMemoryStorage.get(namespace).put(id, list);
-        } else {
-            Map<Long, List> map = new HashMap<>();
-            map.put(id, list);
-            inMemoryStorage.put(namespace, map);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "InMemoryStorage{" +
-                "inMemoryStorage=" + inMemoryStorage +
-                '}';
+    public Map<Long, Training> getTrainingStorage() {
+        return trainingMap;
     }
 }

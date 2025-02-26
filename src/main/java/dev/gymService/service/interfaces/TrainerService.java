@@ -2,8 +2,12 @@ package dev.gymService.service.interfaces;
 
 import dev.gymService.model.Trainer;
 
+import java.util.List;
+
 public interface TrainerService {
-    Trainer createTrainer(String firstName, String lastName, String userName, String password, Boolean isActive, String specialization, String userId);
-    void updateTrainer(String userId);
-    void selectTrainer(String userId);
+    void createTrainer(Trainer trainer);
+    void updateTrainer(Trainer trainer);
+    void deleteTrainer(Long id);
+    Trainer getTrainerById(Long id);
+    List<Trainer> getAllTrainers();
 }

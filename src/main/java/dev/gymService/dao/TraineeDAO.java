@@ -11,9 +11,7 @@ import java.util.logging.Logger;
 
 @Component
 public class TraineeDAO {
-
     private final InMemoryStorage inMemoryStorage;
-    private final String namespace = "trainee";
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
 
     public TraineeDAO(InMemoryStorage inMemoryStorage) {

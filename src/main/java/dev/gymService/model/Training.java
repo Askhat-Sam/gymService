@@ -1,5 +1,6 @@
 package dev.gymService.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Training {
@@ -7,10 +8,11 @@ public class Training {
     private Long trainerId;
     private String trainingName;
     private TrainingType trainingType;
-    private Date trainingDate;
+    private LocalDate trainingDate;
     private Long trainingDuration;
 
-    public Training(Long traineeId, Long trainerId, String trainingName, TrainingType trainingType, Date trainingDate, Long trainingDuration) {
+    public Training(Long traineeId, Long trainerId, String trainingName, TrainingType trainingType,
+                    LocalDate trainingDate, Long trainingDuration) {
         this.traineeId = traineeId;
         this.trainerId = trainerId;
         this.trainingName = trainingName;
@@ -51,11 +53,11 @@ public class Training {
         this.trainingType = trainingType;
     }
 
-    public Date getTrainingDate() {
+    public LocalDate getTrainingDate() {
         return trainingDate;
     }
 
-    public void setTrainingDate(Date trainingDate) {
+    public void setTrainingDate(LocalDate trainingDate) {
         this.trainingDate = trainingDate;
     }
 

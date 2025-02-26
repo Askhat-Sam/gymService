@@ -1,5 +1,7 @@
 package dev.gymService.model;
 
+import dev.gymService.utills.UserInformationUtility;
+
 import java.time.LocalDate;
 import java.util.Date;
 

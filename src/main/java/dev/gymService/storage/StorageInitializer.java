@@ -23,10 +23,10 @@ import java.util.logging.Logger;
 
 @Component
 public class StorageInitializer {
-    private final InMemoryStorage storage;
+    private InMemoryStorage storage;
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
 
-    public StorageInitializer(InMemoryStorage storage) {
+    public void setStorageInitializer(InMemoryStorage storage){
         this.storage = storage;
     }
 
@@ -65,7 +65,8 @@ public class StorageInitializer {
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "IOException has been thrown while working with initialData.txt");
+            logger.log(Level.SEVERE, "IOException has been thrown while working with file initialData.txt");
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

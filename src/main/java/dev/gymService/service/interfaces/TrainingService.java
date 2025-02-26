@@ -12,7 +12,7 @@ public interface TrainingService {
 
     void deleteTraining(Long id);
 
-    Trainer getTrainingById(Long id);
+    Training getTrainingById(Long id);
 
-    List<Trainer> getAllTrainings();
+    List<Training> getAllTrainings();
 }

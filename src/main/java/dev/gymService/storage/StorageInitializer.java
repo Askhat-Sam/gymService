@@ -6,6 +6,7 @@ import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.model.TrainingType;
 import dev.gymService.utills.FileLogger;
+import dev.gymService.utills.UserInformationUtility;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -41,19 +42,26 @@ public class StorageInitializer {
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split(",");
                 if (fields[0].equals("trainee")) {
-                    storage.getTraineeStorage().put(Long.parseLong(fields[1]), new Trainee(Long.parseLong(fields[1]),
-                            fields[2], fields[3], fields[4], fields[5], Boolean.valueOf(fields[6]),
+                    long traineeId = UserInformationUtility.generateTraineeId();
+                    String traineePassword = UserInformationUtility.generatePassword();
+                    String traineeUserName = UserInformationUtility.generateUserName(fields[2], fields[3], traineeId);
+                    storage.getTraineeStorage().put(traineeId, new Trainee(traineeId,
+                            fields[2], fields[3], traineeUserName, traineePassword, Boolean.valueOf(fields[6]),
                             LocalDate.parse(fields[7]), fields[8]));
-                    logger.log(Level.INFO, "New trainee with id [" + fields[1] + "] has been added to trainees DB");
+                    logger.log(Level.INFO, "New trainee with id [" + traineeId + "] has been added to trainees DB");
                 } else if (fields[0].equals("trainer")) {
-                    storage.getTrainerStorage().put(Long.parseLong(fields[1]), new Trainer(fields[2], fields[3],
-                            fields[4], fields[5], fields[6], Boolean.valueOf(fields[7]), fields[8]));
-                    logger.log(Level.INFO, "New trainer with id [" + fields[1] + "] has been added to trainers DB");
+                    long trainerId = UserInformationUtility.generateTrainerId();
+                    String trainerPassword = UserInformationUtility.generatePassword();
+                    String trainerUserName = UserInformationUtility.generateUserName(fields[2], fields[3], trainerId);
+                    storage.getTrainerStorage().put(trainerId, new Trainer(trainerId, fields[3],
+                            fields[4], trainerUserName, trainerPassword, Boolean.valueOf(fields[7]), fields[8]));
+                    logger.log(Level.INFO, "New trainer with id [" + trainerId + "] has been added to trainers DB");
                 } else if (fields[0].equals("training")) {
-                    storage.getTrainingStorage().put(Long.parseLong(fields[1]), new Training(Long.parseLong(fields[2]),
+                    long trainingId = UserInformationUtility.generateTrainingId();
+                    storage.getTrainingStorage().put(trainingId, new Training(trainingId,
                             Long.parseLong(fields[3]), fields[4], new TrainingType(fields[5]), LocalDate.parse(fields[6]),
                             Long.parseLong(fields[7])));
-                    logger.log(Level.INFO, "New training with id [" + fields[1] + "] has been added to trainings DB");
+                    logger.log(Level.INFO, "New training with id [" + trainingId + "] has been added to trainings DB");
                 }
             }
         } catch (IOException e) {

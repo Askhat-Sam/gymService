@@ -4,9 +4,11 @@ import dev.gymService.dao.TrainerDAO;
 import dev.gymService.model.Trainer;
 import dev.gymService.service.interfaces.TrainerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class TrainerServiceImpl implements TrainerService {
     @Autowired
     private final TrainerDAO trainerDAO;

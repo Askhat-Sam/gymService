@@ -11,6 +11,10 @@ public class Trainer extends User{
         this.userId = userId;
     }
 
+    public Trainer() {
+        super();
+    }
+
     public String getSpecialization() {
         return specialization;
     }

@@ -7,6 +7,9 @@ public abstract class User {
     private String password;
     private Boolean isActive;
 
+    public User() {
+    }
+
     public User(String firstName, String lastName, String userName, String password, Boolean isActive) {
         this.firstName = firstName;
         this.lastName = lastName;

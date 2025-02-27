@@ -6,9 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 public interface TraineeService {
-    void createTrainee(Trainee trainee);
-    void updateTrainee(Trainee trainee);
+    Trainee createTrainee(Trainee trainee);
+    Trainee updateTrainee(Trainee trainee);
     void deleteTrainee(Long id);
     Trainee getTraineeById(Long id);
     List<Trainee> getAllTrainee();
+    Long generateTraineeId();
 }

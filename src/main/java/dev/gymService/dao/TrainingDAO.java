@@ -2,42 +2,38 @@ package dev.gymService.dao;
 
 import dev.gymService.model.Training;
 import dev.gymService.storage.InMemoryStorage;
-import dev.gymService.utills.FileLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Repository
 public class TrainingDAO {
     private InMemoryStorage inMemoryStorage;
-    private static final Logger logger = FileLogger.getLogger(TrainingDAO.class);
     @Autowired
     public void setInMemoryStorage(InMemoryStorage inMemoryStorage){
         this.inMemoryStorage = inMemoryStorage;
     }
 
     public Training getById(Long id) {
-        logger.info("Getting training with id: " + id);
         return inMemoryStorage.getTrainingStorage().get(id);
     }
 
-    public void create(Training training) {
-        logger.info("Creating new trainer with id: " + training.getTrainerId());
-        inMemoryStorage.getTrainingStorage().put(training.getTrainerId(), training);
+    public Training create(Training training) {
+        return inMemoryStorage.getTrainingStorage().put(training.getTrainerId(), training);
     }
-    public void update(Training training) {
-        logger.info("Updating training with id: " +training.getTrainerId());
-        inMemoryStorage.getTrainingStorage().put(training.getTrainerId(), training);
+    public Training update(Training training) {
+        return inMemoryStorage.getTrainingStorage().put(training.getTrainerId(), training);
     }
     public void delete(Long id) {
-        logger.info("Deleting training with id: " + id);
         inMemoryStorage.getTrainingStorage().remove(id);
     }
     public List<Training> getAll(){
-        logger.info("Getting the list of all trainings");
         return new ArrayList<>(inMemoryStorage.getTrainingStorage().values());
+    }
+    public Long generateTrainingId() {
+        long maxNumber = getAll().size();
+        return ++maxNumber;
     }
 }

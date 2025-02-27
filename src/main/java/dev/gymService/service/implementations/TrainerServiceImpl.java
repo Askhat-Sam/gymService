@@ -1,44 +1,69 @@
 package dev.gymService.service.implementations;
 
+import dev.gymService.dao.TraineeDAO;
 import dev.gymService.dao.TrainerDAO;
 import dev.gymService.model.Trainer;
 import dev.gymService.service.interfaces.TrainerService;
+import dev.gymService.utills.FileLogger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @Service
 public class TrainerServiceImpl implements TrainerService {
     @Autowired
     private final TrainerDAO trainerDAO;
+    private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
 
     public TrainerServiceImpl(TrainerDAO trainerDAO) {
         this.trainerDAO = trainerDAO;
     }
 
     @Override
-    public void createTrainer(Trainer trainer) {
-        trainerDAO.create(trainer);
+    public Trainer createTrainer(Trainer trainer) {
+        long userNameSuffix = 1;
+        // Check if the userName is unique
+        while (checkUserName(trainer.getUserName())) {
+            trainer.setUserName(trainer.getUserName().concat(String.valueOf(userNameSuffix++)));
+        }
+
+        logger.log(Level.INFO, "New trainer  with id [" + trainer.getUserId() + "] has been created");
+        return trainerDAO.create(trainer);
+    }
+
+    private boolean checkUserName(String userName) {
+        return trainerDAO.getAll().stream().anyMatch(t -> t.getUserName().equals(userName));
     }
 
     @Override
-    public void updateTrainer(Trainer trainer) {
-        trainerDAO.update(trainer);
+    public Trainer updateTrainer(Trainer trainer) {
+        logger.log(Level.INFO, "The trainer  with id [" + trainer.getUserId() + "] has been updated");
+        return trainerDAO.update(trainer);
     }
 
     @Override
     public void deleteTrainer(Long id) {
         trainerDAO.delete(id);
+        logger.log(Level.INFO, "The trainer  with id [" + id + "] has been deleted");
     }
 
     @Override
     public Trainer getTrainerById(Long id) {
+        logger.log(Level.INFO, "The trainer  with id [" + id + "] has been requested");
         return trainerDAO.getById(id);
     }
 
     @Override
     public List<Trainer> getAllTrainers() {
+        logger.log(Level.INFO, "The list of trainers has been requested");
         return trainerDAO.getAll();
+    }
+
+    @Override
+    public Long generateTrainerId() {
+        return trainerDAO.generateTrainerId();
     }
 }

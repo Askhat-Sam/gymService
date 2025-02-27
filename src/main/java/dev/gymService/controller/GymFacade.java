@@ -13,14 +13,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Controller
-public class GymController {
+public class GymFacade {
     TraineeService traineeService;
     TrainerService trainerService;
     TrainingService trainingService;
 
-    private static final Logger logger = FileLogger.getLogger(GymController.class);
+    private static final Logger logger = FileLogger.getLogger(GymFacade.class);
 
-    public GymController(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
+    public GymFacade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;

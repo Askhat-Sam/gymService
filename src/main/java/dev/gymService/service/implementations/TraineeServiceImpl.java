@@ -15,34 +15,49 @@ import java.util.logging.Logger;
 public class TraineeServiceImpl implements TraineeService {
     @Autowired
     private TraineeDAO traineeDAO;
-
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
 
     @Override
-    public void createTrainee(Trainee trainee) {
-        traineeDAO.create(trainee);
+    public Trainee createTrainee(Trainee trainee) {
+        long userNameSuffix = 1;
+        // Check if the userName is unique
+        while (checkUserName(trainee.getUserName())) {
+            trainee.setUserName(trainee.getUserName().concat(String.valueOf(userNameSuffix++)));
+        }
+
+        logger.log(Level.INFO, "New trainee  with id [" + trainee.getUserId() + "] has been created");
+        return traineeDAO.create(trainee);
+    }
+
+    private boolean checkUserName(String userName) {
+        return traineeDAO.getAll().stream().anyMatch(t -> t.getUserName().equals(userName));
     }
 
     @Override
-    public void updateTrainee(Trainee trainee) {
-        logger.log(Level.INFO, "Calling traineeDAO.update method for trainee with id: " + trainee.getUserId());
-        traineeDAO.update(trainee);
+    public Trainee updateTrainee(Trainee trainee) {
+
+        logger.log(Level.INFO, "The trainee  with id [" + trainee.getUserId() + "] has been updated");
+        return traineeDAO.update(trainee);
     }
 
     @Override
     public void deleteTrainee(Long id) {
-        logger.log(Level.INFO, "Calling traineeDAO.delete method for trainee with id: " +id);
         traineeDAO.delete(id);
+        logger.log(Level.INFO, "The trainee  with id [" + id + "] has been deleted");
     }
 
     public List<Trainee> getAllTrainee() {
-        logger.log(Level.INFO, "Calling traineeDAO.getAll method");
+        logger.log(Level.INFO, "The list of trainees has been requested");
         return traineeDAO.getAll();
     }
 
     @Override
     public Trainee getTraineeById(Long id) {
-        logger.log(Level.INFO, "Calling traineeDAO.getById method for trainee with id: " +id);
+        logger.log(Level.INFO, "The trainee  with id [" + id + "] has been requested");
         return traineeDAO.getById(id);
+    }
+
+    public Long generateTraineeId(){
+        return traineeDAO.generateTraineeId();
     }
 }

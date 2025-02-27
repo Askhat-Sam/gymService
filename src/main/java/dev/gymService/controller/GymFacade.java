@@ -9,6 +9,7 @@ import dev.gymService.service.interfaces.TrainingService;
 import dev.gymService.utills.FileLogger;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,14 +27,14 @@ public class GymFacade {
         this.trainingService = trainingService;
     }
     // Trainee methods
-    public void createTrainee(Trainee trainee){
+    public Trainee createTrainee(Trainee trainee){
         logger.log(Level.INFO, "Calling createTrainee method for trainee with id: " + trainee.getUserId());
-        traineeService.createTrainee(trainee);
+        return traineeService.createTrainee(trainee);
     }
 
-    public void updateTrainee(Trainee trainee){
+    public Trainee updateTrainee(Trainee trainee){
         logger.log(Level.INFO, "Calling updateTrainee method for trainee with id: " + trainee.getUserId());
-        traineeService.updateTrainee(trainee);
+        return traineeService.updateTrainee(trainee);
     }
 
     public void deleteTrainee(Long id){
@@ -41,25 +42,25 @@ public class GymFacade {
         traineeService.deleteTrainee(id);
     }
 
-    public void getTraineeById(Long id){
+    public Trainee getTraineeById(Long id){
         logger.log(Level.INFO, "Calling getTraineeById method for trainee with id: " + id);
-        traineeService.getTraineeById(id);
+        return traineeService.getTraineeById(id);
     }
 
-    public void getAllTrainees(){
+    public List<Trainee> getAllTrainees(){
         logger.log(Level.INFO, "Calling getAllTrainees method");
-        traineeService.getAllTrainee();
+        return traineeService.getAllTrainee();
     }
 
     // Trainer methods
-    public void createTrainer(Trainer trainer){
+    public Trainer createTrainer(Trainer trainer){
         logger.log(Level.INFO, "Calling createTrainer method for trainee with id: " + trainer.getUserId());
-        trainerService.createTrainer(trainer);
+        return trainerService.createTrainer(trainer);
     }
 
-    public void updateTrainer(Trainer trainer){
+    public Trainer updateTrainer(Trainer trainer){
         logger.log(Level.INFO, "Calling updateTrainer method for trainee with id: " + trainer.getUserId());
-        trainerService.updateTrainer(trainer);
+        return trainerService.updateTrainer(trainer);
     }
 
     public void deleteTrainer(Long id){
@@ -67,25 +68,25 @@ public class GymFacade {
         trainerService.deleteTrainer(id);
     }
 
-    public void getTrainerById(Long id){
+    public Trainer getTrainerById(Long id){
         logger.log(Level.INFO, "Calling getTrainerById method for trainee with id: " + id);
-        trainerService.getTrainerById(id);
+        return trainerService.getTrainerById(id);
     }
 
-    public void getAllTrainers(){
+    public List<Trainer> getAllTrainers(){
         logger.log(Level.INFO, "Calling getAllTrainees method");
-        trainerService.getAllTrainers();
+        return trainerService.getAllTrainers();
     }
 
     // Training methods
-    public void createTraining(Training training){
+    public Training createTraining(Training training){
         logger.log(Level.INFO, "Calling createTraining method for trainee with id: " + training.getTrainingId());
-        trainingService.createTraining(training);
+        return trainingService.createTraining(training);
     }
 
-    public void updateTraining(Training training){
+    public Training updateTraining(Training training){
         logger.log(Level.INFO, "Calling updateTraining method for trainee with id: " + training.getTrainingId());
-        trainingService.updateTraining(training);
+        return trainingService.updateTraining(training);
     }
 
     public void deleteTraining(Long id){
@@ -93,14 +94,14 @@ public class GymFacade {
         trainingService.deleteTraining(id);
     }
 
-    public void getTrainingById(Long id){
+    public Training getTrainingById(Long id){
         logger.log(Level.INFO, "Calling getTrainingById method for trainee with id: " + id);
-        trainingService.getTrainingById(id);
+        return trainingService.getTrainingById(id);
     }
 
-    public void getAllTrainings(){
+    public List<Training> getAllTrainings(){
         logger.log(Level.INFO, "Calling getAllTrainings method");
-        trainingService.getAllTrainings();
+        return trainingService.getAllTrainings();
     }
 
 }

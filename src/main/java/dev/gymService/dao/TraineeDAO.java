@@ -3,6 +3,7 @@ package dev.gymService.dao;
 import dev.gymService.model.Trainee;
 import dev.gymService.storage.InMemoryStorage;
 import dev.gymService.utills.FileLogger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,8 +12,10 @@ import java.util.logging.Logger;
 
 @Component
 public class TraineeDAO {
+
     private InMemoryStorage inMemoryStorage;
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
+    @Autowired
     public void setInMemoryStorage(InMemoryStorage inMemoryStorage){
         this.inMemoryStorage = inMemoryStorage;
     }

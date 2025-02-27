@@ -1,17 +1,17 @@
 package dev.gymService.model;
 
-import dev.gymService.utills.UserInformationUtility;
-
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Trainee extends User {
     private LocalDate dateOfBirth;
     private String address;
     private Long userId;
 
+    public Trainee() {
+        super();
+    }
 
-    public Trainee(Long userId, String firstName, String lastName, String userName, String password, Boolean isActive, LocalDate dateOfBirth, String address) {
+    public Trainee(String firstName, String lastName, String userName, String password, Boolean isActive, LocalDate dateOfBirth, String address) {
         super(firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;
@@ -40,5 +40,19 @@ public class Trainee extends User {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Trainee{" +
+                "userId='" + userId +
+                "', firstName='" + super.getFirstName() +
+                "', lastName='" + super.getLastName() +
+                "', userName='" + getUserName() +
+                "', isActive='" + super.getActive() +
+                "', dateOfBirth='" + dateOfBirth +
+                "', address='" + address + '\'' +
+
+                '}';
     }
 }

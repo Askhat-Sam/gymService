@@ -21,10 +21,14 @@ public class TrainerDAO {
     }
 
     public Trainer create(Trainer trainer) {
-        return inMemoryStorage.getTrainerStorage().put(trainer.getUserId(), trainer);
+        trainer.setUserId(generateTrainerId());
+        trainer.setUserName(generateUserName(trainer.getFirstName(), trainer.getLastName()));
+        inMemoryStorage.getTrainerStorage().put(trainer.getUserId(), trainer);
+        return inMemoryStorage.getTrainerStorage().get(trainer.getUserId());
     }
     public Trainer update(Trainer trainer) {
-        return inMemoryStorage.getTrainerStorage().put(trainer.getUserId(), trainer);
+        inMemoryStorage.getTrainerStorage().put(trainer.getUserId(), trainer);
+        return inMemoryStorage.getTrainerStorage().get(trainer.getUserId());
     }
     public void delete(Long id) {
         inMemoryStorage.getTrainerStorage().remove(id);
@@ -35,6 +39,22 @@ public class TrainerDAO {
 
     public Long generateTrainerId() {
         long maxNumber = getAll().size();
-        return ++maxNumber;
+        return maxNumber + 1;
+    }
+
+    public String generateUserName(String firstName, String lastName){
+        long userNameSuffix = 1;
+        String userName = firstName.concat(".").concat(lastName);
+        String originalUserName = userName;
+        // Check if the userName is unique
+        while (checkUserName(userName)) {
+            userName = originalUserName.concat(String.valueOf(userNameSuffix++));
+        }
+
+        return userName;
+    }
+
+    public boolean checkUserName(String userName) {
+        return this.getAll().stream().anyMatch(t -> t.getUserName().equals(userName));
     }
 }

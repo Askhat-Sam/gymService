@@ -1,7 +1,10 @@
-trainee,1,Ivan,Ivanov,Ivan.Iva,12345678,true,1993-09-22,Furmanova 1
-trainee,2,Sergey,Sergeyev,Ser.Sergeyev,123456789,true,1992-02-20,Akhmetova 4a
-trainee,3,Andrey,Andreyev,Andrey.And,12345678,true,1992-01-20,Mailina 16
-trainer,1,Denis,Denisov, Denis.Den,12345678,true,cardio
-trainer,2,Nikolay,Nikolayev,Nikolay.Nik,12345678,true,swimming
-training,1,1,cardio,cardio,2025-02-26,45
-training,2,2,aqua,swimming,2025-02-25,45
+trainee,Ivan,Ivanov,true,1993-09-22,Furmanova 1
+trainee,Sergey,Sergeyev,true,1992-02-20,Akhmetova 4a
+trainee,Ivan,Ivanov,true,1992-01-20,Mailina 16
+trainee,Ivan,Ivanov,true,1992-01-22,Mailina 17
+trainer,Denis,Denisov,true,cardio
+trainer,Nikolay,Nikolayev,true,swimming
+trainer,Denis,Denisov,true,cardio
+trainer,Denis,Denisov,true,swimming
+training,1,cardio,cardio,2025-02-26,45
+training,2,aqua,swimming,2025-02-25,45

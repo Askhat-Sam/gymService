@@ -3,6 +3,7 @@ package service;
 import dev.gymService.dao.TrainerDAO;
 import dev.gymService.model.Trainer;
 import dev.gymService.service.implementations.TrainerServiceImpl;
+import dev.gymService.utills.UserInformationUtility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,8 +27,14 @@ public class TrainerServiceUnitTest {
     @Test
     public void shouldCreateNewTrainer() {
         // Given
-        Trainer trainer = new Trainer(1L, "Ivan", "Ivanov", "Ivan.Ivanov",
-                "653654654", true, "swimming");
+        Trainer trainer = new Trainer();
+        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setFirstName("Ivan");
+        trainer.setLastName("Ivanov");
+        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setPassword(UserInformationUtility.generatePassword());
+        trainer.setActive(true);
+        trainer.setSpecialization("swimming");
 
         when(trainerDAO.create(trainer)).thenReturn(trainer);
 
@@ -36,15 +43,23 @@ public class TrainerServiceUnitTest {
 
         // Then
         assertNotNull(createdTrainer);
+        assertEquals("Ivan.Ivanov", createdTrainer.getUserName());
+        assertEquals(10, createdTrainer.getPassword().length());
         assertEquals("swimming", createdTrainer.getSpecialization());
         verify(trainerDAO, times(1)).create(trainer);
     }
 
     @Test
-    public void shouldUpdateTrainee(){
+    public void shouldUpdateTrainer(){
         // Given
-        Trainer trainer = new Trainer(1L, "Ivan", "Ivanov", "Ivan.Ivanov",
-                "653654654", true, "swimming");
+        Trainer trainer = new Trainer();
+        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setFirstName("Ivan");
+        trainer.setLastName("Ivanov");
+        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setPassword(UserInformationUtility.generatePassword());
+        trainer.setActive(true);
+        trainer.setSpecialization("swimming");
 
         when(trainerDAO.update(trainer)).thenReturn(trainer);
 
@@ -53,12 +68,13 @@ public class TrainerServiceUnitTest {
 
         // Then
         assertNotNull(updatedTrainer);
-        assertEquals("653654654", updatedTrainer.getPassword());
+        assertEquals("Ivan.Ivanov", updatedTrainer.getUserName());
+        assertEquals(10, updatedTrainer.getPassword().length());
         verify(trainerDAO, times(1)).update(trainer);
     }
 
     @Test
-    public void shouldDeleteTrainee() {
+    public void shouldDeleteTrainer() {
         // When
         trainerServiceImpl.deleteTrainer(1L);
 
@@ -67,15 +83,28 @@ public class TrainerServiceUnitTest {
     }
 
     @Test
-    public void shouldGetAllTrainees() {
+    public void shouldGetAllTrainers() {
         // Given
-        Trainer trainer1 = new Trainer(1L, "Ivan", "Ivanov", "Ivan.Ivanov",
-                "653654654", true, "swimming");
+        Trainer trainer = new Trainer();
+        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setFirstName("Ivan");
+        trainer.setLastName("Ivanov");
+        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(),List.of("Ivan.Ivanov")));
+        trainer.setPassword(UserInformationUtility.generatePassword());
+        trainer.setActive(true);
+        trainer.setSpecialization("swimming");
 
-        Trainer trainer2 = new Trainer(2L, "Maksim", "Maksimov", "Maksim.Maksimov",
-                "1233243", true, "cardio");
+        Trainer trainer1 = new Trainer();
+        trainer1.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer1.setFirstName("Maksim");
+        trainer1.setLastName("Maksimov");
+        trainer1.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer1.setPassword(UserInformationUtility.generatePassword());
+        trainer1.setActive(true);
+        trainer1.setSpecialization("cardio");
 
-        List<Trainer> trainees = Arrays.asList(trainer1, trainer2);
+
+        List<Trainer> trainees = Arrays.asList(trainer, trainer1);
         when(trainerDAO.getAll()).thenReturn(trainees);
 
         // When
@@ -87,17 +116,28 @@ public class TrainerServiceUnitTest {
     }
 
     @Test
-    public void shouldGetTraineeById() {
+    public void shouldGetTrainerById() {
         // Given
-        Trainer trainer = new Trainer(1L, "Ivan", "Ivanov", "Ivan.Ivanov",
-                "653654654", true, "swimming");
-        when(trainerDAO.getById(1L)).thenReturn(trainer);
+        Trainer trainer = new Trainer();
+        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setFirstName("Ivan");
+        trainer.setLastName("Ivanov");
+        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setPassword(UserInformationUtility.generatePassword());
+        trainer.setActive(true);
+        trainer.setSpecialization("swimming");
+
+        System.out.println("ID: " + trainer.getUserId());
+
+        when(trainerDAO.getById(0L)).thenReturn(trainer);
 
         // When
-        Trainer retrievedTrainer = trainerServiceImpl.getTrainerById(1L);
+        Trainer retrievedTrainer = trainerServiceImpl.getTrainerById(0L);
 
         // Then
         assertNotNull(retrievedTrainer);
-        verify(trainerDAO, times(1)).getById(1L);
+        assertEquals("Ivan.Ivanov", retrievedTrainer.getUserName());
+        assertEquals(10, retrievedTrainer.getPassword().length());
+        verify(trainerDAO, times(1)).getById(0L);
     }
 }

@@ -31,8 +31,13 @@ public class TrainingServiceUnitTest {
     @Test
     public void shouldCreateNewTraining() {
         // Given
-        Training training = new Training(1L, 1L, "Cardio", new TrainingType("Cardio"),
-                LocalDate.parse("2025-01-02"), 45L);
+        Training training = new Training();
+        training.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainerId(1L);
+        training.setTrainingName("Cardio");
+        training.setTrainingType(new TrainingType("Cardio"));
+        training.setTrainingDate(LocalDate.parse("2025-01-01"));
+        training.setTrainingDuration(45L);
 
         when(trainingDAO.create(training)).thenReturn(training);
 
@@ -41,15 +46,22 @@ public class TrainingServiceUnitTest {
 
         // Then
         assertNotNull(createdTraining);
+        assertNotNull(createdTraining.getTrainingId());
         assertEquals("Cardio", createdTraining.getTrainingName());
+
         verify(trainingDAO, times(1)).create(training);
     }
 
     @Test
-    public void shouldUpdateTrainee(){
+    public void shouldUpdateTraining(){
         // Given
-        Training training = new Training(1L, 1L, "Cardio", new TrainingType("Cardio"),
-                LocalDate.parse("2025-01-02"), 45L);
+        Training training = new Training();
+        training.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainerId(1L);
+        training.setTrainingName("Cardio");
+        training.setTrainingType(new TrainingType("Cardio"));
+        training.setTrainingDate(LocalDate.parse("2025-01-01"));
+        training.setTrainingDuration(45L);
 
         when(trainingDAO.update(training)).thenReturn(training);
 
@@ -58,12 +70,13 @@ public class TrainingServiceUnitTest {
 
         // Then
         assertNotNull(updatedTraining);
+        assertNotNull(updatedTraining.getTrainingId());
         assertEquals("Cardio", updatedTraining.getTrainingName());
         verify(trainingDAO, times(1)).update(training);
     }
 
     @Test
-    public void shouldDeleteTrainee() {
+    public void shouldDeleteTraining() {
         // When
         trainingServiceImpl.deleteTraining(1L);
 
@@ -72,14 +85,26 @@ public class TrainingServiceUnitTest {
     }
 
     @Test
-    public void shouldGetAllTrainees() {
+    public void shouldGetAllTrainings() {
         // Given
-        Training training1= new Training(1L, 1L, "Cardio", new TrainingType("Cardio"),
-                LocalDate.parse("2025-01-02"), 45L);
-        Training training2 = new Training(2L, 2L, "Swimming", new TrainingType("Swimming"),
-                LocalDate.parse("2025-01-06"), 55L);
+        Training training = new Training();
+        training.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainerId(1L);
+        training.setTrainingName("Cardio");
+        training.setTrainingType(new TrainingType("Cardio"));
+        training.setTrainingDate(LocalDate.parse("2025-01-01"));
+        training.setTrainingDuration(45L);
 
-        List<Training> trainees = Arrays.asList(training1, training2);
+        // Given
+        Training training1 = new Training();
+        training1.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training1.setTrainerId(2L);
+        training1.setTrainingName("Swimming");
+        training1.setTrainingType(new TrainingType("Swimming"));
+        training1.setTrainingDate(LocalDate.parse("2025-02-01"));
+        training1.setTrainingDuration(55L);
+
+        List<Training> trainees = Arrays.asList(training, training1);
         when(trainingDAO.getAll()).thenReturn(trainees);
 
         // When
@@ -91,10 +116,16 @@ public class TrainingServiceUnitTest {
     }
 
     @Test
-    public void shouldGetTraineeById() {
+    public void shouldGetTrainingById() {
         // Given
-        Training training = new Training(1L, 1L, "Cardio", new TrainingType("Cardio"),
-                LocalDate.parse("2025-01-02"), 45L);
+        Training training = new Training();
+        training.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainerId(1L);
+        training.setTrainingName("Cardio");
+        training.setTrainingType(new TrainingType("Cardio"));
+        training.setTrainingDate(LocalDate.parse("2025-01-01"));
+        training.setTrainingDuration(45L);
+
         when(trainingDAO.getById(1L)).thenReturn(training);
 
         // When

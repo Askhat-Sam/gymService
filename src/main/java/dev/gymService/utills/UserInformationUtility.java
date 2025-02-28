@@ -1,42 +1,37 @@
 package dev.gymService.utills;
 
+import dev.gymService.model.Trainee;
 import dev.gymService.storage.InMemoryStorage;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Random;
-
+@Component
 public class UserInformationUtility {
-    private static InMemoryStorage inMemoryStorage = null;
+    private static InMemoryStorage inMemoryStorage;
     private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
     private static final int PASSWORD_LENGTH = 10;
     private static final Random random = new Random();
 
-    private static long traineeId = 0;
-    private static long trainerId = 0;
-    private static long trainingId = 0;
 
-    public UserInformationUtility(InMemoryStorage inMemoryStorage) {
-        this.inMemoryStorage = inMemoryStorage;
+    public void setStorageInitializer(InMemoryStorage inMemoryStorage){
+        UserInformationUtility.inMemoryStorage = inMemoryStorage;
     }
 
-    public static long generateTraineeId() {
-        return traineeId++;
-    }
-
-    public static long generateTrainerId() {
-        return trainerId++;
-    }
-
-    public static long generateTrainingId() {
-        return trainingId++;
-    }
-
-    public static String generateUserName(String firstName, String lastName, long id) {
+    public static String generateUserName(String firstName, String lastName, List<String> userNameList) {
+        long userNameSuffix = 1;
         String userName = firstName.concat(".").concat(lastName);
-        String finalUserName = userName;
-        if (inMemoryStorage.getTraineeStorage().values().stream().anyMatch(t -> t.getUserName().equals(finalUserName))) {
-            userName = userName.concat(String.valueOf(id));
+        String originalUserName = userName;
+        // Check if the userName is unique
+        while (checkUserName(userName, userNameList)) {
+            userName = originalUserName.concat(String.valueOf(userNameSuffix++));
         }
+
         return userName;
+    }
+
+    public static boolean checkUserName(String userName, List<String> userNameList) {
+        return userNameList.contains(userName);
     }
 
     public static String generatePassword() {

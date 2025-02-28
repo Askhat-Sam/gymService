@@ -15,7 +15,6 @@ public class Trainee extends User {
         super(firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;
-        this.userId = userId;
     }
 
     public LocalDate getDateOfBirth() {
@@ -48,11 +47,10 @@ public class Trainee extends User {
                 "userId='" + userId +
                 "', firstName='" + super.getFirstName() +
                 "', lastName='" + super.getLastName() +
-                "', userName='" + getUserName() +
+                "', userName='" + super.getUserName() +
                 "', isActive='" + super.getActive() +
                 "', dateOfBirth='" + dateOfBirth +
                 "', address='" + address + '\'' +
-
                 '}';
     }
 }

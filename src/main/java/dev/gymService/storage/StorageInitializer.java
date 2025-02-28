@@ -75,7 +75,7 @@ public class StorageInitializer {
                             trainerService.getAllTrainers().stream().map(User::getUserName).collect(Collectors.toList())));
                     trainer.setPassword(UserInformationUtility.generatePassword());
                     trainer.setActive(Boolean.valueOf(fields[3]));
-                    trainer.setSpecialization(fields[4]);
+                    trainer.setSpecialization(new TrainingType(fields[4]));
                     trainerService.createTrainer(trainer);
                 } else if (fields[0].equals("training")) {
                     Training training = new Training();

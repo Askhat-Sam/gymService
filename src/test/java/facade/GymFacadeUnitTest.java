@@ -1,6 +1,6 @@
 package facade;
 
-import dev.gymService.controller.GymFacade;
+import dev.gymService.facade.GymFacade;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -164,7 +164,7 @@ public class GymFacadeUnitTest {
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         when(trainerService.createTrainer(trainer)).thenReturn(trainer);
 
@@ -173,7 +173,7 @@ public class GymFacadeUnitTest {
 
         // Then
         assertNotNull(createdTrainer);
-        assertEquals("Ivan.Ivanov", createdTrainer.getUserName());
+        assertEquals("Ivan.Ivanov1", createdTrainer.getUserName());
         assertEquals(10, createdTrainer.getPassword().length());
         assertEquals("swimming", createdTrainer.getSpecialization());
         verify(trainerService, times(1)).createTrainer(trainer);
@@ -189,7 +189,7 @@ public class GymFacadeUnitTest {
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         when(trainerService.updateTrainer(trainer)).thenReturn(trainer);
 
@@ -198,7 +198,7 @@ public class GymFacadeUnitTest {
 
         // Then
         assertNotNull(updatedTrainer);
-        assertEquals("Ivan.Ivanov", updatedTrainer.getUserName());
+        assertEquals("Ivan.Ivanov1", updatedTrainer.getUserName());
         assertEquals(10, updatedTrainer.getPassword().length());
         verify(trainerService, times(1)).updateTrainer(trainer);
     }
@@ -222,7 +222,7 @@ public class GymFacadeUnitTest {
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         Trainer trainer1 = new Trainer();
         trainer1.setUserId(trainerService.generateTrainerId());
@@ -231,7 +231,7 @@ public class GymFacadeUnitTest {
         trainer1.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer1.setPassword(UserInformationUtility.generatePassword());
         trainer1.setActive(true);
-        trainer1.setSpecialization("cardio");
+        trainer1.setSpecialization(new TrainingType("cardio"));
 
 
         List<Trainer> trainees = Arrays.asList(trainer, trainer1);
@@ -256,7 +256,7 @@ public class GymFacadeUnitTest {
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         when(trainerService.getTrainerById(1L)).thenReturn(trainer);
 
@@ -265,7 +265,7 @@ public class GymFacadeUnitTest {
 
         // Then
         assertNotNull(retrievedTrainer);
-        assertEquals("Ivan.Ivanov", retrievedTrainer.getUserName());
+        assertEquals("Ivan.Ivanov1", retrievedTrainer.getUserName());
         assertEquals(10, retrievedTrainer.getPassword().length());
         verify(trainerService, times(1)).getTrainerById(1L);
     }

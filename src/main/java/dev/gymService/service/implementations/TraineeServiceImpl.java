@@ -19,19 +19,10 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public Trainee createTrainee(Trainee trainee) {
-        long userNameSuffix = 1;
-        // Check if the userName is unique
-        while (checkUserName(trainee.getUserName())) {
-            trainee.setUserName(trainee.getUserName().concat(String.valueOf(userNameSuffix++)));
-        }
-
         logger.log(Level.INFO, "New trainee  with id [" + trainee.getUserId() + "] has been created");
         return traineeDAO.create(trainee);
     }
 
-    private boolean checkUserName(String userName) {
-        return traineeDAO.getAll().stream().anyMatch(t -> t.getUserName().equals(userName));
-    }
 
     @Override
     public Trainee updateTrainee(Trainee trainee) {

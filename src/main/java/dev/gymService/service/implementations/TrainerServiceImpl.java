@@ -29,8 +29,6 @@ public class TrainerServiceImpl implements TrainerService {
         while (checkUserName(trainer.getUserName())) {
             trainer.setUserName(trainer.getUserName().concat(String.valueOf(userNameSuffix++)));
         }
-
-        logger.log(Level.INFO, "New trainer  with id [" + trainer.getUserId() + "] has been created");
         return trainerDAO.create(trainer);
     }
 
@@ -40,14 +38,12 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Trainer updateTrainer(Trainer trainer) {
-        logger.log(Level.INFO, "The trainer  with id [" + trainer.getUserId() + "] has been updated");
         return trainerDAO.update(trainer);
     }
 
     @Override
     public void deleteTrainer(Long id) {
         trainerDAO.delete(id);
-        logger.log(Level.INFO, "The trainer  with id [" + id + "] has been deleted");
     }
 
     @Override
@@ -58,7 +54,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public List<Trainer> getAllTrainers() {
-        logger.log(Level.INFO, "The list of trainers has been requested");
         return trainerDAO.getAll();
     }
 

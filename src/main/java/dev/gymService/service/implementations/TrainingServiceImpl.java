@@ -24,31 +24,26 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public Training createTraining(Training training) {
-        logger.log(Level.INFO, "New training with id [" + training.getTrainingId() + "] has been created");
         return trainingDAO.create(training);
     }
 
     @Override
     public Training updateTraining(Training training) {
-        logger.log(Level.INFO, "The training  with id [" + training.getTrainingId() + "] has been updated");
         return trainingDAO.update(training);
     }
 
     @Override
     public void deleteTraining(Long id) {
         trainingDAO.delete(id);
-        logger.log(Level.INFO, "The trainer  with id [" + id + "] has been deleted");
     }
 
     @Override
     public Training getTrainingById(Long id) {
-        logger.log(Level.INFO, "The training  with id [" + id + "] has been requested");
         return trainingDAO.getById(id);
     }
 
     @Override
     public List<Training> getAllTrainings() {
-        logger.log(Level.INFO, "The list of trainings has been requested");
         return trainingDAO.getAll();
     }
 

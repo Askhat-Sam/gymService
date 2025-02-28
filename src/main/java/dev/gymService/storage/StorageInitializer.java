@@ -1,10 +1,7 @@
 package dev.gymService.storage;
 
 import dev.gymService.dao.TraineeDAO;
-import dev.gymService.model.Trainee;
-import dev.gymService.model.Trainer;
-import dev.gymService.model.Training;
-import dev.gymService.model.TrainingType;
+import dev.gymService.model.*;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.service.interfaces.TrainingService;
@@ -24,6 +21,7 @@ import java.time.LocalDate;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Component
 public class StorageInitializer {
@@ -60,10 +58,10 @@ public class StorageInitializer {
                 String[] fields = line.split(",");
                 if (fields[0].equals("trainee")) {
                     Trainee trainee = new Trainee();
-                    trainee.setUserId(traineeService.generateTraineeId());
                     trainee.setFirstName(fields[1]);
                     trainee.setLastName(fields[2]);
-                    trainee.setUserName(UserInformationUtility.generateUserName(fields[1], fields[2]));
+                    trainee.setUserName(UserInformationUtility.generateUserName(fields[1], fields[2],
+                            traineeService.getAllTrainee().stream().map(User::getUserName).collect(Collectors.toList())));
                     trainee.setPassword(UserInformationUtility.generatePassword());
                     trainee.setActive(Boolean.valueOf(fields[3]));
                     trainee.setDateOfBirth(LocalDate.parse(fields[4]));
@@ -71,17 +69,16 @@ public class StorageInitializer {
                     traineeService.createTrainee(trainee);
                 } else if (fields[0].equals("trainer")) {
                     Trainer trainer = new Trainer();
-                    trainer.setUserId(trainerService.generateTrainerId());
                     trainer.setFirstName(fields[1]);
                     trainer.setLastName(fields[2]);
-                    trainer.setUserName(UserInformationUtility.generateUserName(fields[1], fields[2]));
+                    trainer.setUserName(UserInformationUtility.generateUserName(fields[1], fields[2],
+                            trainerService.getAllTrainers().stream().map(User::getUserName).collect(Collectors.toList())));
                     trainer.setPassword(UserInformationUtility.generatePassword());
                     trainer.setActive(Boolean.valueOf(fields[3]));
                     trainer.setSpecialization(fields[4]);
                     trainerService.createTrainer(trainer);
                 } else if (fields[0].equals("training")) {
                     Training training = new Training();
-                    training.setTrainingId(trainingService.generateTrainingId());
                     training.setTrainerId(Long.parseLong(fields[1]));
                     training.setTrainingName(fields[2]);
                     training.setTrainingType(new TrainingType(fields[3]));

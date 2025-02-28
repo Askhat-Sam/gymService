@@ -1,7 +1,6 @@
 package dev.gymService.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Training {
     private Long trainingId;
@@ -11,7 +10,7 @@ public class Training {
     private LocalDate trainingDate;
     private Long trainingDuration;
 
-    public Training(){
+    public Training() {
         super();
     }
 

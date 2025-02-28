@@ -34,6 +34,6 @@ public class TrainingDAO {
     }
     public Long generateTrainingId() {
         long maxNumber = getAll().size();
-        return ++maxNumber;
+        return maxNumber + 1;
     }
 }

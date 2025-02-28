@@ -36,6 +36,7 @@ public class Trainer extends User{
         return "Trainer{" +
                 "specialization='" + specialization + '\'' +
                 ", userId='" + userId + '\'' +
+                ", userName='" + super.getUserName() + '\'' +
                 '}';
     }
 }

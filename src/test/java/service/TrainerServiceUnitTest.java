@@ -2,6 +2,7 @@ package service;
 
 import dev.gymService.dao.TrainerDAO;
 import dev.gymService.model.Trainer;
+import dev.gymService.model.TrainingType;
 import dev.gymService.service.implementations.TrainerServiceImpl;
 import dev.gymService.utills.UserInformationUtility;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class TrainerServiceUnitTest {
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         when(trainerDAO.create(trainer)).thenReturn(trainer);
 
@@ -43,7 +44,7 @@ public class TrainerServiceUnitTest {
 
         // Then
         assertNotNull(createdTrainer);
-        assertEquals("Ivan.Ivanov", createdTrainer.getUserName());
+        assertEquals("Ivan.Ivanov1", createdTrainer.getUserName());
         assertEquals(10, createdTrainer.getPassword().length());
         assertEquals("swimming", createdTrainer.getSpecialization());
         verify(trainerDAO, times(1)).create(trainer);
@@ -54,12 +55,12 @@ public class TrainerServiceUnitTest {
         // Given
         Trainer trainer = new Trainer();
         trainer.setUserId(trainerServiceImpl.generateTrainerId());
-        trainer.setFirstName("Ivan");
+        trainer.setFirstName("Denis");
         trainer.setLastName("Ivanov");
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         when(trainerDAO.update(trainer)).thenReturn(trainer);
 
@@ -68,7 +69,7 @@ public class TrainerServiceUnitTest {
 
         // Then
         assertNotNull(updatedTrainer);
-        assertEquals("Ivan.Ivanov", updatedTrainer.getUserName());
+        assertEquals("Denis.Ivanov", updatedTrainer.getUserName());
         assertEquals(10, updatedTrainer.getPassword().length());
         verify(trainerDAO, times(1)).update(trainer);
     }
@@ -92,7 +93,7 @@ public class TrainerServiceUnitTest {
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(),List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         Trainer trainer1 = new Trainer();
         trainer1.setUserId(trainerServiceImpl.generateTrainerId());
@@ -101,7 +102,7 @@ public class TrainerServiceUnitTest {
         trainer1.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer1.setPassword(UserInformationUtility.generatePassword());
         trainer1.setActive(true);
-        trainer1.setSpecialization("cardio");
+        trainer1.setSpecialization(new TrainingType("cardio"));
 
 
         List<Trainer> trainees = Arrays.asList(trainer, trainer1);
@@ -125,7 +126,7 @@ public class TrainerServiceUnitTest {
         trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization("swimming");
+        trainer.setSpecialization(new TrainingType("swimming"));
 
         System.out.println("ID: " + trainer.getUserId());
 
@@ -136,7 +137,7 @@ public class TrainerServiceUnitTest {
 
         // Then
         assertNotNull(retrievedTrainer);
-        assertEquals("Ivan.Ivanov", retrievedTrainer.getUserName());
+        assertEquals("Ivan.Ivanov1", retrievedTrainer.getUserName());
         assertEquals(10, retrievedTrainer.getPassword().length());
         verify(trainerDAO, times(1)).getById(0L);
     }

@@ -46,7 +46,7 @@ public class TraineeServiceUnitTest {
 
         // Then
         assertNotNull(createdTrainee);
-        assertEquals("Andrey.Andreyev", createdTrainee.getUserName());
+        assertEquals("Andrey.Andreyev1", createdTrainee.getUserName());
         assertEquals(10, createdTrainee.getPassword().length());
         verify(traineeDAO, times(1)).create(trainee);
     }

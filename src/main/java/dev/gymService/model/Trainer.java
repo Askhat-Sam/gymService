@@ -1,11 +1,11 @@
 package dev.gymService.model;
 
-public class Trainer extends User{
-    private String specialization;
+public class Trainer extends User {
+    private TrainingType specialization;
     private Long userId;
 
     public Trainer(Long userId, String firstName, String lastName, String userName, String password,
-                   Boolean isActive, String specialization) {
+                   Boolean isActive, TrainingType specialization) {
         super(firstName, lastName, userName, password, isActive);
         this.specialization = specialization;
         this.userId = userId;
@@ -15,11 +15,11 @@ public class Trainer extends User{
         super();
     }
 
-    public String getSpecialization() {
+    public TrainingType getSpecialization() {
         return specialization;
     }
 
-    public void setSpecialization(String specialization) {
+    public void setSpecialization(TrainingType specialization) {
         this.specialization = specialization;
     }
 

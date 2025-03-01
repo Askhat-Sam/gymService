@@ -29,10 +29,6 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerDAO.create(trainer);
     }
 
-    private boolean checkUserName(String userName) {
-        return trainerDAO.getAll().stream().anyMatch(t -> t.getUserName().equals(userName));
-    }
-
     @Override
     public Trainer updateTrainer(Trainer trainer) {
         return trainerDAO.update(trainer);
@@ -51,10 +47,5 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public List<Trainer> getAllTrainers() {
         return trainerDAO.getAll();
-    }
-
-    @Override
-    public Long generateTrainerId() {
-        return trainerDAO.generateTrainerId();
     }
 }

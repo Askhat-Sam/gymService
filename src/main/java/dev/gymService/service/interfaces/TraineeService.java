@@ -11,5 +11,4 @@ public interface TraineeService {
     void deleteTrainee(Long id);
     Trainee getTraineeById(Long id);
     List<Trainee> getAllTrainee();
-    Long generateTraineeId();
 }

@@ -26,7 +26,6 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeDAO.create(trainee);
     }
 
-
     @Override
     public Trainee updateTrainee(Trainee trainee) {
         return traineeDAO.update(trainee);
@@ -44,9 +43,5 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public Trainee getTraineeById(Long id) {
         return traineeDAO.getById(id);
-    }
-
-    public Long generateTraineeId(){
-        return traineeDAO.generateTraineeId();
     }
 }

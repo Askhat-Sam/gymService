@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +27,6 @@ public class TrainerDAO {
 
     public Trainer create(Trainer trainer) {
         trainer.setUserId(generateTrainerId());
-        trainer.setUserName(generateUserName(trainer.getFirstName(), trainer.getLastName()));
         inMemoryStorage.getTrainerStorage().put(trainer.getUserId(), trainer);
         logger.log(Level.INFO, "New trainer  with id [" + trainer.getUserId() + "] has been created");
         return inMemoryStorage.getTrainerStorage().get(trainer.getUserId());
@@ -46,8 +46,8 @@ public class TrainerDAO {
     }
 
     public Long generateTrainerId() {
-        long maxNumber = getAll().size();
-        return maxNumber + 1;
+        OptionalLong maxNumber = getAll().stream().mapToLong(Trainer::getUserId).max();
+        return maxNumber.orElse(0) + 1;
     }
 
     public String generateUserName(String firstName, String lastName){

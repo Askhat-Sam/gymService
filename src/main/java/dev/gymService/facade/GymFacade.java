@@ -74,14 +74,6 @@ public class GymFacade {
         return trainingService.createTraining(training);
     }
 
-    public Training updateTraining(Training training) {
-        return trainingService.updateTraining(training);
-    }
-
-    public void deleteTraining(Long id) {
-        trainingService.deleteTraining(id);
-    }
-
     public Training getTrainingById(Long id) {
         return trainingService.getTrainingById(id);
     }

@@ -1,18 +1,16 @@
 package dev.gymService.dao;
 
 import dev.gymService.model.Trainee;
-import dev.gymService.model.User;
 import dev.gymService.storage.InMemoryStorage;
 import dev.gymService.utills.FileLogger;
-import dev.gymService.utills.UserInformationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Component
 public class TraineeDAO {
@@ -24,7 +22,6 @@ public class TraineeDAO {
     public void setInMemoryStorage(InMemoryStorage inMemoryStorage) {
         this.inMemoryStorage = inMemoryStorage;
     }
-
     public Trainee getById(Long id) {
         logger.log(Level.INFO, "The trainee  with id [" + id + "] has been requested");
         return inMemoryStorage.getTraineeStorage().get(id);
@@ -32,8 +29,6 @@ public class TraineeDAO {
 
     public Trainee create(Trainee trainee) {
         trainee.setUserId(generateTraineeId());
-        trainee.setUserName(UserInformationUtility.generateUserName(trainee.getFirstName(), trainee.getLastName(),
-                this.getAll().stream().map(User::getUserName).collect(Collectors.toList())));
         inMemoryStorage.getTraineeStorage().put(trainee.getUserId(), trainee);
         logger.log(Level.INFO, "New trainee  with id [" + trainee.getUserId() + "] has been created");
         return inMemoryStorage.getTraineeStorage().get(trainee.getUserId());
@@ -56,7 +51,7 @@ public class TraineeDAO {
     }
 
     public long generateTraineeId() {
-        long maxNumber = getAll().size();
-        return maxNumber + 1;
+        OptionalLong maxNumber = getAll().stream().mapToLong(Trainee::getUserId).max();
+        return maxNumber.orElse(0) + 1;
     }
 }

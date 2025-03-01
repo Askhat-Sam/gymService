@@ -1,22 +1,21 @@
 package dev.gymService.service.implementations;
 
-import dev.gymService.dao.TraineeDAO;
 import dev.gymService.dao.TrainerDAO;
 import dev.gymService.model.Trainer;
+import dev.gymService.model.User;
 import dev.gymService.service.interfaces.TrainerService;
-import dev.gymService.utills.FileLogger;
+import dev.gymService.utills.UserInformationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 
 @Service
 public class TrainerServiceImpl implements TrainerService {
     @Autowired
     private final TrainerDAO trainerDAO;
-    private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
 
     public TrainerServiceImpl(TrainerDAO trainerDAO) {
         this.trainerDAO = trainerDAO;
@@ -24,11 +23,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Trainer createTrainer(Trainer trainer) {
-        long userNameSuffix = 1;
-        // Check if the userName is unique
-        while (checkUserName(trainer.getUserName())) {
-            trainer.setUserName(trainer.getUserName().concat(String.valueOf(userNameSuffix++)));
-        }
+        trainer.setPassword(UserInformationUtility.generatePassword());
+        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(),
+                this.getAllTrainers().stream().map(User::getUserName).collect(Collectors.toList())));
         return trainerDAO.create(trainer);
     }
 
@@ -48,7 +45,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Trainer getTrainerById(Long id) {
-        logger.log(Level.INFO, "The trainer  with id [" + id + "] has been requested");
         return trainerDAO.getById(id);
     }
 

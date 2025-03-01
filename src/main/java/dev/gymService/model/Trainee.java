@@ -48,6 +48,7 @@ public class Trainee extends User {
                 "', firstName='" + super.getFirstName() +
                 "', lastName='" + super.getLastName() +
                 "', userName='" + super.getUserName() +
+                "', password='" + super.getPassword() +
                 "', isActive='" + super.getActive() +
                 "', dateOfBirth='" + dateOfBirth +
                 "', address='" + address + '\'' +

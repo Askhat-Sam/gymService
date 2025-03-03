@@ -8,12 +8,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
-public class TraineeDAO {
+public class TraineeDAO extends Dao<Trainee>{
 
     private InMemoryStorage inMemoryStorage;
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
@@ -50,8 +49,16 @@ public class TraineeDAO {
         return new ArrayList<>(inMemoryStorage.getTraineeStorage().values());
     }
 
-    public long generateTraineeId() {
-        OptionalLong maxNumber = getAll().stream().mapToLong(Trainee::getUserId).max();
-        return maxNumber.orElse(0) + 1;
+    public Long generateTraineeId() {
+        return generateId(Trainee::getUserId);
     }
+
+    public Trainee getTraineeByUserName(String userName) {
+        return inMemoryStorage.getTraineeStorage().values()
+                .stream()
+                .filter(trainee -> userName.equals(trainee.getUserName()))
+                .findFirst()
+                .orElse(null);
+    }
+
 }

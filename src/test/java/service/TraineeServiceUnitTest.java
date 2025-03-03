@@ -31,14 +31,13 @@ public class TraineeServiceUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey", "Andreyev",
-                List.of("Ivan.Ivanov", "Andrey.Andreyev")));
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeServiceImpl.generateTraineeId());
-        trainee.setPassword(UserInformationUtility.generatePassword());
+        trainee.setUserId(1L);
 
+        // Mocking getTraineeByUserName to simulate existing user
+        when(traineeDAO.getTraineeByUserName("Andrey.Andreyev")).thenReturn(null);
         when(traineeDAO.create(trainee)).thenReturn(trainee);
 
         // When
@@ -46,7 +45,7 @@ public class TraineeServiceUnitTest {
 
         // Then
         assertNotNull(createdTrainee);
-        assertEquals("Andrey.Andreyev1", createdTrainee.getUserName());
+        assertEquals("Andrey.Andreyev", createdTrainee.getUserName());
         assertEquals(10, createdTrainee.getPassword().length());
         verify(traineeDAO, times(1)).create(trainee);
     }
@@ -57,14 +56,13 @@ public class TraineeServiceUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey", "Andreyev",
-                List.of("Ivan.Ivanov", "Andrey.Andreyev")));
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeServiceImpl.generateTraineeId());
-        trainee.setPassword(UserInformationUtility.generatePassword());
+        trainee.setUserId(1L);
 
+        // Mocking getTraineeByUserName to simulate existing user
+        when(traineeDAO.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
         when(traineeDAO.create(trainee)).thenReturn(trainee);
 
         // When
@@ -79,33 +77,36 @@ public class TraineeServiceUnitTest {
 
     @Test
     public void shouldCreateNewTraineeWithUserNameWithSuffix2() {
-        // Given
-        Trainee trainee = new Trainee();
-        trainee.setFirstName("Andrey");
-        trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey", "Andreyev",
-                List.of("Ivan.Ivanov", "Andrey.Andreyev", "Andrey.Andreyev1")));
-        trainee.setActive(true);
-        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeServiceImpl.generateTraineeId());
-        trainee.setPassword(UserInformationUtility.generatePassword());
+        // Given: Existing users
+        Trainee existingTrainee1 = new Trainee();
+        existingTrainee1.setUserName("Andrey.Andreyev"); // Already exists
 
-        when(traineeDAO.create(trainee)).thenReturn(trainee);
+        Trainee existingTrainee2 = new Trainee();
+        existingTrainee2.setUserName("Andrey.Andreyev1"); // Already exists
+
+        // New trainee being created
+        Trainee newTrainee = new Trainee();
+        newTrainee.setFirstName("Andrey");
+        newTrainee.setLastName("Andreyev");
+        newTrainee.setActive(true);
+        newTrainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
+        newTrainee.setAddress("Furmanova 2");
+        newTrainee.setUserId(1L);
+
+        // Simulating that "Andrey.Andreyev" and "Andrey.Andreyev1" already exist in DB
+        when(traineeDAO.getTraineeByUserName("Andrey.Andreyev")).thenReturn(existingTrainee1);
+        when(traineeDAO.getTraineeByUserName("Andrey.Andreyev1")).thenReturn(existingTrainee2);
+        when(traineeDAO.getTraineeByUserName("Andrey.Andreyev2")).thenReturn(null);
+        when(traineeDAO.create(newTrainee)).thenReturn(newTrainee);
 
         // When
-        Trainee createdTrainee = traineeServiceImpl.createTrainee(trainee);
+        Trainee createdTrainee = traineeServiceImpl.createTrainee(newTrainee);
 
         // Then
         assertNotNull(createdTrainee);
         assertEquals("Andrey.Andreyev2", createdTrainee.getUserName());
         assertEquals(10, createdTrainee.getPassword().length());
-        verify(traineeDAO, times(1)).create(trainee);
-    }
-
-    @Test
-    public void shouldGenerateUserNameWithoutSuffix() {
-
+        verify(traineeDAO, times(1)).create(newTrainee);
     }
 
     @Test
@@ -114,11 +115,11 @@ public class TraineeServiceUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey", "Andreyev", List.of("Ivan.Ivanov")));
+        trainee.setUserName("Andrey.Andreyev");
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeServiceImpl.generateTraineeId());
+        trainee.setUserId(1L);
         trainee.setPassword(UserInformationUtility.generatePassword());
 
         when(traineeDAO.update(trainee)).thenReturn(trainee);
@@ -149,21 +150,19 @@ public class TraineeServiceUnitTest {
         Trainee trainee1 = new Trainee();
         trainee1.setFirstName("Andrey");
         trainee1.setLastName("Andreyev");
-        trainee1.setUserName(UserInformationUtility.generateUserName("Andrey", "Andreyev", List.of("Ivan.Ivanov")));
         trainee1.setActive(true);
         trainee1.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee1.setAddress("Furmanova 2");
-        trainee1.setUserId(traineeServiceImpl.generateTraineeId());
+        trainee1.setUserId(1L);
         trainee1.setPassword(UserInformationUtility.generatePassword());
 
         Trainee trainee2 = new Trainee();
         trainee2.setFirstName("Ivan");
         trainee2.setLastName("Ivanov");
-        trainee2.setUserName(UserInformationUtility.generateUserName("Ivan", "Ivanov", List.of("Ivan.Ivanov")));
         trainee2.setActive(true);
         trainee2.setDateOfBirth(LocalDate.parse("1990-01-01"));
         trainee2.setAddress("Mailina 2");
-        trainee2.setUserId(traineeServiceImpl.generateTraineeId());
+        trainee2.setUserId(2L);
         trainee2.setPassword(UserInformationUtility.generatePassword());
 
         List<Trainee> trainees = Arrays.asList(trainee1, trainee2);
@@ -183,11 +182,11 @@ public class TraineeServiceUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey", "Andreyev", List.of("Ivan.Ivanov")));
+        trainee.setUserName("Andrey.Andreyev");
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeServiceImpl.generateTraineeId());
+        trainee.setUserId(1L);
         trainee.setPassword(UserInformationUtility.generatePassword());
 
         when(traineeDAO.getById(1L)).thenReturn(trainee);

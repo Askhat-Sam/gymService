@@ -8,12 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Repository
-public class TrainerDAO {
+public class TrainerDAO extends Dao<Trainer>{
     private InMemoryStorage inMemoryStorage;
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
     @Autowired
@@ -46,22 +45,14 @@ public class TrainerDAO {
     }
 
     public Long generateTrainerId() {
-        OptionalLong maxNumber = getAll().stream().mapToLong(Trainer::getUserId).max();
-        return maxNumber.orElse(0) + 1;
+        return generateId(Trainer::getUserId);
     }
 
-    public String generateUserName(String firstName, String lastName){
-        long userNameSuffix = 1;
-        String userName = firstName.concat(".").concat(lastName);
-        String originalUserName = userName;
-        // Check if the userName is unique
-        while (checkUserName(userName)) {
-            userName = originalUserName.concat(String.valueOf(userNameSuffix++));
-        }
-        return userName;
-    }
-
-    public boolean checkUserName(String userName) {
-        return this.getAll().stream().anyMatch(t -> t.getUserName().equals(userName));
+    public Trainer getTrainerByUserName(String userName) {
+        return inMemoryStorage.getTrainerStorage().values()
+                .stream()
+                .filter(trainer -> userName.equals(trainer.getUserName()))
+                .findFirst()
+                .orElse(null);
     }
 }

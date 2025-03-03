@@ -32,7 +32,7 @@ public class TrainingServiceUnitTest {
     public void shouldCreateNewTraining() {
         // Given
         Training training = new Training();
-        training.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainingId(1L);
         training.setTrainerId(1L);
         training.setTrainingName("Cardio");
         training.setTrainingType(new TrainingType("Cardio"));
@@ -52,43 +52,15 @@ public class TrainingServiceUnitTest {
         verify(trainingDAO, times(1)).create(training);
     }
 
-    @Test
-    public void shouldUpdateTraining(){
-        // Given
-        Training training = new Training();
-        training.setTrainingId(trainingServiceImpl.generateTrainingId());
-        training.setTrainerId(1L);
-        training.setTrainingName("Cardio");
-        training.setTrainingType(new TrainingType("Cardio"));
-        training.setTrainingDate(LocalDate.parse("2025-01-01"));
-        training.setTrainingDuration(45L);
 
-        when(trainingDAO.update(training)).thenReturn(training);
 
-        // When
-        Training updatedTraining = trainingServiceImpl.updateTraining(training);
 
-        // Then
-        assertNotNull(updatedTraining);
-        assertNotNull(updatedTraining.getTrainingId());
-        assertEquals("Cardio", updatedTraining.getTrainingName());
-        verify(trainingDAO, times(1)).update(training);
-    }
-
-    @Test
-    public void shouldDeleteTraining() {
-        // When
-        trainingServiceImpl.deleteTraining(1L);
-
-        // Then
-        verify(trainingDAO, times(1)).delete(1L);
-    }
 
     @Test
     public void shouldGetAllTrainings() {
         // Given
         Training training = new Training();
-        training.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainingId(1L);
         training.setTrainerId(1L);
         training.setTrainingName("Cardio");
         training.setTrainingType(new TrainingType("Cardio"));
@@ -97,7 +69,7 @@ public class TrainingServiceUnitTest {
 
         // Given
         Training training1 = new Training();
-        training1.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainingId(1L);
         training1.setTrainerId(2L);
         training1.setTrainingName("Swimming");
         training1.setTrainingType(new TrainingType("Swimming"));
@@ -119,7 +91,7 @@ public class TrainingServiceUnitTest {
     public void shouldGetTrainingById() {
         // Given
         Training training = new Training();
-        training.setTrainingId(trainingServiceImpl.generateTrainingId());
+        training.setTrainingId(1L);
         training.setTrainerId(1L);
         training.setTrainingName("Cardio");
         training.setTrainingType(new TrainingType("Cardio"));

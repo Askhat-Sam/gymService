@@ -23,9 +23,14 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Trainer createTrainer(Trainer trainer) {
+        long userNameSuffix = 1;
+        String userName = trainer.getFirstName().concat(".").concat(trainer.getLastName());
+        String originalUserName = userName;
+        while (this.getTrainerByUserName(userName) != null) {
+            userName = originalUserName.concat(String.valueOf(userNameSuffix++));
+        }
         trainer.setPassword(UserInformationUtility.generatePassword());
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(),
-                this.getAllTrainers().stream().map(User::getUserName).collect(Collectors.toList())));
+        trainer.setUserName(userName);
         return trainerDAO.create(trainer);
     }
 
@@ -47,5 +52,10 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public List<Trainer> getAllTrainers() {
         return trainerDAO.getAll();
+    }
+
+    @Override
+    public Trainer getTrainerByUserName(String userName) {
+        return trainerDAO.getTrainerByUserName(userName);
     }
 }

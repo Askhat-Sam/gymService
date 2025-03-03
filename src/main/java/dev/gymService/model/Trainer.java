@@ -34,9 +34,9 @@ public class Trainer extends User {
     @Override
     public String toString() {
         return "Trainer{" +
+                "specialization='" + specialization + '\'' +
                 ", userId='" + userId + '\'' +
                 ", userName='" + super.getUserName() + '\'' +
-                ", password='" + super.getPassword() + '\'' +
                 '}';
     }
 }

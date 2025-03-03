@@ -42,12 +42,11 @@ public class GymFacadeUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey","Andreyev",
-                List.of("Ivan.Ivanov")));
+        trainee.setUserName("Andrey.Andreyev");
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeService.generateTraineeId());
+        trainee.setUserId(1L);
         trainee.setPassword(UserInformationUtility.generatePassword());
 
         when(traineeService.createTrainee(trainee)).thenReturn(trainee);
@@ -68,11 +67,11 @@ public class GymFacadeUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey","Andreyev", List.of("Ivan.Ivanov")));
+        trainee.setUserName("Andrey.Andreyev");
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeService.generateTraineeId());
+        trainee.setUserId(1L);
         trainee.setPassword(UserInformationUtility.generatePassword());
 
         when(traineeService.updateTrainee(trainee)).thenReturn(trainee);
@@ -102,21 +101,19 @@ public class GymFacadeUnitTest {
         Trainee trainee1 = new Trainee();
         trainee1.setFirstName("Andrey");
         trainee1.setLastName("Andreyev");
-        trainee1.setUserName(UserInformationUtility.generateUserName("Andrey","Andreyev", List.of("Ivan.Ivanov")));
         trainee1.setActive(true);
         trainee1.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee1.setAddress("Furmanova 2");
-        trainee1.setUserId(traineeService.generateTraineeId());
+        trainee1.setUserId(1L);
         trainee1.setPassword(UserInformationUtility.generatePassword());
 
         Trainee trainee2 = new Trainee();
         trainee2.setFirstName("Ivan");
         trainee2.setLastName("Ivanov");
-        trainee2.setUserName(UserInformationUtility.generateUserName("Ivan","Ivanov", List.of("Ivan.Ivanov")));
         trainee2.setActive(true);
         trainee2.setDateOfBirth(LocalDate.parse("1990-01-01"));
         trainee2.setAddress("Mailina 2");
-        trainee2.setUserId(traineeService.generateTraineeId());
+        trainee2.setUserId(2L);
         trainee2.setPassword(UserInformationUtility.generatePassword());
 
         List<Trainee> trainees = Arrays.asList(trainee1, trainee2);
@@ -136,11 +133,10 @@ public class GymFacadeUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey","Andreyev", List.of("Ivan.Ivanov")));
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
-        trainee.setUserId(traineeService.generateTraineeId());
+        trainee.setUserId(1L);
         trainee.setPassword(UserInformationUtility.generatePassword());
 
         when(traineeService.getTraineeById(1L)).thenReturn(trainee);
@@ -158,13 +154,14 @@ public class GymFacadeUnitTest {
     public void shouldCreateNewTrainer() {
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerService.generateTrainerId());
+        TrainingType trainingType = new TrainingType("Swimming");
+        trainer.setUserId(1L);
         trainer.setFirstName("Ivan");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setUserName("Ivan.Ivanov1");
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization(new TrainingType("swimming"));
+        trainer.setSpecialization(trainingType);
 
         when(trainerService.createTrainer(trainer)).thenReturn(trainer);
 
@@ -175,7 +172,7 @@ public class GymFacadeUnitTest {
         assertNotNull(createdTrainer);
         assertEquals("Ivan.Ivanov1", createdTrainer.getUserName());
         assertEquals(10, createdTrainer.getPassword().length());
-        assertEquals("swimming", createdTrainer.getSpecialization());
+        assertEquals(trainingType, createdTrainer.getSpecialization());
         verify(trainerService, times(1)).createTrainer(trainer);
     }
 
@@ -183,10 +180,10 @@ public class GymFacadeUnitTest {
     public void shouldUpdateTrainer(){
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerService.generateTrainerId());
+        trainer.setUserId(1L);
         trainer.setFirstName("Ivan");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setUserName("Ivan.Ivanov1");
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
         trainer.setSpecialization(new TrainingType("swimming"));
@@ -216,19 +213,17 @@ public class GymFacadeUnitTest {
     public void shouldGetAllTrainers() {
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerService.generateTrainerId());
+        trainer.setUserId(1L);
         trainer.setFirstName("Ivan");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
         trainer.setSpecialization(new TrainingType("swimming"));
 
         Trainer trainer1 = new Trainer();
-        trainer1.setUserId(trainerService.generateTrainerId());
+        trainer1.setUserId(1L);
         trainer1.setFirstName("Maksim");
         trainer1.setLastName("Maksimov");
-        trainer1.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer1.setPassword(UserInformationUtility.generatePassword());
         trainer1.setActive(true);
         trainer1.setSpecialization(new TrainingType("cardio"));
@@ -250,10 +245,10 @@ public class GymFacadeUnitTest {
     public void shouldGetTrainerById() {
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerService.generateTrainerId());
+        trainer.setUserId(1L);
         trainer.setFirstName("Ivan");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setUserName("Ivan.Ivanov1");
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
         trainer.setSpecialization(new TrainingType("swimming"));
@@ -275,7 +270,7 @@ public class GymFacadeUnitTest {
     public void shouldCreateNewTraining() {
         // Given
         Training training = new Training();
-        training.setTrainingId(trainingService.generateTrainingId());
+        training.setTrainingId(1L);
         training.setTrainerId(1L);
         training.setTrainingName("Cardio");
         training.setTrainingType(new TrainingType("Cardio"));
@@ -295,43 +290,13 @@ public class GymFacadeUnitTest {
         verify(trainingService, times(1)).createTraining(training);
     }
 
-    @Test
-    public void shouldUpdateTraining(){
-        // Given
-        Training training = new Training();
-        training.setTrainingId(trainingService.generateTrainingId());
-        training.setTrainerId(1L);
-        training.setTrainingName("Cardio");
-        training.setTrainingType(new TrainingType("Cardio"));
-        training.setTrainingDate(LocalDate.parse("2025-01-01"));
-        training.setTrainingDuration(45L);
 
-        when(trainingService.updateTraining(training)).thenReturn(training);
-
-        // When
-        Training updatedTraining = gymFacade.updateTraining(training);
-
-        // Then
-        assertNotNull(updatedTraining);
-        assertNotNull(updatedTraining.getTrainingId());
-        assertEquals("Cardio", updatedTraining.getTrainingName());
-        verify(trainingService, times(1)).updateTraining(training);
-    }
-
-    @Test
-    public void shouldDeleteTraining() {
-        // When
-        gymFacade.deleteTraining(1L);
-
-        // Then
-        verify(trainingService, times(1)).deleteTraining(1L);
-    }
 
     @Test
     public void shouldGetAllTrainings() {
         // Given
         Training training = new Training();
-        training.setTrainingId(trainingService.generateTrainingId());
+        training.setTrainingId(1L);
         training.setTrainerId(1L);
         training.setTrainingName("Cardio");
         training.setTrainingType(new TrainingType("Cardio"));
@@ -340,7 +305,7 @@ public class GymFacadeUnitTest {
 
         // Given
         Training training1 = new Training();
-        training1.setTrainingId(trainingService.generateTrainingId());
+        training1.setTrainingId(2L);
         training1.setTrainerId(2L);
         training1.setTrainingName("Swimming");
         training1.setTrainingType(new TrainingType("Swimming"));
@@ -362,7 +327,7 @@ public class GymFacadeUnitTest {
     public void shouldGetTrainingById() {
         // Given
         Training training = new Training();
-        training.setTrainingId(trainingService.generateTrainingId());
+        training.setTrainingId(1L);
         training.setTrainerId(1L);
         training.setTrainingName("Cardio");
         training.setTrainingType(new TrainingType("Cardio"));

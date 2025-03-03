@@ -14,24 +14,8 @@ public class UserInformationUtility {
     private static final Random random = new Random();
 
 
-    public void setStorageInitializer(InMemoryStorage inMemoryStorage){
+    public void setStorageInitializer(InMemoryStorage inMemoryStorage) {
         UserInformationUtility.inMemoryStorage = inMemoryStorage;
-    }
-
-    public static String generateUserName(String firstName, String lastName, List<String> userNameList) {
-        long userNameSuffix = 1;
-        String userName = firstName.concat(".").concat(lastName);
-        String originalUserName = userName;
-        // Check if the userName is unique
-        while (checkUserName(userName, userNameList)) {
-            userName = originalUserName.concat(String.valueOf(userNameSuffix++));
-        }
-
-        return userName;
-    }
-
-    public static boolean checkUserName(String userName, List<String> userNameList) {
-        return userNameList.contains(userName);
     }
 
     public static String generatePassword() {

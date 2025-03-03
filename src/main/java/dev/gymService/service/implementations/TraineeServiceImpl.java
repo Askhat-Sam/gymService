@@ -20,9 +20,14 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public Trainee createTrainee(Trainee trainee) {
+        long userNameSuffix = 1;
+        String userName = trainee.getFirstName().concat(".").concat(trainee.getLastName());
+        String originalUserName = userName;
+        while (this.getTraineeByUserName(userName) != null) {
+            userName = originalUserName.concat(String.valueOf(userNameSuffix++));
+        }
         trainee.setPassword(UserInformationUtility.generatePassword());
-        trainee.setUserName(UserInformationUtility.generateUserName(trainee.getFirstName(), trainee.getLastName(),
-                this.getAllTrainee().stream().map(User::getUserName).collect(Collectors.toList())));
+        trainee.setUserName(userName);
         return traineeDAO.create(trainee);
     }
 
@@ -41,7 +46,14 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    public Trainee getTraineeByUserName(String userName) {
+        return traineeDAO.getTraineeByUserName(userName);
+    }
+
+    @Override
     public Trainee getTraineeById(Long id) {
         return traineeDAO.getById(id);
     }
+
+
 }

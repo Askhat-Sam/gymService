@@ -2,7 +2,6 @@ package dev.gymService.service.interfaces;
 
 import dev.gymService.model.Trainee;
 
-import java.util.Date;
 import java.util.List;
 
 public interface TraineeService {
@@ -11,4 +10,6 @@ public interface TraineeService {
     void deleteTrainee(Long id);
     Trainee getTraineeById(Long id);
     List<Trainee> getAllTrainee();
+
+    Trainee getTraineeByUserName(String userName);
 }

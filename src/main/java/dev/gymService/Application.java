@@ -30,8 +30,6 @@ public class Application {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setUserName(UserInformationUtility.generateUserName("Andrey","Andreyev",
-                traineeService.getAllTrainee().stream().map(User::getUserName).collect(Collectors.toList())));
         trainee.setActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
@@ -39,6 +37,27 @@ public class Application {
 
         // Get the created new trainee
         System.out.println("Getting trainee with id 5:" + traineeService.getTraineeById(5L));
+
+        // Add new trainee
+        Trainee trainee2 = new Trainee();
+        trainee2.setFirstName("Andrey");
+        trainee2.setLastName("Andreyev");
+        trainee2.setActive(true);
+        trainee2.setDateOfBirth(LocalDate.parse("2000-01-01"));
+        trainee2.setAddress("Furmanova 2");
+        traineeService.createTrainee(trainee2);
+
+        // Add new trainee
+        Trainee trainee3 = new Trainee();
+        trainee3.setFirstName("Andrey");
+        trainee3.setLastName("Andreyev");
+        trainee3.setActive(true);
+        trainee3.setDateOfBirth(LocalDate.parse("2000-01-01"));
+        trainee3.setAddress("Furmanova 2");
+        traineeService.createTrainee(trainee3);
+
+        System.out.println();
+        System.out.println("All Trainee: " + traineeService.getAllTrainee());
 
         // Update trainee with id 5
         Trainee trainee1 = traineeService.getTraineeById(5L);

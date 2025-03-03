@@ -29,13 +29,12 @@ public class TrainerServiceUnitTest {
     public void shouldCreateNewTrainer() {
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        TrainingType trainingType = new TrainingType("Swimming");
+        trainer.setUserId(1L);
         trainer.setFirstName("Ivan");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
-        trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
-        trainer.setSpecialization(new TrainingType("swimming"));
+        trainer.setSpecialization(trainingType);
 
         when(trainerDAO.create(trainer)).thenReturn(trainer);
 
@@ -44,9 +43,9 @@ public class TrainerServiceUnitTest {
 
         // Then
         assertNotNull(createdTrainer);
-        assertEquals("Ivan.Ivanov1", createdTrainer.getUserName());
+        assertEquals("Ivan.Ivanov", createdTrainer.getUserName());
         assertEquals(10, createdTrainer.getPassword().length());
-        assertEquals("swimming", createdTrainer.getSpecialization());
+        assertEquals(trainingType, createdTrainer.getSpecialization());
         verify(trainerDAO, times(1)).create(trainer);
     }
 
@@ -54,10 +53,10 @@ public class TrainerServiceUnitTest {
     public void shouldUpdateTrainer(){
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setUserId(1L);
         trainer.setFirstName("Denis");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setUserName("Denis.Ivanov");
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
         trainer.setSpecialization(new TrainingType("swimming"));
@@ -87,19 +86,17 @@ public class TrainerServiceUnitTest {
     public void shouldGetAllTrainers() {
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setUserId(1L);
         trainer.setFirstName("Ivan");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(),List.of("Ivan.Ivanov")));
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
         trainer.setSpecialization(new TrainingType("swimming"));
 
         Trainer trainer1 = new Trainer();
-        trainer1.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setUserId(1L);
         trainer1.setFirstName("Maksim");
         trainer1.setLastName("Maksimov");
-        trainer1.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
         trainer1.setPassword(UserInformationUtility.generatePassword());
         trainer1.setActive(true);
         trainer1.setSpecialization(new TrainingType("cardio"));
@@ -120,10 +117,10 @@ public class TrainerServiceUnitTest {
     public void shouldGetTrainerById() {
         // Given
         Trainer trainer = new Trainer();
-        trainer.setUserId(trainerServiceImpl.generateTrainerId());
+        trainer.setUserId(1L);
         trainer.setFirstName("Ivan");
         trainer.setLastName("Ivanov");
-        trainer.setUserName(UserInformationUtility.generateUserName(trainer.getFirstName(), trainer.getLastName(), List.of("Ivan.Ivanov")));
+        trainer.setUserName("Ivan.Ivanov1");
         trainer.setPassword(UserInformationUtility.generatePassword());
         trainer.setActive(true);
         trainer.setSpecialization(new TrainingType("swimming"));

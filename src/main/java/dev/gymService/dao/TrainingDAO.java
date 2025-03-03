@@ -8,12 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Repository
-public class TrainingDAO {
+public class TrainingDAO extends Dao<Training>{
     private InMemoryStorage inMemoryStorage;
     private static final Logger logger = FileLogger.getLogger(TraineeDAO.class);
     @Autowired
@@ -36,7 +35,6 @@ public class TrainingDAO {
         return new ArrayList<>(inMemoryStorage.getTrainingStorage().values());
     }
     public Long generateTrainingId() {
-        OptionalLong maxNumber = getAll().stream().mapToLong(Training::getTrainingId).max();
-        return maxNumber.orElse(0) + 1;
+        return generateId(Training::getTrainingId);
     }
 }

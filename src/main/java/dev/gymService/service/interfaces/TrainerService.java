@@ -1,14 +1,18 @@
-//package dev.gymService.service.interfaces;
-//
-//import dev.gymService.model.Trainer;
-//
-//import java.util.List;
-//
-//public interface TrainerService {
-//    Trainer createTrainer(Trainer trainer);
+package dev.gymService.service.interfaces;
+
+import dev.gymService.model.Trainer;
+
+import java.util.List;
+
+public interface TrainerService {
+    Trainer createTrainer(Trainer trainer);
+    Trainer getTrainerById(Long id);
+    Trainer getTrainerByUserName(String userName);
+    void changeTrainerPassword(String userName,String newPassword);
+    Trainer updateTrainer(Trainer trainer);
 //    Trainer updateTrainer(Trainer trainer);
 //    void deleteTrainer(Long id);
 //    Trainer getTrainerById(Long id);
 //    List<Trainer> getAllTrainers();
-//    Trainer getTrainerByUserName(String userName);
-//}
+
+}

@@ -1,26 +1,25 @@
-//package dev.gymService.service.implementations;
-//
-//import dev.gymService.dao.TrainerDAO;
-//import dev.gymService.model.Trainer;
-//import dev.gymService.service.interfaces.TrainerService;
-//import dev.gymService.utills.UserInformationUtility;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.List;
-//
-//
-//@Service
-//public class TrainerServiceImpl implements TrainerService {
-//    @Autowired
-//    private final TrainerDAO trainerDAO;
-//
-//    public TrainerServiceImpl(TrainerDAO trainerDAO) {
-//        this.trainerDAO = trainerDAO;
-//    }
-//
-//    @Override
-//    public Trainer createTrainer(Trainer trainer) {
+package dev.gymService.service.implementations;
+
+import dev.gymService.dao.interfaces.TrainerRepository;
+import dev.gymService.model.Trainer;
+import dev.gymService.service.interfaces.TrainerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+
+@Service
+public class TrainerServiceImpl implements TrainerService {
+    @Autowired
+    private final TrainerRepository trainerRepository;
+
+    public TrainerServiceImpl(TrainerRepository trainerRepository) {
+        this.trainerRepository = trainerRepository;
+    }
+
+    @Override
+    public Trainer createTrainer(Trainer trainer) {
 //        long userNameSuffix = 1;
 //        String userName = trainer.getFirstName().concat(".").concat(trainer.getLastName());
 //        String originalUserName = userName;
@@ -29,31 +28,26 @@
 //        }
 //        trainer.setPassword(UserInformationUtility.generatePassword());
 //        trainer.setUserName(userName);
-//        return trainerDAO.create(trainer);
-//    }
-//
-//    @Override
-//    public Trainer updateTrainer(Trainer trainer) {
-//        return trainerDAO.update(trainer);
-//    }
-//
-//    @Override
-//    public void deleteTrainer(Long id) {
-//        trainerDAO.delete(id);
-//    }
-//
-//    @Override
-//    public Trainer getTrainerById(Long id) {
-//        return trainerDAO.getById(id);
-//    }
-//
-//    @Override
-//    public List<Trainer> getAllTrainers() {
-//        return trainerDAO.getAll();
-//    }
-//
-//    @Override
-//    public Trainer getTrainerByUserName(String userName) {
-//        return trainerDAO.getTrainerByUserName(userName);
-//    }
-//}
+        return trainerRepository.create(trainer);
+    }
+
+    @Override
+    public Trainer getTrainerById(Long id) {
+        return trainerRepository.getTrainerById(id);
+    }
+
+    @Override
+    public Trainer getTrainerByUserName(String userName) {
+        return trainerRepository.getTrainerByUserName(userName);
+    }
+
+    @Override
+    public void changeTrainerPassword(String userName, String newPassword) {
+        trainerRepository.changeTrainerPassword(userName, newPassword);
+    }
+
+    @Override
+    public Trainer updateTrainer(Trainer trainer) {
+        return trainerRepository.updateTrainee(trainer);
+    }
+}

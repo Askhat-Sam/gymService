@@ -1,7 +1,9 @@
 package dev.gymService.dao.implmentations;
 
 import dev.gymService.dao.interfaces.TraineeRepository;
+import dev.gymService.dao.interfaces.TrainerRepository;
 import dev.gymService.model.Trainee;
+import dev.gymService.model.Trainer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -12,39 +14,39 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class TraineeRepositoryImpl implements TraineeRepository {
+public class TrainerRepositoryImpl implements TrainerRepository {
     @Autowired
     @Qualifier("getSessionFactory")
     SessionFactory sessionFactory;
 
     @Override
-    public Trainee create(Trainee trainee) {
+    public Trainer create(Trainer trainer) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        session.persist(trainee);
+        session.persist(trainer);
         transaction.commit();
         session.close();
-        return trainee;
+        return trainer;
     }
 
     @Override
-    public Trainee getTraineeById(Long id) {
+    public Trainer getTrainerById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Trainee.class, id);
+            return session.get(Trainer.class, id);
         }
     }
 
     @Override
-    public Trainee getTraineeByUserName(String userName) {
+    public Trainer getTrainerByUserName(String userName) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery( "SELECT t FROM Trainee t WHERE t.user.userName = :userName", Trainee.class)
+            return session.createQuery( "SELECT t FROM Trainer t WHERE t.user.userName = :userName", Trainer.class)
                     .setParameter("userName", userName)
                     .uniqueResult();
         }
     }
 
     @Override
-    public void changeTraineePassword(String userName,String newPassword) {
+    public void changeTrainerPassword(String userName,String newPassword) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -58,21 +60,20 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public Trainee updateTrainee(Trainee trainee) {
-        Trainee existingTrainee = getTraineeByUserName(trainee.getUserName());
+    public Trainer updateTrainee(Trainer trainer) {
+        Trainer existingTrainer = getTrainerByUserName(trainer.getUserName());
 
-        existingTrainee.setFirstName(trainee.getFirstName());
-        existingTrainee.setLastName(trainee.getLastName());
-        existingTrainee.setPassword(trainee.getPassword());
-        existingTrainee.setIsActive(trainee.getIsActive());
-        existingTrainee.setDateOfBirth(trainee.getDateOfBirth());
-        existingTrainee.setAddress(trainee.getAddress());
+        existingTrainer.setFirstName(trainer.getFirstName());
+        existingTrainer.setLastName(trainer.getLastName());
+        existingTrainer.setPassword(trainer.getPassword());
+        existingTrainer.setIsActive(trainer.getIsActive());
+        existingTrainer.setSpecialization(trainer.getSpecialization());
 
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Trainee updatedTrainee = (Trainee) session.merge(existingTrainee);
+            Trainer updatedTrainer = (Trainer) session.merge(existingTrainer);
             transaction.commit();
-            return updatedTrainee;
+            return updatedTrainer;
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -80,11 +81,14 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public List<Trainee> findAll() {
+    public List<Trainer> findAll() {
         return null;
     }
 
-
+    @Override
+    public Trainer update(Trainer trainer) {
+        return null;
+    }
 
     @Override
     public void delete(Long id) {

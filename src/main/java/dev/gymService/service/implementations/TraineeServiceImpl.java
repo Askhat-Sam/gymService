@@ -30,6 +30,21 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeRepository.getTraineeById(id);
     }
 
+    @Override
+    public Trainee getTraineeByUserName(String userName) {
+        return traineeRepository.getTraineeByUserName(userName);
+    }
+
+    @Override
+    public Trainee updateTrainee(Trainee trainee) {
+        return traineeRepository.updateTrainee(trainee);
+    }
+
+    @Override
+    public void changeTraineePassword(String userName,String newPassword) {
+        traineeRepository.changeTraineePassword(userName, newPassword);
+    }
+
 //    @Override
 //    public Trainee updateTrainee(Trainee trainee) {
 //        return traineeDAO.update(trainee);

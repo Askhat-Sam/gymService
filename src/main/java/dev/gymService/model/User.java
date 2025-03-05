@@ -7,10 +7,10 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name="user")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id

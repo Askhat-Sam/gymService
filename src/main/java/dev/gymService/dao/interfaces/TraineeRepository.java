@@ -9,8 +9,9 @@ public interface TraineeRepository {
 
     Trainee getTraineeById(Long id);
     Trainee getTraineeByUserName(String userName);
+    void changeTraineePassword(String userName,String newPassword);
 
     List<Trainee> findAll();
-    Trainee update(Trainee trainee);
+    Trainee updateTrainee(Trainee trainee);
     void delete(Long id);
 }

@@ -6,10 +6,13 @@ import java.util.List;
 
 public interface TraineeService {
     Trainee createTrainee(Trainee trainee);
-//    Trainee updateTrainee(Trainee trainee);
-//    void deleteTrainee(Long id);
     Trainee getTraineeById(Long id);
+    Trainee getTraineeByUserName(String userName);
+    Trainee updateTrainee(Trainee trainee);
+
+    void changeTraineePassword(String userName,String newPassword);
+    //    Trainee updateTrainee(Trainee trainee);
+    //    void deleteTrainee(Long id);
 //    List<Trainee> getAllTrainee();
 //
-//    Trainee getTraineeByUserName(String userName);
 }

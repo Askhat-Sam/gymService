@@ -1,21 +1,40 @@
 package dev.gymService.model;
 
-public abstract class User {
-    private String firstName;
-    private String lastName;
-    private String userName;
-    private String password;
-    private Boolean isActive;
+import lombok.*;
 
-    public User() {
+import javax.persistence.*;
+
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "user")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+    @Column(name="user_name", nullable =false, unique = true)
+    private String userName;
+    @Column(name = "password", nullable = false)
+    private String password;
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Trainee trainee;
+
+    public Long getId() {
+        return id;
     }
 
-    public User(String firstName, String lastName, String userName, String password, Boolean isActive) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userName = userName;
-        this.password = password;
-        this.isActive = isActive;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -58,10 +77,19 @@ public abstract class User {
         isActive = active;
     }
 
+    public Trainee getTrainee() {
+        return trainee;
+    }
+
+    public void setTrainee(Trainee trainee) {
+        this.trainee = trainee;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "firstName='" + firstName + '\'' +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +

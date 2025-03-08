@@ -81,6 +81,38 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
+    public void changeTrainerStatus(String userName) {
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            Trainer trainer = session.createQuery( "SELECT t FROM Trainer t WHERE t.userName = :userName", Trainer.class)
+                    .setParameter("userName", userName)
+                    .uniqueResult();
+
+            if (trainer != null) {
+                Boolean isActive = !trainer.getIsActive(); // Toggle status
+
+                // Update trainee's active status
+                session.createQuery("UPDATE Trainer t SET t.isActive = :isActive WHERE t.userName = :userName")
+                        .setParameter("isActive", isActive)
+                        .setParameter("userName", userName)
+                        .executeUpdate();
+
+                transaction.commit();
+                System.out.println("Trainer status updated successfully.");
+            } else {
+                System.out.println("Trainer not found with username: " + userName);
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
     public List<Trainer> findAll() {
         return null;
     }

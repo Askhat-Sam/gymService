@@ -2,6 +2,7 @@ package dev.gymService.dao.implmentations;
 
 import dev.gymService.dao.interfaces.TraineeRepository;
 import dev.gymService.model.Trainee;
+import dev.gymService.model.Training;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -55,6 +56,61 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
             transaction.commit();
         }
+    }
+
+    @Override
+    public void deleteTraineeByUserName(String userName) {
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            session.createQuery("DELETE FROM Trainee WHERE userName = :userName")
+                    .setParameter("userName", userName)
+                    .executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void changeTraineeStatus(String userName) {
+        // Get trainee by userName
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            Trainee trainee = session.createQuery( "SELECT t FROM Trainee t WHERE t.userName = :userName", Trainee.class)
+                    .setParameter("userName", userName)
+                    .uniqueResult();
+
+            if (trainee != null) {
+                Boolean isActive = !trainee.getIsActive(); // Toggle status
+
+                // Update trainee's active status
+                session.createQuery("UPDATE Trainee t SET t.isActive = :isActive WHERE t.userName = :userName")
+                        .setParameter("isActive", isActive)
+                        .setParameter("userName", userName)
+                        .executeUpdate();
+
+                transaction.commit();
+                System.out.println("Trainee status updated successfully.");
+            } else {
+                System.out.println("Trainee not found with username: " + userName);
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public List<Training> getTraineeTrainings(String userName, String fromDate, String toDate, String trainerUserName) {
+        return null;
     }
 
     @Override

@@ -50,4 +50,9 @@ public class TrainerServiceImpl implements TrainerService {
     public Trainer updateTrainer(Trainer trainer) {
         return trainerRepository.updateTrainee(trainer);
     }
+
+    @Override
+    public void changeTrainerStatus(String userName) {
+        trainerRepository.changeTrainerStatus(userName);
+    }
 }

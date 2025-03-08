@@ -13,7 +13,6 @@ public class Application {
         TraineeService traineeService = context.getBean("traineeServiceImpl", TraineeService.class);
         TrainerService trainerService = context.getBean("trainerServiceImpl", TrainerService.class);
 
-
 //        // Creating new trainee
 //        Trainee trainee = new Trainee();
 //        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
@@ -49,6 +48,12 @@ public class Application {
 //        trainee.setIsActive(false);
 //        traineeService.updateTrainee(trainee);
 
+        // Getting trainer by userName
+//        traineeService.deleteTraineeByUserName("Andrey.Andreyev");
+
+        // Change trainee status
+//        traineeService.changeTraineeStatus("Denis.Denisov");
+
         //###############################################################################
 
         // Creating new trainer
@@ -66,7 +71,7 @@ public class Application {
 //        System.out.println(trainerService.getTrainerById(4L));
 
         // Getting trainer by userName
-//        System.out.println(trainerService.getTrainerByUserName("Andrey.Andreyev4"));
+        System.out.println(trainerService.getTrainerByUserName("Maksim.Maksimov").getTrainings());
 
         // Change trainer's password
 //        trainerService.changeTrainerPassword("Vladislav.Bekmeev", "987654321");
@@ -82,9 +87,12 @@ public class Application {
 //        trainer.setIsActive(false);
 //        trainerService.updateTrainer(trainer);
 
+        // Change trainer status
+//        trainerService.changeTrainerStatus("Maksim.Maksimov");
 
 
-
+        // Get trainings list by trainer Username
+//        trainerService.getTrainerTrainings("Maksim.Maksimov");
 
 
 

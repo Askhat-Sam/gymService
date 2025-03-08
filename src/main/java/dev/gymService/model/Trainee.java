@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -24,6 +26,8 @@ public class Trainee extends User{
 
     @Column(name = "user_id")
     private Long userId;
+
+
 
     @OneToOne(cascade = CascadeType.ALL)
     @MapsId

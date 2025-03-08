@@ -3,6 +3,7 @@ package dev.gymService.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +19,9 @@ public class Trainer extends User {
     private Long specialization;
     @Column(name = "user_id")
     private Long userId;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "trainer", orphanRemoval = true)
+    private List<Training> trainings;
 
     @OneToOne(cascade = CascadeType.ALL)
     @MapsId

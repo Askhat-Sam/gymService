@@ -9,6 +9,8 @@ public interface TraineeService {
     Trainee getTraineeById(Long id);
     Trainee getTraineeByUserName(String userName);
     Trainee updateTrainee(Trainee trainee);
+    void deleteTraineeByUserName(String userName);
+    public void changeTraineeStatus(String userName);
 
     void changeTraineePassword(String userName,String newPassword);
     //    Trainee updateTrainee(Trainee trainee);

@@ -41,6 +41,16 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    public void deleteTraineeByUserName(String userName) {
+        traineeRepository.deleteTraineeByUserName(userName);
+    }
+
+    @Override
+    public void changeTraineeStatus(String userName) {
+        traineeRepository.changeTraineeStatus(userName);
+    }
+
+    @Override
     public void changeTraineePassword(String userName,String newPassword) {
         traineeRepository.changeTraineePassword(userName, newPassword);
     }

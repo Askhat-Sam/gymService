@@ -27,7 +27,16 @@ public class Trainee extends User{
     @Column(name = "user_id")
     private Long userId;
 
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "trainee", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Training> trainings;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "trainee_trainer",
+            joinColumns = @JoinColumn(name = "trainee_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainer_id")
+    )
+    private List<Trainer> trainers;
 
     @OneToOne(cascade = CascadeType.ALL)
     @MapsId
@@ -48,7 +57,6 @@ public class Trainee extends User{
                 ", address='" + address + '\'' +
                 ", userId=" + userId + '\'' +
                 ", password='" + getPassword() + '\'' +
-//                ", user=" + user +
                 '}';
     }
 }

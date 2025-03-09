@@ -8,18 +8,10 @@ import java.util.List;
 
 public interface TrainerService {
     Trainer createTrainer(Trainer trainer);
-    Trainer getTrainerById(Long id);
-    Trainer getTrainerByUserName(String userName);
-    void changeTrainerPassword(String userName,String newPassword);
+    Trainer getTrainerById(Long id, String userName, String password);
+    Trainer getTrainerByUserName(String userName, String password);
+    void changeTrainerPassword(String userName, String oldPassword, String newPassword);
     Trainer updateTrainer(Trainer trainer);
-    void changeTrainerStatus(String userName);
-
-
-
-
-//    Trainer updateTrainer(Trainer trainer);
-//    void deleteTrainer(Long id);
-//    Trainer getTrainerById(Long id);
-//    List<Trainer> getAllTrainers();
-
+    void changeTrainerStatus(String userName, String password);
+    List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName);
 }

@@ -19,8 +19,10 @@ public class Trainer extends User {
     private Long specialization;
     @Column(name = "user_id")
     private Long userId;
+    @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
+    private List<Trainee> trainees;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "trainer", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "trainer", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Training> trainings;
 
     @OneToOne(cascade = CascadeType.ALL)

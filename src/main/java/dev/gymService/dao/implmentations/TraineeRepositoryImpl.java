@@ -26,21 +26,22 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Trainee create(Trainee trainee) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        session.persist(trainee);
-        transaction.commit();
-        session.close();
-        return trainee;
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.persist(trainee);
+            transaction.commit();
+            logger.log(Level.INFO, "Trainee has been created: " + trainee.getUserName());
+            return trainee;
+        }
     }
 
     @Override
     public Trainee getTraineeById(Long id, String userName, String password) {
         try (Session session = sessionFactory.openSession()) {
-            //  Check userName and password matching
             Trainee trainee = session.get(Trainee.class, id);
+            //  Check userName and password for matching
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainer: " + trainee.getUserName());
                 return trainee;
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
@@ -52,9 +53,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     @Override
     public Trainee getTraineeByUserName(String userName, String password) {
         try (Session session = sessionFactory.openSession()) {
-
             //  Check userName and password matching
-            Trainee trainee = this.getTraineeByUserName(userName, password);
+            Trainee trainee = session.createQuery("SELECT t FROM Trainee t WHERE t.userName = :userName", Trainee.class)
+                    .setParameter("userName", userName)
+                    .uniqueResult();
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
                 logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
                 return trainee;
@@ -69,7 +71,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     public void changeTraineePassword(String userName, String oldPassword, String newPassword) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-
             //  Check userName and password matching
             Trainee trainee = this.getTraineeByUserName(userName, oldPassword);
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(oldPassword)) {
@@ -78,6 +79,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                         .setParameter("newPassword", newPassword)
                         .setParameter("userName", userName)
                         .executeUpdate();
+                logger.log(Level.INFO, "Trainee's password has been updated: " + trainee.getUserName());
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
             }
@@ -93,28 +95,23 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             //  Check userName and password matching
             Trainee trainee = this.getTraineeByUserName(userName, password);
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
+                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
                 session.createQuery("DELETE FROM Trainee WHERE userName = :userName")
                         .setParameter("userName", userName)
                         .executeUpdate();
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Trainee has been deleted: " + trainee.getUserName());
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
             }
             transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
         }
     }
 
     @Override
     public void changeTraineeStatus(String userName, String password) {
         // Get trainee by userName
-        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             Trainee trainee = this.getTraineeByUserName(userName, password);
 
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
@@ -131,13 +128,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
             }
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
         }
-
     }
 
     @Override
@@ -183,6 +174,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 Transaction transaction = session.beginTransaction();
                 Trainee updatedTrainee = (Trainee) session.merge(existingTrainee);
                 transaction.commit();
+                logger.log(Level.INFO, "Trainee has been updated: " + trainee.getUserName());
                 return updatedTrainee;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -229,6 +221,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
                 trainee.setTrainers(trainers);
                 session.update(trainee);
+                logger.log(Level.INFO, "Trainee's trainers list has been updated: " + trainee.getUserName());
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
             }

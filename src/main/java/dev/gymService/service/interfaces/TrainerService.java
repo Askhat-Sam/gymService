@@ -13,5 +13,6 @@ public interface TrainerService {
     void changeTrainerPassword(String userName, String oldPassword, String newPassword);
     Trainer updateTrainer(Trainer trainer);
     void changeTrainerStatus(String userName, String password);
-    List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName);
+    List<Training> getTrainerTrainingList(String trainerName, String password,
+                                          String fromDate, String toDate, String traineeName);
 }

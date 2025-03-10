@@ -34,7 +34,7 @@ public class Application {
 //        traineeService.createTrainee(trainee);
 
         // Getting trainee by id
-        System.out.println("Getting trainee by id: " + traineeService.getTraineeById(3L, "Andrey.Andreyev", "j7hU76gt758"));
+//        System.out.println("Getting trainee by id: " + traineeService.getTraineeById(3L, "Andrey.Andreyev", "j7hU76gt758"));
 
         // Getting trainer by userName
 //        System.out.println(traineeService.getTraineeByUserName("Andrey.Andreyev"));

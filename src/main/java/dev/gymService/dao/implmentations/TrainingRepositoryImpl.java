@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Repository
@@ -24,6 +25,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         Transaction transaction = session.beginTransaction();
         session.persist(training);
         transaction.commit();
+        logger.log(Level.INFO, "Training has been added: " + training.getTrainingId());
         session.close();
         return training;
     }

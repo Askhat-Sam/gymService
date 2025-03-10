@@ -25,12 +25,13 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Trainer create(Trainer trainer) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        session.persist(trainer);
-        transaction.commit();
-        session.close();
-        return trainer;
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.persist(trainer);
+            transaction.commit();
+            logger.log(Level.INFO, "Trainee has been created: " + trainer.getUserName());
+            return trainer;
+        }
     }
 
     @Override
@@ -77,6 +78,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                         .setParameter("newPassword", newPassword)
                         .setParameter("userName", userName)
                         .executeUpdate();
+                logger.log(Level.INFO, "Trainer's password has been updated: " + trainer.getUserName());
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
             }
@@ -99,11 +101,8 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                 logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
                 Trainer updatedTrainer = (Trainer) session.merge(existingTrainer);
                 transaction.commit();
+                logger.log(Level.INFO, "Trainee has been updated: " + trainer.getUserName());
                 return updatedTrainer;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
             }
         } else {
             logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
@@ -126,45 +125,36 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                         .setParameter("isActive", isActive)
                         .setParameter("userName", userName)
                         .executeUpdate();
-
+                logger.log(Level.INFO, "Trainer's status has been updated: " + trainer.getUserName());
                 transaction.commit();
-                System.out.println("Trainer status updated successfully.");
-            } catch (Exception e) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
             }
         } else {
             logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
         }
     }
 
-        @Override
-        public List<Training> getTrainerTrainingList (String trainerName, String password, String fromDate, String toDate, String
-        traineeName){
-            Trainer trainer = this.getTrainerByUserName(trainerName, password);
-            if (trainer.getUserName().equals(trainerName) && trainer.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
-                try (Session session = sessionFactory.openSession()) {
-                    return session.createQuery(
-                                    "SELECT t FROM Training t " +
-                                            "WHERE t.trainer.userName = :trainerName " +
-                                            "AND t.trainingDate >= :fromDate " +
-                                            "AND t.trainingDate <= :toDate " +
-                                            "AND t.trainee.userName = :traineeName", Training.class)
-                            .setParameter("trainerName", trainerName)
-                            .setParameter("fromDate", LocalDate.parse(fromDate))
-                            .setParameter("toDate", LocalDate.parse(toDate))
-                            .setParameter("traineeName", traineeName)
-                            .getResultList();
-                } catch (Exception e) {
-                    logger.log(Level.SEVERE, "Exception has been thrown: " + e.getMessage());
-                    throw new RuntimeException(e);
-                }
-            } else {
-                logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
-                return null;
+    @Override
+    public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String
+            traineeName) {
+        Trainer trainer = this.getTrainerByUserName(trainerName, password);
+        if (trainer.getUserName().equals(trainerName) && trainer.getPassword().equals(password)) {
+            logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
+            try (Session session = sessionFactory.openSession()) {
+                return session.createQuery(
+                                "SELECT t FROM Training t " +
+                                        "WHERE t.trainer.userName = :trainerName " +
+                                        "AND t.trainingDate >= :fromDate " +
+                                        "AND t.trainingDate <= :toDate " +
+                                        "AND t.trainee.userName = :traineeName", Training.class)
+                        .setParameter("trainerName", trainerName)
+                        .setParameter("fromDate", LocalDate.parse(fromDate))
+                        .setParameter("toDate", LocalDate.parse(toDate))
+                        .setParameter("traineeName", traineeName)
+                        .getResultList();
             }
+        } else {
+            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
+            return null;
         }
     }
+}

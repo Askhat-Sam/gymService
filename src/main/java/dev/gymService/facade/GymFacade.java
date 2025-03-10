@@ -66,6 +66,10 @@ public class GymFacade {
     public void updateTrainersList(String traineeUserName, String password, List<Trainer> trainers){
         traineeService.updateTrainersList(traineeUserName, password, trainers);
     }
+
+
+
+
     // ### - Trainer methods - ##
 
     public Trainer createTrainer(Trainer trainer){

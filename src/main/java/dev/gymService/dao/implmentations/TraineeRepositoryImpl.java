@@ -28,9 +28,15 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     public Trainee create(Trainee trainee) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.persist(trainee);
-            transaction.commit();
-            logger.log(Level.INFO, "Trainee has been created: " + trainee.getUserName());
+            // Required fields validation
+            if (trainee.getFirstName() != null && trainee.getLastName() != null && trainee.getUserName() != null
+                    && trainee.getPassword() != null && trainee.getIsActive() != null) {
+                session.persist(trainee);
+                transaction.commit();
+                logger.log(Level.INFO, "Trainee has been created: " + trainee.getUserName());
+            } else {
+                logger.log(Level.INFO, "Required fields validation has not been passed: " + trainee.getUserName());
+            }
             return trainee;
         }
     }
@@ -172,13 +178,16 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
             try (Session session = sessionFactory.openSession()) {
                 Transaction transaction = session.beginTransaction();
-                Trainee updatedTrainee = (Trainee) session.merge(existingTrainee);
-                transaction.commit();
-                logger.log(Level.INFO, "Trainee has been updated: " + trainee.getUserName());
-                return updatedTrainee;
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
+                // Required fields validation
+                if (trainee.getFirstName() != null && trainee.getLastName() != null && trainee.getUserName() != null
+                        && trainee.getPassword() != null && trainee.getIsActive() != null) {
+                    Trainee updatedTrainee = (Trainee) session.merge(existingTrainee);
+                    transaction.commit();
+                    logger.log(Level.INFO, "Trainee has been updated: " + trainee.getUserName());
+                    return updatedTrainee;
+                } else {
+                    logger.log(Level.INFO, "Required fields validation has not been passed: " + trainee.getUserName());
+                }
             }
         } else {
             logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());

@@ -27,9 +27,16 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     public Trainer create(Trainer trainer) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.persist(trainer);
-            transaction.commit();
-            logger.log(Level.INFO, "Trainee has been created: " + trainer.getUserName());
+            // Required fields validation
+            if (trainer.getFirstName() != null && trainer.getLastName() != null && trainer.getUserName() != null
+                    && trainer.getPassword() != null && trainer.getIsActive() != null) {
+                session.persist(trainer);
+                transaction.commit();
+                logger.log(Level.INFO, "Trainee has been created: " + trainer.getUserName());
+                return trainer;
+            } else {
+                logger.log(Level.INFO, "Required fields validation has not been passed: " + trainer.getUserName());
+            }
             return trainer;
         }
     }
@@ -99,15 +106,23 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             try (Session session = sessionFactory.openSession()) {
                 Transaction transaction = session.beginTransaction();
                 logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
-                Trainer updatedTrainer = (Trainer) session.merge(existingTrainer);
-                transaction.commit();
-                logger.log(Level.INFO, "Trainee has been updated: " + trainer.getUserName());
-                return updatedTrainer;
+
+                // Required fields validation
+                if (trainer.getFirstName() != null && trainer.getLastName() != null && trainer.getUserName() != null
+                        && trainer.getPassword() != null && trainer.getIsActive() != null) {
+                    Trainer updatedTrainer = (Trainer) session.merge(existingTrainer);
+                    transaction.commit();
+                    logger.log(Level.INFO, "Trainee has been updated: " + trainer.getUserName());
+                    return updatedTrainer;
+                } else {
+                    logger.log(Level.INFO, "Required fields validation has not been passed: " + trainer.getUserName());
+                }
             }
         } else {
             logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
             return null;
         }
+        return existingTrainer;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package service;
 
-import dev.gymService.dao.interfaces.TrainingRepository;
+import dev.gymService.repository.interfaces.TrainingRepository;
 import dev.gymService.model.Training;
 import dev.gymService.service.implementations.TrainingServiceImpl;
 import org.junit.Test;

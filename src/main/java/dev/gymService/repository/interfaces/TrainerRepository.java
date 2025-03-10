@@ -1,4 +1,4 @@
-package dev.gymService.dao.interfaces;
+package dev.gymService.repository.interfaces;
 
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;

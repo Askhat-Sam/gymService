@@ -1,6 +1,6 @@
 package dev.gymService.service.implementations;
 
-import dev.gymService.dao.interfaces.TrainerRepository;
+import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.service.interfaces.TrainerService;

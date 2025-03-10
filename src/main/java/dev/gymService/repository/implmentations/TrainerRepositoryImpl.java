@@ -1,6 +1,6 @@
-package dev.gymService.dao.implmentations;
+package dev.gymService.repository.implmentations;
 
-import dev.gymService.dao.interfaces.TrainerRepository;
+import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.utills.FileLogger;
@@ -47,7 +47,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             //  Check userName and password matching
             Trainer trainer = session.get(Trainer.class, id);
             if (trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
                 return trainer;
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
@@ -64,7 +64,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                     .setParameter("userName", userName)
                     .uniqueResult();
             if (trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
                 return trainer;
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
@@ -80,7 +80,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             //  Check userName and password matching
             Trainer trainer = this.getTrainerByUserName(userName, oldPassword);
             if (trainer.getUserName().equals(userName) && trainer.getPassword().equals(oldPassword)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
                 session.createQuery("UPDATE User u SET u.password = :newPassword WHERE u.userName = :userName")
                         .setParameter("newPassword", newPassword)
                         .setParameter("userName", userName)
@@ -105,7 +105,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
             try (Session session = sessionFactory.openSession()) {
                 Transaction transaction = session.beginTransaction();
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
 
                 // Required fields validation
                 if (trainer.getFirstName() != null && trainer.getLastName() != null && trainer.getUserName() != null
@@ -153,7 +153,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             traineeName) {
         Trainer trainer = this.getTrainerByUserName(trainerName, password);
         if (trainer.getUserName().equals(trainerName) && trainer.getPassword().equals(password)) {
-            logger.log(Level.INFO, "Successfull authentification for trainer: " + trainer.getUserName());
+            logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
             try (Session session = sessionFactory.openSession()) {
                 return session.createQuery(
                                 "SELECT t FROM Training t " +

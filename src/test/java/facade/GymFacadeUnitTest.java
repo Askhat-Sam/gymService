@@ -44,7 +44,7 @@ public class GymFacadeUnitTest {
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
         trainee.setUserName("Andrey.Andreyev");
-        trainee.setActive(true);
+        trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
@@ -69,7 +69,7 @@ public class GymFacadeUnitTest {
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
         trainee.setUserName("Andrey.Andreyev");
-        trainee.setActive(true);
+        trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
@@ -102,7 +102,7 @@ public class GymFacadeUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setActive(true);
+        trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
@@ -124,7 +124,7 @@ public class GymFacadeUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setActive(true);
+        trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
@@ -198,7 +198,7 @@ public class GymFacadeUnitTest {
         trainer.setFirstName("Andrey");
         trainer.setLastName("Andreyev");
         trainer.setUserName("Andrey.Andreyev");
-        trainer.setActive(true);
+        trainer.setIsActive(true);
         trainer.setUserId(1L);
         trainer.setPassword(UserInformationUtility.generatePassword());
 
@@ -221,7 +221,7 @@ public class GymFacadeUnitTest {
         trainer.setFirstName("Andrey");
         trainer.setLastName("Andreyev");
         trainer.setUserName("Andrey.Andreyev");
-        trainer.setActive(true);
+        trainer.setIsActive(true);
         trainer.setUserId(1L);
         trainer.setPassword(UserInformationUtility.generatePassword());
 
@@ -245,7 +245,7 @@ public class GymFacadeUnitTest {
         trainer.setFirstName("Andrey");
         trainer.setLastName("Andreyev");
         trainer.setUserName("Andrey.Andreyev");
-        trainer.setActive(true);
+        trainer.setIsActive(true);
         trainer.setUserId(1L);
         trainer.setPassword(UserInformationUtility.generatePassword());
 
@@ -266,7 +266,7 @@ public class GymFacadeUnitTest {
         trainer.setFirstName("Andrey");
         trainer.setLastName("Andreyev");
         trainer.setUserName("Andrey.Andreyev");
-        trainer.setActive(true);
+        trainer.setIsActive(true);
         trainer.setUserId(1L);
         trainer.setPassword(UserInformationUtility.generatePassword());
 

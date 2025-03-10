@@ -1,18 +1,11 @@
 package dev.gymService;
 
 import dev.gymService.configuration.AppConfig;
-import dev.gymService.dao.interfaces.TrainerRepository;
-import dev.gymService.model.Trainee;
-import dev.gymService.model.Trainer;
-import dev.gymService.model.Training;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.service.interfaces.TrainingService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.time.LocalDate;
-import java.util.List;
 
 public class Application {
 
@@ -30,7 +23,7 @@ public class Application {
 //        trainee.setFirstName("Andrey");
 //        trainee.setLastName("Andreyev");
 //        trainee.setIsActive(true);
-//        trainee.setUserId(8L);
+//        trainee.setUserId(7L);
 //        traineeService.createTrainee(trainee);
 
         // Getting trainee by id
@@ -152,9 +145,5 @@ public class Application {
 //            training.setTrainer(trainer);
 //
 //        System.out.println("New training has been added: " + trainingService.addTraining(training));
-
-
-
-
     }
 }

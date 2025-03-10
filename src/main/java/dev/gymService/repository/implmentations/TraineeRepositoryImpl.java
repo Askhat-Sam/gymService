@@ -1,6 +1,6 @@
-package dev.gymService.dao.implmentations;
+package dev.gymService.repository.implmentations;
 
-import dev.gymService.dao.interfaces.TraineeRepository;
+import dev.gymService.repository.interfaces.TraineeRepository;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -47,7 +47,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             Trainee trainee = session.get(Trainee.class, id);
             //  Check userName and password for matching
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successful authentication for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
                 return trainee;
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
@@ -64,7 +64,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                     .setParameter("userName", userName)
                     .uniqueResult();
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
                 return trainee;
             } else {
                 logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
@@ -80,7 +80,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             //  Check userName and password matching
             Trainee trainee = this.getTraineeByUserName(userName, oldPassword);
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(oldPassword)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
                 session.createQuery("UPDATE User u SET u.password = :newPassword WHERE u.userName = :userName")
                         .setParameter("newPassword", newPassword)
                         .setParameter("userName", userName)
@@ -101,7 +101,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             //  Check userName and password matching
             Trainee trainee = this.getTraineeByUserName(userName, password);
             if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
                 session.createQuery("DELETE FROM Trainee WHERE userName = :userName")
                         .setParameter("userName", userName)
                         .executeUpdate();
@@ -143,7 +143,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             //  Check userName and password matching
             Trainee trainee = this.getTraineeByUserName(traineeName, password);
             if (trainee.getUserName().equals(traineeName) && trainee.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
                 return session.createQuery(
                                 "SELECT t FROM Training t " +
                                         "WHERE t.trainee.userName = :traineeName " +
@@ -168,7 +168,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         Trainee existingTrainee = getTraineeByUserName(trainee.getUserName(), trainee.getPassword());
         //  Check userName and password matching
         if (existingTrainee.getUserName().equals(trainee.getUserName()) && existingTrainee.getPassword().equals(trainee.getPassword())) {
-            logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+            logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
             existingTrainee.setFirstName(trainee.getFirstName());
             existingTrainee.setLastName(trainee.getLastName());
             existingTrainee.setPassword(trainee.getPassword());
@@ -193,6 +193,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             logger.log(Level.INFO, "Incorrect userName and password for trainee: " + trainee.getUserName());
             return null;
         }
+        return existingTrainee;
     }
 
     @Override
@@ -201,7 +202,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             //  Check userName and password matching
             Trainee trainee = this.getTraineeByUserName(traineeUserName, password);
             if (trainee.getUserName().equals(traineeUserName) && trainee.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
                 return session.createQuery(
                                 "SELECT tr FROM Trainer tr " +
                                         "WHERE tr.id NOT IN (" +
@@ -226,7 +227,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
             //  Check userName and password matching
             Trainee trainee = this.getTraineeByUserName(traineeUserName, password);
             if (trainee.getUserName().equals(traineeUserName) && trainee.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successfull authentification for trainer: " + trainee.getUserName());
+                logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
 
                 trainee.setTrainers(trainers);
                 session.update(trainee);

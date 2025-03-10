@@ -1,6 +1,6 @@
-package dev.gymService.dao.implmentations;
+package dev.gymService.repository.implmentations;
 
-import dev.gymService.dao.interfaces.TrainingRepository;
+import dev.gymService.repository.interfaces.TrainingRepository;
 import dev.gymService.model.Training;
 import dev.gymService.utills.FileLogger;
 import org.hibernate.Session;

@@ -1,7 +1,7 @@
 package service;
 
 
-import dev.gymService.dao.interfaces.TraineeRepository;
+import dev.gymService.repository.interfaces.TraineeRepository;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -34,7 +34,7 @@ public class TraineeServiceUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setActive(true);
+        trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
@@ -59,7 +59,7 @@ public class TraineeServiceUnitTest {
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
-        trainee.setActive(true);
+        trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
@@ -91,7 +91,7 @@ public class TraineeServiceUnitTest {
         Trainee newTrainee = new Trainee();
         newTrainee.setFirstName("Andrey");
         newTrainee.setLastName("Andreyev");
-        newTrainee.setActive(true);
+        newTrainee.setIsActive(true);
         newTrainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         newTrainee.setAddress("Furmanova 2");
         newTrainee.setUserId(1L);
@@ -119,7 +119,7 @@ public class TraineeServiceUnitTest {
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
         trainee.setUserName("Andrey.Andreyev");
-        trainee.setActive(true);
+        trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
@@ -162,7 +162,7 @@ public class TraineeServiceUnitTest {
         Trainee trainee1 = new Trainee();
         trainee1.setFirstName("Andrey");
         trainee1.setLastName("Andreyev");
-        trainee1.setActive(true);
+        trainee1.setIsActive(true);
         trainee1.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee1.setAddress("Furmanova 2");
         trainee1.setUserId(1L);

@@ -1,6 +1,6 @@
 package service;
 
-import dev.gymService.dao.interfaces.TrainerRepository;
+import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -33,7 +33,7 @@ public class TrainerServiceUnitTest {
         Trainer trainer = new Trainer();
         trainer.setFirstName("Andrey");
         trainer.setLastName("Andreyev");
-        trainer.setActive(true);
+        trainer.setIsActive(true);
         trainer.setUserId(1L);
         trainer.setPassword(UserInformationUtility.generatePassword());
 
@@ -57,7 +57,7 @@ public class TrainerServiceUnitTest {
         Trainer trainer = new Trainer();
         trainer.setFirstName("Andrey");
         trainer.setLastName("Andreyev");
-        trainer.setActive(true);
+        trainer.setIsActive(true);
         trainer.setUserId(1L);
         trainer.setPassword(UserInformationUtility.generatePassword());
 
@@ -88,7 +88,7 @@ public class TrainerServiceUnitTest {
         Trainer newTrainer = new Trainer();
         newTrainer.setFirstName("Andrey");
         newTrainer.setLastName("Andreyev");
-        newTrainer.setActive(true);
+        newTrainer.setIsActive(true);
         newTrainer.setUserId(1L);
         newTrainer.setPassword(UserInformationUtility.generatePassword());
 
@@ -115,7 +115,7 @@ public class TrainerServiceUnitTest {
         trainer.setFirstName("Andrey");
         trainer.setLastName("Andreyev");
         trainer.setUserName("Andrey.Andreyev");
-        trainer.setActive(true);
+        trainer.setIsActive(true);
         trainer.setUserId(1L);
         trainer.setPassword(UserInformationUtility.generatePassword());
 
@@ -126,7 +126,7 @@ public class TrainerServiceUnitTest {
 
         // Then
         assertNotNull(updatedTrainer);
-        assertEquals(true, updatedTrainer.getActive());
+        assertEquals(true, updatedTrainer.getIsActive());
         assertEquals("Andrey.Andreyev", updatedTrainer.getUserName());
         assertEquals(10, updatedTrainer.getPassword().length());
         verify(trainerRepository, times(1)).updateTrainee(trainer);
@@ -148,7 +148,7 @@ public class TrainerServiceUnitTest {
         Trainer trainer1 = new Trainer();
         trainer1.setFirstName("Andrey");
         trainer1.setLastName("Andreyev");
-        trainer1.setActive(true);
+        trainer1.setIsActive(true);
         trainer1.setUserId(1L);
         trainer1.setPassword(UserInformationUtility.generatePassword());
 

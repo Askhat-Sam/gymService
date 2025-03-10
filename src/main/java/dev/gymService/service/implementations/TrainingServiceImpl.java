@@ -1,6 +1,6 @@
 package dev.gymService.service.implementations;
 
-import dev.gymService.dao.interfaces.TrainingRepository;
+import dev.gymService.repository.interfaces.TrainingRepository;
 import dev.gymService.model.Training;
 import dev.gymService.service.interfaces.TrainingService;
 import org.springframework.beans.factory.annotation.Autowired;

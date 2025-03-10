@@ -8,16 +8,12 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name="trainee")
 @PrimaryKeyJoinColumn(name = "id")
 public class Trainee extends User{
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
@@ -42,10 +38,12 @@ public class Trainee extends User{
     @MapsId
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, nullable = false)
     private User user;
+
+
     public void setUser(User user) {
         this.user = user;
         if (user != null) {
-            this.userId = user.getId();  // Ensure userId is correctly set
+            this.userId = user.getId();
         }
     }
 

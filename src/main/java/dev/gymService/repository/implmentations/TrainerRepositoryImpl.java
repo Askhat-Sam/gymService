@@ -22,6 +22,13 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     private static final Logger logger = FileLogger.getLogger(TrainerRepositoryImpl.class);
     private final SessionFactory sessionFactory;
 
+    private static final String SELECT_BY_USERNAME = "SELECT t FROM Trainer t WHERE t.userName = :userName";
+    private static final String GET_TRAINING_LIST = "SELECT t FROM Training t " +
+            "WHERE t.trainer.userName = :trainerName " +
+            "AND t.trainingDate >= :fromDate " +
+            "AND t.trainingDate <= :toDate " +
+            "AND t.trainee.userName = :traineeName";
+
     public TrainerRepositoryImpl(@Qualifier("getSessionFactory") SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
@@ -42,7 +49,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Trainer getTrainerByUserName(String userName) {
-        return sessionFactory.fromTransaction(session -> session.createQuery("SELECT t FROM Trainer t WHERE t.userName = :userName", Trainer.class)
+        return sessionFactory.fromTransaction(session -> session.createQuery(SELECT_BY_USERNAME, Trainer.class)
                 .setParameter("userName", userName)
                 .uniqueResult());
     }
@@ -60,12 +67,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     @Override
     public List<Training> getTrainerTrainingList(String trainerName, String fromDate, String toDate, String
             traineeName) {
-        return sessionFactory.fromTransaction(session -> session.createQuery(
-                        "SELECT t FROM Training t " +
-                                "WHERE t.trainer.userName = :trainerName " +
-                                "AND t.trainingDate >= :fromDate " +
-                                "AND t.trainingDate <= :toDate " +
-                                "AND t.trainee.userName = :traineeName", Training.class)
+        return sessionFactory.fromTransaction(session -> session.createQuery(GET_TRAINING_LIST, Training.class)
                 .setParameter("trainerName", trainerName)
                 .setParameter("fromDate", LocalDate.parse(fromDate))
                 .setParameter("toDate", LocalDate.parse(toDate))

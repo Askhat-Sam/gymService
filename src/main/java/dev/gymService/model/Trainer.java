@@ -10,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "trainer")
-@PrimaryKeyJoinColumn(name = "id")
 public class Trainer extends User {
     private Long id;
     @Column(name = "specialization", nullable = false)

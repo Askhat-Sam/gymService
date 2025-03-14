@@ -6,7 +6,7 @@ import dev.gymService.model.Training;
 import javax.swing.event.ListDataListener;
 import java.util.List;
 
-public interface TrainerService {
+public interface TrainerService extends UserService {
     Trainer createTrainer(Trainer trainer);
 
     Trainer getTrainerById(Long id, String userName, String password);

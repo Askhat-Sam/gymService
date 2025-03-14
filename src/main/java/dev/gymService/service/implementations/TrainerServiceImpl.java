@@ -40,7 +40,7 @@ public class TrainerServiceImpl implements TrainerService {
     public Trainer getTrainerById(Long id, String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerById(id);
         //  Return trainer if the userName and password is matching
-        if (trainer != null && trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainer)) {
             logger.log(Level.INFO, "Successful authentication for trainer: " + userName);
             return trainer;
         } else {
@@ -53,7 +53,7 @@ public class TrainerServiceImpl implements TrainerService {
     public Trainer getTrainerByUserName(String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         //  Return trainer if the userName and password is matching
-        if (trainer != null && trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainer)) {
             logger.log(Level.INFO, "Successful authentication for trainer: " + userName);
             return trainer;
         } else {
@@ -66,7 +66,7 @@ public class TrainerServiceImpl implements TrainerService {
     public void changeTrainerPassword(String userName, String oldPassword, String newPassword) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         //  Update trainer if the userName and password is matching
-        if (trainer != null && trainer.getUserName().equals(userName) && trainer.getPassword().equals(oldPassword)) {
+        if (isAuthenticated(userName, oldPassword, trainer)) {
             logger.log(Level.INFO, "Successful authentication for trainer: " + userName);
             trainer.setPassword(newPassword);
             trainerRepository.updateTrainer(trainer);
@@ -79,7 +79,7 @@ public class TrainerServiceImpl implements TrainerService {
     public Trainer updateTrainer(Trainer updatedTrainer, String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(updatedTrainer.getUserName());
         //  Check userName and password matching
-        if (trainer != null && trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainer)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + trainer.getUserName());
             trainer.setFirstName(updatedTrainer.getFirstName());
             trainer.setLastName(updatedTrainer.getLastName());
@@ -98,7 +98,7 @@ public class TrainerServiceImpl implements TrainerService {
     public void changeTrainerStatus(String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         //  Change trainee status if userName and password matching
-        if (trainer != null && trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainer)) {
             // Toggle status
             Boolean isActive = !trainer.getIsActive();
             trainer.setIsActive(isActive);
@@ -113,7 +113,7 @@ public class TrainerServiceImpl implements TrainerService {
     public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName) {
         Trainer trainer = trainerRepository.getTrainerByUserName(trainerName);
         //  Return list of trainings if userName and password matching
-        if (trainer != null && trainer.getUserName().equals(trainerName) && trainer.getPassword().equals(password)) {
+        if (isAuthenticated(trainerName, password, trainer)) {
             logger.log(Level.INFO, "Successful authentication for trainer: " +trainerName);
             return trainerRepository.getTrainerTrainingList(trainerName, fromDate, toDate, traineeName);
         } else {

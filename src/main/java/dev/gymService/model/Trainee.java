@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "trainee")
-@PrimaryKeyJoinColumn(name = "id")
 public class Trainee extends User {
     private Long id;
     @Column(name = "date_of_birth")

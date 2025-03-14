@@ -19,6 +19,19 @@ import java.util.logging.Logger;
 public class TraineeRepositoryImpl implements TraineeRepository {
     private static final Logger logger = FileLogger.getLogger(TraineeRepositoryImpl.class);
 
+    private static final String SELECT_BY_USERNAME = "SELECT t FROM Trainee t WHERE t.userName = :userName";
+    private static final String DELETE_BY_USERNAME = "DELETE FROM Trainee WHERE userName = :userName";
+    private static final String GET_TRAINEE_TRAINING_LIST = "SELECT t FROM Training t " +
+            "WHERE t.trainee.userName = :traineeName " +
+            "AND t.trainingDate >= :fromDate " +
+            "AND t.trainingDate <= :toDate " +
+            "AND t.trainer.userName = :trainerName";
+    private static final String GET_NOT_ASSIGNED_TRAINERS = "SELECT tr FROM Trainer tr " +
+            "WHERE tr.id NOT IN (" +
+            "   SELECT ttr.id FROM Trainee t " +
+            "   JOIN t.trainers ttr " +
+            "   WHERE t.userName = :traineeUserName)";
+
     private final SessionFactory sessionFactory;
 
     public TraineeRepositoryImpl(@Qualifier("getSessionFactory") SessionFactory sessionFactory) {
@@ -41,7 +54,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public Trainee getTraineeByUserName(String userName) {
-        return sessionFactory.fromTransaction(session -> session.createQuery("SELECT t FROM Trainee t WHERE t.userName = :userName", Trainee.class)
+        return sessionFactory.fromTransaction(session -> session.createQuery(SELECT_BY_USERNAME, Trainee.class)
                 .setParameter("userName", userName)
                 .uniqueResult());
     }
@@ -49,7 +62,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     @Override
     public void deleteTraineeByUserName(String userName) {
         sessionFactory.inTransaction(session -> {
-            session.createMutationQuery("DELETE FROM Trainee WHERE userName = :userName")
+            session.createMutationQuery(DELETE_BY_USERNAME)
                     .setParameter("userName", userName)
                     .executeUpdate();
         });
@@ -58,12 +71,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public List<Training> getTraineeTrainingList(String traineeName, String fromDate, String toDate, String trainerName) {
-        return sessionFactory.fromTransaction(session -> session.createQuery(
-                        "SELECT t FROM Training t " +
-                                "WHERE t.trainee.userName = :traineeName " +
-                                "AND t.trainingDate >= :fromDate " +
-                                "AND t.trainingDate <= :toDate " +
-                                "AND t.trainer.userName = :trainerName", Training.class)
+        return sessionFactory.fromTransaction(session -> session.createQuery(GET_TRAINEE_TRAINING_LIST, Training.class)
                 .setParameter("traineeName", traineeName)
                 .setParameter("fromDate", LocalDate.parse(fromDate))
                 .setParameter("toDate", LocalDate.parse(toDate))
@@ -82,13 +90,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
     @Override
     public List<Trainer> getNotAssignedTrainers(String traineeUserName) {
-        return sessionFactory.fromTransaction(session -> session.createQuery(
-                        "SELECT tr FROM Trainer tr " +
-                                "WHERE tr.id NOT IN (" +
-                                "   SELECT ttr.id FROM Trainee t " +
-                                "   JOIN t.trainers ttr " +
-                                "   WHERE t.userName = :traineeUserName)",
-                        Trainer.class)
+        return sessionFactory.fromTransaction(session -> session.createQuery(GET_NOT_ASSIGNED_TRAINERS, Trainer.class)
                 .setParameter("traineeUserName", traineeUserName)
                 .getResultList());
     }

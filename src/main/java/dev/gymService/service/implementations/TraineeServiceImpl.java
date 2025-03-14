@@ -3,6 +3,7 @@ package dev.gymService.service.implementations;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
+import dev.gymService.model.User;
 import dev.gymService.repository.implmentations.TraineeRepositoryImpl;
 import dev.gymService.repository.interfaces.TraineeRepository;
 import dev.gymService.service.interfaces.TraineeService;
@@ -41,7 +42,7 @@ public class TraineeServiceImpl implements TraineeService {
     public Trainee getTraineeById(Long id, String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeById(id);
         //  Return trainee if the userName and password is matching
-        if (trainee != null && trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainee)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
             return trainee;
         } else {
@@ -54,7 +55,7 @@ public class TraineeServiceImpl implements TraineeService {
     public Trainee getTraineeByUserName(String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Return trainee if the userName and password is matching
-        if (trainee != null && trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainee)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
             return trainee;
         } else {
@@ -67,7 +68,7 @@ public class TraineeServiceImpl implements TraineeService {
     public void changeTraineePassword(String userName, String oldPassword, String newPassword) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Update trainee if the userName and password is matching
-        if (trainee != null && trainee.getUserName().equals(userName) && trainee.getPassword().equals(oldPassword)) {
+        if (isAuthenticated(userName, oldPassword, trainee)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
             trainee.setPassword(newPassword);
             traineeRepository.updateTrainee(trainee);
@@ -80,7 +81,7 @@ public class TraineeServiceImpl implements TraineeService {
     public Trainee updateTrainee(Trainee updatedTrainee, String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(updatedTrainee.getUserName());
         //  Check userName and password matching
-        if (trainee != null && trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainee)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
             trainee.setFirstName(updatedTrainee.getFirstName());
             trainee.setLastName(updatedTrainee.getLastName());
@@ -101,7 +102,7 @@ public class TraineeServiceImpl implements TraineeService {
     public List<Trainer> getNotAssignedTrainers(String traineeUserName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(traineeUserName);
         //  Get list of trainers if userName and password matching
-        if (trainee != null && trainee.getUserName().equals(traineeUserName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(traineeUserName, password, trainee)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + traineeUserName);
             return traineeRepository.getNotAssignedTrainers(traineeUserName);
         } else {
@@ -114,7 +115,7 @@ public class TraineeServiceImpl implements TraineeService {
     public void deleteTraineeByUserName(String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Delete trainee if userName and password matching
-        if (trainee != null && trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainee)) {
             traineeRepository.deleteTraineeByUserName(userName);
             logger.log(Level.INFO, "Trainee has been deleted: " + trainee.getUserName());
         } else {
@@ -126,7 +127,7 @@ public class TraineeServiceImpl implements TraineeService {
     public void changeTraineeStatus(String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Change trainee status if userName and password matching
-        if (trainee != null && trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainee)) {
             // Toggle status
             Boolean isActive = !trainee.getIsActive();
             trainee.setIsActive(isActive);
@@ -141,7 +142,7 @@ public class TraineeServiceImpl implements TraineeService {
     public List<Training> getTraineeTrainingList(String traineeName, String password, String fromDate, String toDate, String trainerName) {
         Trainee trainee = traineeRepository.getTraineeByUserName(traineeName);
         //  Return list of trainings if userName and password matching
-        if (trainee != null && trainee.getUserName().equals(traineeName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(traineeName, password, trainee)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
             return traineeRepository.getTraineeTrainingList(traineeName, fromDate, toDate, trainerName);
         } else {
@@ -155,7 +156,7 @@ public class TraineeServiceImpl implements TraineeService {
     public void updateTrainersList(String userName, String password, List<Trainer> trainers) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Update trainee's trainings list if userName and password matching
-        if (trainee.getUserName().equals(userName) && trainee.getPassword().equals(password)) {
+        if (isAuthenticated(userName, password, trainee)) {
             logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
             trainee.setTrainers(trainers);
             traineeRepository.updateTrainee(trainee);
@@ -164,4 +165,5 @@ public class TraineeServiceImpl implements TraineeService {
             logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
         }
     }
+
 }

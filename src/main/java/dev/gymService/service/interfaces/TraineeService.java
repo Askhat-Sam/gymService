@@ -6,7 +6,7 @@ import dev.gymService.model.Training;
 
 import java.util.List;
 
-public interface TraineeService {
+public interface TraineeService extends UserService{
     Trainee createTrainee(Trainee trainee);
 
     Trainee getTraineeById(Long id, String userName, String password);

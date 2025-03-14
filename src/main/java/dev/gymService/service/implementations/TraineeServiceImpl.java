@@ -45,10 +45,8 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = traineeRepository.getTraineeById(id);
         //  Return trainee if the userName and password is matching
         if (isAuthenticated(userName, password, trainee)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
             return trainee;
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
             return null;
         }
     }
@@ -58,10 +56,8 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Return trainee if the userName and password is matching
         if (isAuthenticated(userName, password, trainee)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
             return trainee;
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
             return null;
         }
     }
@@ -72,11 +68,8 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Update trainee if the userName and password is matching
         if (isAuthenticated(userName, oldPassword, trainee)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
             trainee.setPassword(newPassword);
             traineeRepository.updateTrainee(trainee);
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
         }
     }
 
@@ -86,7 +79,6 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = traineeRepository.getTraineeByUserName(updatedTrainee.getUserName());
         //  Check userName and password matching
         if (isAuthenticated(userName, password, trainee)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
             trainee.setFirstName(updatedTrainee.getFirstName());
             trainee.setLastName(updatedTrainee.getLastName());
             trainee.setPassword(updatedTrainee.getPassword());
@@ -97,7 +89,6 @@ public class TraineeServiceImpl implements TraineeService {
             logger.log(Level.INFO, "Trainee has been updated: " + userName);
             return updatedTrainee;
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + updatedTrainee.getUserName());
             return null;
         }
     }
@@ -107,10 +98,8 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = traineeRepository.getTraineeByUserName(traineeUserName);
         //  Get list of trainers if userName and password matching
         if (isAuthenticated(traineeUserName, password, trainee)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + traineeUserName);
             return traineeRepository.getNotAssignedTrainers(traineeUserName);
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + traineeUserName);
             return null;
         }
     }
@@ -123,8 +112,6 @@ public class TraineeServiceImpl implements TraineeService {
         if (isAuthenticated(userName, password, trainee)) {
             traineeRepository.deleteTraineeByUserName(userName);
             logger.log(Level.INFO, "Trainee has been deleted: " + trainee.getUserName());
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
         }
     }
 
@@ -139,8 +126,6 @@ public class TraineeServiceImpl implements TraineeService {
             trainee.setIsActive(isActive);
             traineeRepository.updateTrainee(trainee);
             logger.log(Level.INFO, "Trainee status has been toggled");
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
         }
     }
 
@@ -149,10 +134,8 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = traineeRepository.getTraineeByUserName(traineeName);
         //  Return list of trainings if userName and password matching
         if (isAuthenticated(traineeName, password, trainee)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
             return traineeRepository.getTraineeTrainingList(traineeName, fromDate, toDate, trainerName);
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + traineeName);
             return null;
         }
     }
@@ -164,12 +147,9 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Update trainee's trainings list if userName and password matching
         if (isAuthenticated(userName, password, trainee)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + trainee.getUserName());
             trainee.setTrainers(trainers);
             traineeRepository.updateTrainee(trainee);
             logger.log(Level.INFO, "Trainee's trainers list has been updated: " + userName);
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
         }
     }
 }

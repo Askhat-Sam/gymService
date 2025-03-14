@@ -43,10 +43,8 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer trainer = trainerRepository.getTrainerById(id);
         //  Return trainer if the userName and password is matching
         if (isAuthenticated(userName, password, trainer)) {
-            logger.log(Level.INFO, "Successful authentication for trainer: " + userName);
             return trainer;
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + userName);
             return null;
         }
     }
@@ -56,10 +54,8 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         //  Return trainer if the userName and password is matching
         if (isAuthenticated(userName, password, trainer)) {
-            logger.log(Level.INFO, "Successful authentication for trainer: " + userName);
             return trainer;
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + userName);
             return null;
         }
     }
@@ -70,11 +66,8 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         //  Update trainer if the userName and password is matching
         if (isAuthenticated(userName, oldPassword, trainer)) {
-            logger.log(Level.INFO, "Successful authentication for trainer: " + userName);
             trainer.setPassword(newPassword);
             trainerRepository.updateTrainer(trainer);
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + userName);
         }
     }
 
@@ -84,7 +77,6 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer trainer = trainerRepository.getTrainerByUserName(updatedTrainer.getUserName());
         //  Check userName and password matching
         if (isAuthenticated(userName, password, trainer)) {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + trainer.getUserName());
             trainer.setFirstName(updatedTrainer.getFirstName());
             trainer.setLastName(updatedTrainer.getLastName());
             trainer.setPassword(updatedTrainer.getPassword());
@@ -93,7 +85,6 @@ public class TrainerServiceImpl implements TrainerService {
             logger.log(Level.INFO, "Trainer has been updated: " + userName);
             return updatedTrainer;
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + userName);
             return null;
         }
     }
@@ -109,8 +100,6 @@ public class TrainerServiceImpl implements TrainerService {
             trainer.setIsActive(isActive);
             trainerRepository.updateTrainer(trainer);
             logger.log(Level.INFO, "Trainer status has been toggled");
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + userName);
         }
     }
 
@@ -119,10 +108,8 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer trainer = trainerRepository.getTrainerByUserName(trainerName);
         //  Return list of trainings if userName and password matching
         if (isAuthenticated(trainerName, password, trainer)) {
-            logger.log(Level.INFO, "Successful authentication for trainer: " +trainerName);
             return trainerRepository.getTrainerTrainingList(trainerName, fromDate, toDate, traineeName);
         } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainerName);
             return null;
         }
     }

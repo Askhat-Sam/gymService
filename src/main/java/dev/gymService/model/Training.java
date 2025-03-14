@@ -1,32 +1,32 @@
 package dev.gymService.model;
 
-import lombok.*;
-import org.hibernate.annotations.Fetch;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDate;
+
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="training")
+@Table(name = "training")
 public class Training {
     @Id
-    @Column(name="id")
+    @Column(name = "id", nullable = false)
     private Long trainingId;
-    @Column(name="trainee_id", insertable = false, updatable = false)
+    @Column(name = "trainee_id", insertable = false, updatable = false)
     private Long traineeId;
-    @Column(name="trainer_id", insertable = false, updatable = false)
+    @Column(name = "trainer_id", insertable = false, updatable = false)
     private Long trainerId;
-    @Column(name="training_name")
+    @Column(name = "training_name", nullable = false)
     private String trainingName;
-    @Column(name="training_type_id")
+    @Column(name = "training_type_id", nullable = false)
     private Long trainingTypeId;
-    @Column(name="training_date")
+    @Column(name = "training_date", nullable = false)
     private LocalDate trainingDate;
-    @Column(name="training_duration")
+    @Column(name = "training_duration", nullable = false)
     private Long trainingDuration;
 
     @ManyToOne
@@ -37,16 +37,18 @@ public class Training {
     @JoinColumn(name = "trainer_id", nullable = false)
     private Trainer trainer;
 
-
     @Override
     public String toString() {
         return "Training{" +
                 "trainingId=" + trainingId +
-                ", trainerId=" + traineeId +
+                ", traineeId=" + traineeId +
                 ", trainerId=" + trainerId +
                 ", trainingName='" + trainingName + '\'' +
+                ", trainingTypeId=" + trainingTypeId +
                 ", trainingDate=" + trainingDate +
                 ", trainingDuration=" + trainingDuration +
+                ", trainee=" + trainee +
+                ", trainer=" + trainer +
                 '}';
     }
 }

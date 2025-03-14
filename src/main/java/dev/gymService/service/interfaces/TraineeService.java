@@ -15,13 +15,13 @@ public interface TraineeService {
 
     void changeTraineePassword(String userName, String oldPassword, String newPassword);
 
-    Trainee updateTrainee(Trainee trainee);
-
     void deleteTraineeByUserName(String userName, String password);
 
     void changeTraineeStatus(String userName, String password);
 
     List<Training> getTraineeTrainingList(String traineeName, String password, String fromDate, String toDate, String trainerName);
+
+    Trainee updateTrainee(Trainee updatedTrainee, String userName, String password);
 
     List<Trainer> getNotAssignedTrainers(String traineeUserName, String password);
 

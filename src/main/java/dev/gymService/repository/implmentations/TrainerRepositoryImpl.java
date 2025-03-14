@@ -1,5 +1,6 @@
 package dev.gymService.repository.implmentations;
 
+import dev.gymService.model.Trainee;
 import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -19,157 +20,56 @@ import java.util.logging.Logger;
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
     private static final Logger logger = FileLogger.getLogger(TrainerRepositoryImpl.class);
-    @Autowired
-    @Qualifier("getSessionFactory")
-    SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
+
+    public TrainerRepositoryImpl(@Qualifier("getSessionFactory") SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Trainer create(Trainer trainer) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            // Required fields validation
-            if (trainer.getFirstName() != null && trainer.getLastName() != null && trainer.getUserName() != null
-                    && trainer.getPassword() != null && trainer.getIsActive() != null) {
-                session.persist(trainer);
-                transaction.commit();
-                logger.log(Level.INFO, "Trainee has been created: " + trainer.getUserName());
-                return trainer;
-            } else {
-                logger.log(Level.INFO, "Required fields validation has not been passed: " + trainer.getUserName());
-            }
+        return sessionFactory.fromTransaction(session -> {
+            session.persist(trainer);
+            logger.log(Level.INFO, "Trainer has been created: " + trainer.getUserName());
             return trainer;
-        }
+        });
     }
 
     @Override
-    public Trainer getTrainerById(Long id, String userName, String password) {
-        try (Session session = sessionFactory.openSession()) {
-            //  Check userName and password matching
-            Trainer trainer = session.get(Trainer.class, id);
-            if (trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
-                return trainer;
-            } else {
-                logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
-                return null;
-            }
-        }
+    public Trainer getTrainerById(Long id) {
+        return sessionFactory.fromTransaction(session -> session.get(Trainer.class, id));
     }
 
     @Override
-    public Trainer getTrainerByUserName(String userName, String password) {
-        try (Session session = sessionFactory.openSession()) {
-            //  Check userName and password matching
-            Trainer trainer = session.createQuery("SELECT t FROM Trainer t WHERE t.user.userName = :userName", Trainer.class)
-                    .setParameter("userName", userName)
-                    .uniqueResult();
-            if (trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
-                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
-                return trainer;
-            } else {
-                logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
-                return null;
-            }
-        }
+    public Trainer getTrainerByUserName(String userName) {
+        return sessionFactory.fromTransaction(session -> session.createQuery("SELECT t FROM Trainer t WHERE t.userName = :userName", Trainer.class)
+                .setParameter("userName", userName)
+                .uniqueResult());
     }
 
+
     @Override
-    public void changeTrainerPassword(String userName, String oldPassword, String newPassword) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            //  Check userName and password matching
-            Trainer trainer = this.getTrainerByUserName(userName, oldPassword);
-            if (trainer.getUserName().equals(userName) && trainer.getPassword().equals(oldPassword)) {
-                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
-                session.createQuery("UPDATE User u SET u.password = :newPassword WHERE u.userName = :userName")
-                        .setParameter("newPassword", newPassword)
-                        .setParameter("userName", userName)
-                        .executeUpdate();
-                logger.log(Level.INFO, "Trainer's password has been updated: " + trainer.getUserName());
-            } else {
-                logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
-            }
-            transaction.commit();
-        }
+    public Trainer updateTrainer(Trainer trainer) {
+        return sessionFactory.fromTransaction(session -> {
+            session.merge(trainer);
+            return trainer;
+        });
     }
 
-    @Override
-    public Trainer updateTrainee(Trainer trainer) {
-        Trainer existingTrainer = getTrainerByUserName(trainer.getUserName(), trainer.getPassword());
-        if (existingTrainer.getUserName().equals(trainer.getUserName()) && existingTrainer.getPassword().equals(trainer.getPassword())) {
-            existingTrainer.setFirstName(trainer.getFirstName());
-            existingTrainer.setLastName(trainer.getLastName());
-            existingTrainer.setPassword(trainer.getPassword());
-            existingTrainer.setIsActive(trainer.getIsActive());
-            existingTrainer.setSpecialization(trainer.getSpecialization());
-
-            try (Session session = sessionFactory.openSession()) {
-                Transaction transaction = session.beginTransaction();
-                logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
-
-                // Required fields validation
-                if (trainer.getFirstName() != null && trainer.getLastName() != null && trainer.getUserName() != null
-                        && trainer.getPassword() != null && trainer.getIsActive() != null) {
-                    Trainer updatedTrainer = (Trainer) session.merge(existingTrainer);
-                    transaction.commit();
-                    logger.log(Level.INFO, "Trainee has been updated: " + trainer.getUserName());
-                    return updatedTrainer;
-                } else {
-                    logger.log(Level.INFO, "Required fields validation has not been passed: " + trainer.getUserName());
-                }
-            }
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
-            return null;
-        }
-        return existingTrainer;
-    }
 
     @Override
-    public void changeTrainerStatus(String userName, String password) {
-        Transaction transaction = null;
-        Trainer trainer = getTrainerByUserName(userName, password);
-        if (trainer.getUserName().equals(userName) && trainer.getPassword().equals(password)) {
-            try (Session session = sessionFactory.openSession()) {
-                transaction = session.beginTransaction();
-                // Toggle status
-                Boolean isActive = !trainer.getIsActive();
-
-                // Update trainee's active status
-                session.createQuery("UPDATE Trainer t SET t.isActive = :isActive WHERE t.userName = :userName")
-                        .setParameter("isActive", isActive)
-                        .setParameter("userName", userName)
-                        .executeUpdate();
-                logger.log(Level.INFO, "Trainer's status has been updated: " + trainer.getUserName());
-                transaction.commit();
-            }
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
-        }
-    }
-
-    @Override
-    public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String
+    public List<Training> getTrainerTrainingList(String trainerName, String fromDate, String toDate, String
             traineeName) {
-        Trainer trainer = this.getTrainerByUserName(trainerName, password);
-        if (trainer.getUserName().equals(trainerName) && trainer.getPassword().equals(password)) {
-            logger.log(Level.INFO, "Successful authentication for trainer: " + trainer.getUserName());
-            try (Session session = sessionFactory.openSession()) {
-                return session.createQuery(
-                                "SELECT t FROM Training t " +
-                                        "WHERE t.trainer.userName = :trainerName " +
-                                        "AND t.trainingDate >= :fromDate " +
-                                        "AND t.trainingDate <= :toDate " +
-                                        "AND t.trainee.userName = :traineeName", Training.class)
-                        .setParameter("trainerName", trainerName)
-                        .setParameter("fromDate", LocalDate.parse(fromDate))
-                        .setParameter("toDate", LocalDate.parse(toDate))
-                        .setParameter("traineeName", traineeName)
-                        .getResultList();
-            }
-        } else {
-            logger.log(Level.INFO, "Incorrect userName and password for trainer: " + trainer.getUserName());
-            return null;
-        }
+        return sessionFactory.fromTransaction(session -> session.createQuery(
+                        "SELECT t FROM Training t " +
+                                "WHERE t.trainer.userName = :trainerName " +
+                                "AND t.trainingDate >= :fromDate " +
+                                "AND t.trainingDate <= :toDate " +
+                                "AND t.trainee.userName = :traineeName", Training.class)
+                .setParameter("trainerName", trainerName)
+                .setParameter("fromDate", LocalDate.parse(fromDate))
+                .setParameter("toDate", LocalDate.parse(toDate))
+                .setParameter("traineeName", traineeName)
+                .getResultList());
     }
 }

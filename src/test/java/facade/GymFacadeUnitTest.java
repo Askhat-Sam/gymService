@@ -4,11 +4,11 @@ import dev.gymService.facade.GymFacade;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
-import dev.gymService.model.TrainingType;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.service.interfaces.TrainingService;
 import dev.gymService.utills.UserInformationUtility;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,8 +17,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,26 +28,41 @@ public class GymFacadeUnitTest {
     TraineeService traineeService;
     @Mock
     TrainingService trainingService;
-
     @Mock
     TrainerService trainerService;
-
     @InjectMocks
     GymFacade gymFacade;
+    private Trainee trainee;
+    private Trainer trainer;
 
-    @Test
-    public void shouldCreateTrainee(){
-        // Given
-        Trainee trainee = new Trainee();
+
+    @Before
+    public void setUpTrainee() {
+        trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
         trainee.setUserName("Andrey.Andreyev");
+        trainee.setPassword("1234567890");
         trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
-        trainee.setPassword(UserInformationUtility.generatePassword());
+    }
 
+    @Before
+    public void setUpTrainer() {
+        trainer = new Trainer();
+        trainer.setFirstName("Andrey");
+        trainer.setLastName("Andreyev");
+        trainer.setUserName("Andrey.Andreyev");
+        trainer.setPassword("1234567890");
+        trainer.setIsActive(true);
+        trainer.setUserId(1L);
+    }
+
+    @Test
+    public void shouldCreateTrainee() {
+        // Given
         when(traineeService.createTrainee(trainee)).thenReturn(trainee);
 
         // When
@@ -63,77 +76,49 @@ public class GymFacadeUnitTest {
     }
 
     @Test
-    public void shouldUpdateTrainee(){
+    public void shouldUpdateTrainee() {
         // Given
-        Trainee trainee = new Trainee();
-        trainee.setFirstName("Andrey");
-        trainee.setLastName("Andreyev");
-        trainee.setUserName("Andrey.Andreyev");
-        trainee.setIsActive(true);
-        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee.setAddress("Furmanova 2");
-        trainee.setUserId(1L);
-        trainee.setPassword(UserInformationUtility.generatePassword());
-
-        when(traineeService.updateTrainee(trainee)).thenReturn(trainee);
+        when(traineeService.updateTrainee(trainee, "Andrey.Andreyev", "1234567890")).thenReturn(trainee);
 
         // When
-        Trainee updatedTrainee = gymFacade.updateTrainee(trainee);
+        Trainee updatedTrainee = gymFacade.updateTrainee(trainee, "Andrey.Andreyev", "1234567890");
 
         // Then
         assertNotNull(updatedTrainee);
         assertEquals("Andrey.Andreyev", updatedTrainee.getUserName());
         assertEquals(10, updatedTrainee.getPassword().length());
-        verify(traineeService, times(1)).updateTrainee(trainee);
+        verify(traineeService, times(1)).updateTrainee(trainee, "Andrey.Andreyev", "1234567890");
     }
 
     @Test
-    public void shouldDeleteTraineeByUserName(){
+    public void shouldDeleteTraineeByUserName() {
         // When
-        gymFacade.deleteTraineeByUserName("Andre.Andreyev", "12345678");
+        gymFacade.deleteTraineeByUserName("Andre.Andreyev", "1234567890");
 
         // Then
-        verify(traineeService, times(1)).deleteTraineeByUserName("Andre.Andreyev", "12345678");
+        verify(traineeService, times(1)).deleteTraineeByUserName("Andre.Andreyev", "1234567890");
     }
 
     @Test
     public void shouldGetTraineeById() {
         // Given
-        Trainee trainee = new Trainee();
-        trainee.setFirstName("Andrey");
-        trainee.setLastName("Andreyev");
-        trainee.setIsActive(true);
-        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee.setAddress("Furmanova 2");
-        trainee.setUserId(1L);
-        trainee.setPassword(UserInformationUtility.generatePassword());
-
-        when(traineeService.getTraineeById(1L, "Andrey.Andreyev", "12345678")).thenReturn(trainee);
+        when(traineeService.getTraineeById(1L, "Andrey.Andreyev", "1234567890")).thenReturn(trainee);
 
         // When
-        Trainee retrievedTrainee = gymFacade.getTraineeById(1L, "Andrey.Andreyev", "12345678");
+        Trainee retrievedTrainee = gymFacade.getTraineeById(1L, "Andrey.Andreyev", "1234567890");
 
         // Then
         assertNotNull(retrievedTrainee);
-        verify(traineeService, times(1)).getTraineeById(1L, "Andrey.Andreyev", "12345678");
+        verify(traineeService, times(1)).getTraineeById(1L, "Andrey.Andreyev", "1234567890");
     }
 
     @Test
     public void shouldGetTraineeByUserName() {
         // Given
-        Trainee trainee = new Trainee();
-        trainee.setFirstName("Andrey");
-        trainee.setLastName("Andreyev");
-        trainee.setIsActive(true);
-        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee.setAddress("Furmanova 2");
-        trainee.setUserId(1L);
-        trainee.setPassword(UserInformationUtility.generatePassword());
-
         when(traineeService.getTraineeByUserName("Andrey.Andreyev", "12345678")).thenReturn(trainee);
 
         // When
-        Trainee retrievedTrainee = gymFacade.getTraineeByUserName( "Andrey.Andreyev", "12345678");
+        Trainee retrievedTrainee = gymFacade.getTraineeByUserName("Andrey.Andreyev", "12345678");
 
         // Then
         assertNotNull(retrievedTrainee);
@@ -141,16 +126,16 @@ public class GymFacadeUnitTest {
     }
 
     @Test
-    public void shouldChangeTraineePassword(){
+    public void shouldChangeTraineePassword() {
         // When
-        gymFacade.changeTraineePassword( "Andrey.Andreyev", "12345678", "09876543");
+        gymFacade.changeTraineePassword("Andrey.Andreyev", "12345678", "09876543");
 
         // Then
         verify(traineeService, times(1)).changeTraineePassword("Andrey.Andreyev", "12345678", "09876543");
     }
 
     @Test
-    public void shouldChangeTraineeStatus(){
+    public void shouldChangeTraineeStatus() {
         // When
         gymFacade.changeTraineeStatus("Andre.Andreyev", "12345678");
 
@@ -159,16 +144,16 @@ public class GymFacadeUnitTest {
     }
 
     @Test
-    public void shouldGetTraineeTrainingList(){
+    public void shouldGetTraineeTrainingList() {
         // When
-        gymFacade.getTraineeTrainingList("Andre.Andreyev", "12345678", "2025-01-01","2025-01-01", "Denis.Denisov");
+        gymFacade.getTraineeTrainingList("Andre.Andreyev", "12345678", "2025-01-01", "2025-01-01", "Denis.Denisov");
 
         // Then
-        verify(traineeService, times(1)).getTraineeTrainingList("Andre.Andreyev", "12345678", "2025-01-01","2025-01-01", "Denis.Denisov");
+        verify(traineeService, times(1)).getTraineeTrainingList("Andre.Andreyev", "12345678", "2025-01-01", "2025-01-01", "Denis.Denisov");
     }
 
     @Test
-    public void shouldGetNotAssignedTrainers(){
+    public void shouldGetNotAssignedTrainers() {
 
         // When
         gymFacade.getNotAssignedTrainers("Andre.Andreyev", "12345678");
@@ -178,8 +163,7 @@ public class GymFacadeUnitTest {
     }
 
     @Test
-    public void shouldUpdateTrainersList(){
-
+    public void shouldUpdateTrainersList() {
         // When
         gymFacade.updateTrainersList("Andre.Andreyev", "12345678", new ArrayList<>());
 
@@ -187,21 +171,10 @@ public class GymFacadeUnitTest {
         verify(traineeService, times(1)).updateTrainersList("Andre.Andreyev", "12345678", new ArrayList<>());
     }
 
-
-
-
-    // Trainer
+    //    // Trainer
     @Test
-    public void shouldCreateTrainer(){
+    public void shouldCreateTrainer() {
         // Given
-        Trainer trainer = new Trainer();
-        trainer.setFirstName("Andrey");
-        trainer.setLastName("Andreyev");
-        trainer.setUserName("Andrey.Andreyev");
-        trainer.setIsActive(true);
-        trainer.setUserId(1L);
-        trainer.setPassword(UserInformationUtility.generatePassword());
-
         when(trainerService.createTrainer(trainer)).thenReturn(trainer);
 
         // When
@@ -215,40 +188,24 @@ public class GymFacadeUnitTest {
     }
 
     @Test
-    public void shouldUpdateTrainer(){
+    public void shouldUpdateTrainer() {
         // Given
-        Trainer trainer = new Trainer();
-        trainer.setFirstName("Andrey");
-        trainer.setLastName("Andreyev");
-        trainer.setUserName("Andrey.Andreyev");
-        trainer.setIsActive(true);
-        trainer.setUserId(1L);
-        trainer.setPassword(UserInformationUtility.generatePassword());
-
-        when(trainerService.updateTrainer(trainer)).thenReturn(trainer);
+        when(trainerService.updateTrainer(trainer, "Andrey.Andreyev", "12345678")).thenReturn(trainer);
 
         // When
-        Trainer updatedTrainer = gymFacade.updateTrainer(trainer);
+        Trainer updatedTrainer = gymFacade.updateTrainer(trainer, "Andrey.Andreyev", "12345678");
 
         // Then
         assertNotNull(updatedTrainer);
         assertEquals("Andrey.Andreyev", updatedTrainer.getUserName());
         assertEquals(10, updatedTrainer.getPassword().length());
-        verify(trainerService, times(1)).updateTrainer(trainer);
+        verify(trainerService, times(1)).updateTrainer(trainer, "Andrey.Andreyev", "12345678");
     }
 
 
     @Test
     public void shouldGetTrainerById() {
         // Given
-        Trainer trainer = new Trainer();
-        trainer.setFirstName("Andrey");
-        trainer.setLastName("Andreyev");
-        trainer.setUserName("Andrey.Andreyev");
-        trainer.setIsActive(true);
-        trainer.setUserId(1L);
-        trainer.setPassword(UserInformationUtility.generatePassword());
-
         when(trainerService.getTrainerById(1L, "Andrey.Andreyev", "12345678")).thenReturn(trainer);
 
         // When
@@ -262,18 +219,10 @@ public class GymFacadeUnitTest {
     @Test
     public void shouldGetTrainerByUserName() {
         // Given
-        Trainer trainer = new Trainer();
-        trainer.setFirstName("Andrey");
-        trainer.setLastName("Andreyev");
-        trainer.setUserName("Andrey.Andreyev");
-        trainer.setIsActive(true);
-        trainer.setUserId(1L);
-        trainer.setPassword(UserInformationUtility.generatePassword());
-
         when(trainerService.getTrainerByUserName("Andrey.Andreyev", "12345678")).thenReturn(trainer);
 
         // When
-        Trainer retrievedTrainer = gymFacade.getTrainerByUserName( "Andrey.Andreyev", "12345678");
+        Trainer retrievedTrainer = gymFacade.getTrainerByUserName("Andrey.Andreyev", "12345678");
 
         // Then
         assertNotNull(retrievedTrainer);
@@ -281,16 +230,16 @@ public class GymFacadeUnitTest {
     }
 
     @Test
-    public void shouldChangeTrainerPassword(){
+    public void shouldChangeTrainerPassword() {
         // When
-        gymFacade.changeTrainerPassword( "Andrey.Andreyev", "12345678", "09876543");
+        gymFacade.changeTrainerPassword("Andrey.Andreyev", "12345678", "09876543");
 
         // Then
         verify(trainerService, times(1)).changeTrainerPassword("Andrey.Andreyev", "12345678", "09876543");
     }
 
     @Test
-    public void shouldChangeTrainerStatus(){
+    public void shouldChangeTrainerStatus() {
         // When
         gymFacade.changeTrainerStatus("Andre.Andreyev", "12345678");
 
@@ -299,17 +248,16 @@ public class GymFacadeUnitTest {
     }
 
     @Test
-    public void shouldGetTrainerTrainingList(){
+    public void shouldGetTrainerTrainingList() {
         // When
-        gymFacade.getTrainerTrainingList("Andre.Andreyev", "12345678", "2025-01-01","2025-01-01", "Denis.Denisov");
+        gymFacade.getTrainerTrainingList("Andre.Andreyev", "12345678", "2025-01-01", "2025-01-01", "Denis.Denisov");
 
         // Then
-        verify(trainerService, times(1)).getTrainerTrainingList("Andre.Andreyev", "12345678", "2025-01-01","2025-01-01", "Denis.Denisov");
+        verify(trainerService, times(1)).getTrainerTrainingList("Andre.Andreyev", "12345678", "2025-01-01", "2025-01-01", "Denis.Denisov");
     }
 
 
-
-    // Training
+    //    // Training
     @Test
     public void shouldCreateNewTraining() {
         // Given

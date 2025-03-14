@@ -1,16 +1,15 @@
 package dev.gymService.model;
 
-import lombok.*;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="user")
+@Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
@@ -20,15 +19,14 @@ public class User {
     private String firstName;
     @Column(name = "last_name", nullable = false)
     private String lastName;
-    @Column(name="user_name", nullable =false, unique = true)
+    @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 10)
     private String password;
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Trainee trainee;
-
+//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+//    private Trainee trainee;
 
     @Override
     public String toString() {

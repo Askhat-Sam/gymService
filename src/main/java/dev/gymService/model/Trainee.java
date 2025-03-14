@@ -1,25 +1,25 @@
 package dev.gymService.model;
 
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="trainee")
+@Table(name = "trainee")
 @PrimaryKeyJoinColumn(name = "id")
-public class Trainee extends User{
+public class Trainee extends User {
     private Long id;
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
     @Column(name = "address")
     private String address;
-
     @Column(name = "user_id")
     private Long userId;
 
@@ -34,27 +34,13 @@ public class Trainee extends User{
     )
     private List<Trainer> trainers;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @MapsId
-    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, nullable = false)
-    private User user;
-
-
-    public void setUser(User user) {
-        this.user = user;
-        if (user != null) {
-            this.userId = user.getId();
-        }
-    }
-
     @Override
     public String toString() {
         return "Trainee{" +
                 "id=" + id +
                 ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
-                ", userId=" + userId + '\'' +
-                ", password='" + getPassword() + '\'' +
+                ", userId=" + userId +
                 '}';
     }
 }

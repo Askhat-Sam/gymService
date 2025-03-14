@@ -43,60 +43,63 @@ public class GymFacade {
         traineeService.changeTraineePassword(userName, oldPassword, newPassword);
     }
 
-    public Trainee updateTrainee(Trainee trainee){
-        return traineeService.updateTrainee(trainee);
+    public Trainee updateTrainee(Trainee trainee, String userName, String password) {
+        return traineeService.updateTrainee(trainee, userName, password);
     }
 
-    public void deleteTraineeByUserName(String userName, String password){
+    public void deleteTraineeByUserName(String userName, String password) {
         traineeService.deleteTraineeByUserName(userName, password);
     }
 
-    public void changeTraineeStatus(String userName, String password){
+    public void changeTraineeStatus(String userName, String password) {
         traineeService.changeTraineeStatus(userName, password);
     }
 
-    public List<Training> getTraineeTrainingList(String traineeName, String password, String fromDate, String toDate, String trainerName){
+    public List<Training> getTraineeTrainingList(String traineeName, String password, String fromDate, String toDate, String trainerName) {
         return traineeService.getTraineeTrainingList(traineeName, password, fromDate, toDate, trainerName);
     }
 
-    public List<Trainer> getNotAssignedTrainers(String traineeUserName, String password){
+    public List<Trainer> getNotAssignedTrainers(String traineeUserName, String password) {
         return traineeService.getNotAssignedTrainers(traineeUserName, password);
     }
 
-    public void updateTrainersList(String traineeUserName, String password, List<Trainer> trainers){
+    public void updateTrainersList(String traineeUserName, String password, List<Trainer> trainers) {
         traineeService.updateTrainersList(traineeUserName, password, trainers);
     }
 
 
-
-
     // ### - Trainer methods - ##
-
-    public Trainer createTrainer(Trainer trainer){
+    public Trainer createTrainer(Trainer trainer) {
         return trainerService.createTrainer(trainer);
     }
-    public Trainer getTrainerById(Long id, String userName, String password){
+
+    public Trainer getTrainerById(Long id, String userName, String password) {
         return trainerService.getTrainerById(id, userName, password);
     }
-    public Trainer getTrainerByUserName(String userName, String password){
+
+    public Trainer getTrainerByUserName(String userName, String password) {
         return trainerService.getTrainerByUserName(userName, password);
     }
-    public void changeTrainerPassword(String userName, String oldPassword, String newPassword){
+
+    public void changeTrainerPassword(String userName, String oldPassword, String newPassword) {
         trainerService.changeTrainerPassword(userName, oldPassword, newPassword);
     }
-    public Trainer updateTrainer(Trainer trainer){
-        return trainerService.updateTrainer(trainer);
+
+    public Trainer updateTrainer(Trainer trainer, String userName, String password) {
+        return trainerService.updateTrainer(trainer, userName, password);
     }
-    public void changeTrainerStatus(String userName, String password){
+
+    public void changeTrainerStatus(String userName, String password) {
         trainerService.changeTrainerStatus(userName, password);
     }
-    public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName){
+
+    public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName) {
         return trainerService.getTrainerTrainingList(trainerName, password, fromDate, toDate, traineeName);
     }
 
     // ### - Trainings methods - ##
 
-    public Training addTraining(Training training){
+    public Training addTraining(Training training) {
         return trainingService.addTraining(training);
     }
 }

@@ -1,12 +1,11 @@
 package service;
 
 
-import dev.gymService.repository.interfaces.TraineeRepository;
 import dev.gymService.model.Trainee;
-import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
+import dev.gymService.repository.interfaces.TraineeRepository;
 import dev.gymService.service.implementations.TraineeServiceImpl;
-import dev.gymService.utills.UserInformationUtility;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,20 +26,27 @@ public class TraineeServiceUnitTest {
     TraineeRepository traineeRepository;
     @InjectMocks
     TraineeServiceImpl traineeServiceImpl;
+    private Trainee trainee;
 
-    @Test
-    public void shouldCreateNewTraineeWithUserNameWithoutSuffix() {
-        // Given
-        Trainee trainee = new Trainee();
+
+    @Before
+    public void setUp() {
+        trainee = new Trainee();
         trainee.setFirstName("Andrey");
         trainee.setLastName("Andreyev");
+        trainee.setUserName("Andrey.Andreyev");
+        trainee.setPassword("1234567890");
         trainee.setIsActive(true);
         trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         trainee.setAddress("Furmanova 2");
         trainee.setUserId(1L);
+    }
 
-        // Mocking getTraineeByUserName to simulate existing user
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev", trainee.getPassword())).thenReturn(null);
+    @Test
+    public void shouldCreateNewTraineeWithUserNameWithoutSuffix() {
+        // Given
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(null);
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(null);
         when(traineeRepository.create(trainee)).thenReturn(trainee);
 
         // When
@@ -56,16 +62,7 @@ public class TraineeServiceUnitTest {
     @Test
     public void shouldCreateNewTraineeWithUserNameWithSuffix1() {
         // Given
-        Trainee trainee = new Trainee();
-        trainee.setFirstName("Andrey");
-        trainee.setLastName("Andreyev");
-        trainee.setIsActive(true);
-        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee.setAddress("Furmanova 2");
-        trainee.setUserId(1L);
-
-        // Mocking getTraineeByUserName to simulate existing user
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev", trainee.getPassword())).thenReturn(trainee);
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
         when(traineeRepository.create(trainee)).thenReturn(trainee);
 
         // When
@@ -83,23 +80,27 @@ public class TraineeServiceUnitTest {
         // Given: Existing users
         Trainee existingTrainee1 = new Trainee();
         existingTrainee1.setUserName("Andrey.Andreyev");
+        existingTrainee1.setPassword("1234567890");
 
         Trainee existingTrainee2 = new Trainee();
         existingTrainee2.setUserName("Andrey.Andreyev1");
+        existingTrainee2.setPassword("1234567890");
 
         // New trainee being created
         Trainee newTrainee = new Trainee();
         newTrainee.setFirstName("Andrey");
         newTrainee.setLastName("Andreyev");
+        newTrainee.setUserName("Andrey.Andreyev");
+        newTrainee.setPassword("1234567890");
         newTrainee.setIsActive(true);
         newTrainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
         newTrainee.setAddress("Furmanova 2");
         newTrainee.setUserId(1L);
 
         // Simulating that "Andrey.Andreyev" and "Andrey.Andreyev1" already exist in DB
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev", newTrainee.getPassword())).thenReturn(existingTrainee1);
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev1", newTrainee.getPassword())).thenReturn(existingTrainee2);
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev2", newTrainee.getPassword())).thenReturn(null);
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(existingTrainee1);
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev1")).thenReturn(existingTrainee2);
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev2")).thenReturn(null);
         when(traineeRepository.create(newTrainee)).thenReturn(newTrainee);
 
         // When
@@ -115,20 +116,11 @@ public class TraineeServiceUnitTest {
     @Test
     public void shouldUpdateTrainee() {
         // Given
-        Trainee trainee = new Trainee();
-        trainee.setFirstName("Andrey");
-        trainee.setLastName("Andreyev");
-        trainee.setUserName("Andrey.Andreyev");
-        trainee.setIsActive(true);
-        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee.setAddress("Furmanova 2");
-        trainee.setUserId(1L);
-        trainee.setPassword(UserInformationUtility.generatePassword());
-
         when(traineeRepository.updateTrainee(trainee)).thenReturn(trainee);
+        when(traineeRepository.getTraineeByUserName(trainee.getUserName())).thenReturn(trainee);
 
         // When
-        Trainee updatedTrainee = traineeServiceImpl.updateTrainee(trainee);
+        Trainee updatedTrainee = traineeServiceImpl.updateTrainee(trainee, "Andrey.Andreyev", "1234567890");
 
         // Then
         assertNotNull(updatedTrainee);
@@ -140,80 +132,78 @@ public class TraineeServiceUnitTest {
 
     @Test
     public void shouldDeleteTrainee() {
+        // Given
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+
         // When
-        traineeServiceImpl.deleteTraineeByUserName("Andrey.Andreyev", "SamplePassword");
+        traineeServiceImpl.deleteTraineeByUserName("Andrey.Andreyev", "1234567890");
 
         // Then
-        verify(traineeRepository, times(1)).deleteTraineeByUserName("Andrey.Andreyev", "SamplePassword");
+        verify(traineeRepository, times(1)).deleteTraineeByUserName("Andrey.Andreyev");
     }
 
     @Test
     public void shouldChangeTraineeStatus() {
+        // Given
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
         // When
-        traineeServiceImpl.changeTraineeStatus("Andrey.Andreyev", "SamplePassword");
+        traineeServiceImpl.changeTraineeStatus("Andrey.Andreyev", "1234567890");
 
         // Then
-        verify(traineeRepository, times(1)).changeTraineeStatus("Andrey.Andreyev", "SamplePassword");
+        verify(traineeRepository, times(1)).updateTrainee(any());
     }
 
     @Test
     public void shouldGetTraineeTrainingList() {
         // Given
-        Trainee trainee1 = new Trainee();
-        trainee1.setFirstName("Andrey");
-        trainee1.setLastName("Andreyev");
-        trainee1.setIsActive(true);
-        trainee1.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee1.setAddress("Furmanova 2");
-        trainee1.setUserId(1L);
-        trainee1.setPassword(UserInformationUtility.generatePassword());
-
-        Trainer trainer = new Trainer();
-        trainer.setUserName("Denis.Denisov");
-
-        Training training1 =new Training();
+        Training training1 = new Training();
         training1.setTrainingId(1L);
         training1.setTrainingName("Cardio");
         training1.setTrainingDate(LocalDate.parse("2025-01-01"));
 
-        Training training2 =new Training();
+        Training training2 = new Training();
         training2.setTrainingId(2L);
         training2.setTrainingName("Yoga");
         training2.setTrainingDate(LocalDate.parse("2025-01-02"));
 
-        trainee1.setTrainings(new ArrayList<>());
-        trainee1.getTrainings().add(training1);
-        trainee1.getTrainings().add(training2);
+        trainee.setTrainings(new ArrayList<>());
+        trainee.getTrainings().add(training1);
+        trainee.getTrainings().add(training2);
 
-        when(traineeRepository.getTraineeTrainingList("Andrey.Andreyev", "123456", "2025-01-01",
-                "2025-01-01", "Denis.Denisov")).thenReturn(trainee1.getTrainings());
+        when(traineeRepository.getTraineeTrainingList("Andrey.Andreyev", "2025-01-01",
+                "2025-01-01", "Denis.Denisov")).thenReturn(trainee.getTrainings());
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
 
         // When
-        List<Training> retrievedTraineeTrainings = traineeServiceImpl.getTraineeTrainingList("Andrey.Andreyev", "123456", "2025-01-01",
+        List<Training> retrievedTraineeTrainings = traineeServiceImpl.getTraineeTrainingList("Andrey.Andreyev", "1234567890", "2025-01-01",
                 "2025-01-01", "Denis.Denisov");
 
         // Then
         assertEquals(2, retrievedTraineeTrainings.size());
-        verify(traineeRepository, times(1)).getTraineeTrainingList("Andrey.Andreyev", "123456", "2025-01-01",
+        verify(traineeRepository, times(1)).getTraineeTrainingList("Andrey.Andreyev", "2025-01-01",
                 "2025-01-01", "Denis.Denisov");
     }
 
     @Test
     public void shouldChangeTraineePassword() {
+        // Given
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
         // When
-        traineeServiceImpl.changeTraineePassword("Andrey.Andreyev", "123456789", "987654321");
+        traineeServiceImpl.changeTraineePassword("Andrey.Andreyev", "1234567890", "987654321");
 
         // Then
-        verify(traineeRepository, times(1)).changeTraineePassword("Andrey.Andreyev", "123456789", "987654321");
+        verify(traineeRepository, times(1)).updateTrainee(any());
     }
 
     @Test
     public void shouldGetNotAssignedTrainers() {
+        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
         // When
-        traineeServiceImpl.getNotAssignedTrainers("Andrey.Andreyev", "123456789");
+        traineeServiceImpl.getNotAssignedTrainers("Andrey.Andreyev", "1234567890");
 
         // Then
-        verify(traineeRepository, times(1)).getNotAssignedTrainers("Andrey.Andreyev", "123456789");
+        verify(traineeRepository, times(1)).getNotAssignedTrainers("Andrey.Andreyev");
     }
 
 }

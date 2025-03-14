@@ -8,21 +8,17 @@ import java.util.List;
 
 public interface TraineeRepository {
     Trainee create(Trainee trainee);
+
     Trainee updateTrainee(Trainee trainee);
 
-    Trainee getTraineeById(Long id, String userName, String password);
+    Trainee getTraineeById(Long id);
 
-    Trainee getTraineeByUserName(String userName, String password);
+    Trainee getTraineeByUserName(String userName);
 
-    void changeTraineePassword(String userName, String oldPassword, String newPassword);
+    void deleteTraineeByUserName(String userName);
 
-    void deleteTraineeByUserName(String userName, String password);
+    List<Training> getTraineeTrainingList(String traineeName, String fromDate, String toDate, String trainerName);
 
-    void changeTraineeStatus(String userName, String password);
+    List<Trainer> getNotAssignedTrainers(String traineeUserName);
 
-    List<Training> getTraineeTrainingList(String traineeName, String password, String fromDate, String toDate, String trainerName);
-
-    List<Trainer> getNotAssignedTrainers(String traineeUserName, String password);
-
-    void updateTrainersList(String traineeUserName, String password, List<Trainer> trainers);
 }

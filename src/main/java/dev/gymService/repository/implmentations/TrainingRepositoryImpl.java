@@ -21,10 +21,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public Training addTraining(Training training) {
-        return sessionFactory.fromTransaction(session -> {
-            session.persist(training);
-            logger.log(Level.INFO, "Training has been added: " + training.getTrainingId());
-            return training;
-        });
+        sessionFactory.getCurrentSession().persist(training);
+        logger.log(Level.INFO, "Training has been added: " + training.getTrainingId());
+        return training;
     }
 }

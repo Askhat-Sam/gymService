@@ -1,14 +1,10 @@
 package dev.gymService.repository.implmentations;
 
-import dev.gymService.model.Trainee;
-import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
+import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.utills.FileLogger;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -35,43 +31,39 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Trainer create(Trainer trainer) {
-        return sessionFactory.fromTransaction(session -> {
-            session.persist(trainer);
-            logger.log(Level.INFO, "Trainer has been created: " + trainer.getUserName());
-            return trainer;
-        });
+        sessionFactory.getCurrentSession().persist(trainer);
+        logger.log(Level.INFO, "Trainer has been created: " + trainer.getUserName());
+        return trainer;
     }
 
     @Override
     public Trainer getTrainerById(Long id) {
-        return sessionFactory.fromTransaction(session -> session.get(Trainer.class, id));
+        return sessionFactory.getCurrentSession().get(Trainer.class, id);
     }
 
     @Override
     public Trainer getTrainerByUserName(String userName) {
-        return sessionFactory.fromTransaction(session -> session.createQuery(SELECT_BY_USERNAME, Trainer.class)
+        return sessionFactory.getCurrentSession().createQuery(SELECT_BY_USERNAME, Trainer.class)
                 .setParameter("userName", userName)
-                .uniqueResult());
+                .uniqueResult();
     }
 
 
     @Override
     public Trainer updateTrainer(Trainer trainer) {
-        return sessionFactory.fromTransaction(session -> {
-            session.merge(trainer);
-            return trainer;
-        });
+        sessionFactory.getCurrentSession().merge(trainer);
+        return trainer;
     }
 
 
     @Override
     public List<Training> getTrainerTrainingList(String trainerName, String fromDate, String toDate, String
             traineeName) {
-        return sessionFactory.fromTransaction(session -> session.createQuery(GET_TRAINING_LIST, Training.class)
+        return sessionFactory.getCurrentSession().createQuery(GET_TRAINING_LIST, Training.class)
                 .setParameter("trainerName", trainerName)
                 .setParameter("fromDate", LocalDate.parse(fromDate))
                 .setParameter("toDate", LocalDate.parse(toDate))
                 .setParameter("traineeName", traineeName)
-                .getResultList());
+                .getResultList();
     }
 }

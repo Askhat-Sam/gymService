@@ -7,6 +7,7 @@ import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.utills.FileLogger;
 import dev.gymService.utills.UserInformationUtility;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
+    @Transactional
     public Trainer createTrainer(Trainer trainer) {
         long userNameSuffix = 1;
         String userName = trainer.getFirstName().concat(".").concat(trainer.getLastName());
@@ -63,6 +65,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
+    @Transactional
     public void changeTrainerPassword(String userName, String oldPassword, String newPassword) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         //  Update trainer if the userName and password is matching
@@ -76,6 +79,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
+    @Transactional
     public Trainer updateTrainer(Trainer updatedTrainer, String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(updatedTrainer.getUserName());
         //  Check userName and password matching
@@ -95,6 +99,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
+    @Transactional
     public void changeTrainerStatus(String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         //  Change trainee status if userName and password matching

@@ -9,6 +9,7 @@ import dev.gymService.repository.interfaces.TraineeRepository;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.utills.FileLogger;
 import dev.gymService.utills.UserInformationUtility;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public Trainee createTrainee(Trainee trainee) {
         long userNameSuffix = 1;
         String userName = trainee.getFirstName().concat(".").concat(trainee.getLastName());
@@ -65,6 +67,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public void changeTraineePassword(String userName, String oldPassword, String newPassword) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Update trainee if the userName and password is matching
@@ -78,6 +81,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public Trainee updateTrainee(Trainee updatedTrainee, String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(updatedTrainee.getUserName());
         //  Check userName and password matching
@@ -112,6 +116,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public void deleteTraineeByUserName(String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Delete trainee if userName and password matching
@@ -124,6 +129,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public void changeTraineeStatus(String userName, String password) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Change trainee status if userName and password matching
@@ -153,6 +159,7 @@ public class TraineeServiceImpl implements TraineeService {
 
 
     @Override
+    @Transactional
     public void updateTrainersList(String userName, String password, List<Trainer> trainers) {
         Trainee trainee = traineeRepository.getTraineeByUserName(userName);
         //  Update trainee's trainings list if userName and password matching
@@ -165,5 +172,4 @@ public class TraineeServiceImpl implements TraineeService {
             logger.log(Level.INFO, "Incorrect userName and password for trainee: " + userName);
         }
     }
-
 }

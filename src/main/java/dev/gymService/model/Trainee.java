@@ -1,6 +1,7 @@
 package dev.gymService.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
+@Data
 @Table(name = "trainee")
 public class Trainee extends User {
     private Long id;

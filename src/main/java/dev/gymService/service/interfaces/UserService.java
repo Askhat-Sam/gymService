@@ -14,8 +14,8 @@ public interface UserService {
             logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
             return true;
         } else {
-            logger.log(Level.INFO, "Successful authentication for trainee: " + userName);
-            return false;
+            logger.log(Level.INFO, "Failed authentication for trainee: " + userName);
+            throw new RuntimeException("Failed authentication for trainee: " + userName);
         }
     }
 }

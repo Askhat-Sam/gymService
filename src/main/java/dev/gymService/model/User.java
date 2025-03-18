@@ -25,8 +25,6 @@ public class User {
     private String password;
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
-//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-//    private Trainee trainee;
 
     @Override
     public String toString() {

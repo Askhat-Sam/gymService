@@ -18,8 +18,6 @@ public class GymFacade {
     TrainerService trainerService;
     TrainingService trainingService;
 
-    private static final Logger logger = FileLogger.getLogger(GymFacade.class);
-
     public GymFacade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;

@@ -21,5 +21,3 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingRepository.addTraining(training);
     }
 }
-
-

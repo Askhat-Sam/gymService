@@ -1,5 +1,6 @@
 package dev.gymService.service.implementations;
 
+
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -32,6 +33,7 @@ public class TraineeServiceImpl implements TraineeService {
         long userNameSuffix = 1;
         String userName = trainee.getFirstName().concat(".").concat(trainee.getLastName());
         String originalUserName = userName;
+
         while (this.getTraineeByUserName(userName, trainee.getPassword()) != null) {
             userName = originalUserName.concat(String.valueOf(userNameSuffix++));
         }

@@ -1,5 +1,6 @@
 package dev.gymService.model;
 
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;

@@ -1,5 +1,4 @@
 package dev.gymService.model;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +20,7 @@ public class Trainer extends User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "trainer", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Training> trainings;
+
 
 
     @Override

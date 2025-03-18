@@ -8,7 +8,6 @@ import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.service.interfaces.TrainingService;
 import dev.gymService.utills.UserInformationUtility;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -76,6 +76,7 @@ public class GymFacadeUnitTest {
     }
 
     @Test
+
     public void shouldUpdateTrainee() {
         // Given
         when(traineeService.updateTrainee(trainee, "Andrey.Andreyev", "1234567890")).thenReturn(trainee);

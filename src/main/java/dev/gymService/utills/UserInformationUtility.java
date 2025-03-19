@@ -10,6 +10,7 @@ public class UserInformationUtility {
     private static final int PASSWORD_LENGTH = 10;
     private static final Random random = new Random();
 
+
     public static String generatePassword() {
         StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
         for (int i = 0; i < PASSWORD_LENGTH; i++) {

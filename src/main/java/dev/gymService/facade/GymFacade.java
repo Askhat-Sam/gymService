@@ -10,6 +10,7 @@ import dev.gymService.utills.FileLogger;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 import java.util.logging.Logger;
 
 @Service
@@ -23,6 +24,7 @@ public class GymFacade {
         this.trainerService = trainerService;
         this.trainingService = trainingService;
     }
+
 
     // ### - Trainee methods - ##
     public Trainee createTrainee(Trainee trainee) {

@@ -33,3 +33,4 @@ public class AppConfig {
         dataSource.setPassword(password);
         return dataSource;
     }
+}

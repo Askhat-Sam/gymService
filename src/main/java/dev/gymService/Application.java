@@ -1,6 +1,7 @@
 package dev.gymService;
 
 import dev.gymService.configuration.AppConfig;
+
 import dev.gymService.service.interfaces.TraineeService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

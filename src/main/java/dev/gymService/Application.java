@@ -11,5 +11,8 @@ public class Application {
         TraineeService traineeService = context.getBean("traineeServiceImpl", TraineeService.class);
         // Getting trainee by id
         System.out.println("Getting trainee by id: " + traineeService.getTraineeById(1L, "Ivan.Ivanov", "12hU76gt5("));
+
+        // Getting trainee by userName
+        System.out.println("Getting trainee by userName: " + traineeService.getTraineeByUserName("Denis.Denisov", "32hU46gt5("));
     }
 }

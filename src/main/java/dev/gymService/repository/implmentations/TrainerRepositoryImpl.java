@@ -31,28 +31,32 @@ public class TrainerRepositoryImpl implements TrainerRepository {
 
     @Override
     public Trainer create(Trainer trainer) {
-        sessionFactory.getCurrentSession().persist(trainer);
-        logger.log(Level.INFO, "Trainer has been created: " + trainer.getUserName());
-        return trainer;
+        return sessionFactory.fromTransaction(session -> {
+            session.persist(trainer);
+            logger.log(Level.INFO, "Trainer has been created: " + trainer.getUserName());
+            return trainer;
+        });
     }
 
     @Override
     public Trainer getTrainerById(Long id) {
-        return sessionFactory.getCurrentSession().get(Trainer.class, id);
+        return sessionFactory.fromTransaction(session -> session.get(Trainer.class, id));
     }
 
     @Override
     public Trainer getTrainerByUserName(String userName) {
-        return sessionFactory.getCurrentSession().createQuery(SELECT_BY_USERNAME, Trainer.class)
+        return sessionFactory.fromTransaction(session -> session.createQuery(SELECT_BY_USERNAME, Trainer.class)
                 .setParameter("userName", userName)
-                .uniqueResult();
+                .uniqueResult());
     }
 
 
     @Override
     public Trainer updateTrainer(Trainer trainer) {
-        sessionFactory.getCurrentSession().merge(trainer);
-        return trainer;
+        return sessionFactory.fromTransaction(session -> {
+            session.merge(trainer);
+            return trainer;
+        });
     }
 
 

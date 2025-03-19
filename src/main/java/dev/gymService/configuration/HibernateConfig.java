@@ -2,13 +2,14 @@ package dev.gymService.configuration;
 
 
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -42,12 +43,13 @@ public class HibernateConfig {
     }
 
     @Bean
+
     public SessionFactory getSessionFactory(LocalSessionFactoryBean localSessionFactoryBean) {
         return localSessionFactoryBean.getObject();
     }
 
     @Bean
-    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+    public HibernateTransactionManager transactionManager(@Qualifier("getSessionFactory") SessionFactory sessionFactory) {
         return new HibernateTransactionManager(sessionFactory);
     }
 

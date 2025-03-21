@@ -57,5 +57,11 @@ public class Application {
         trainer1.setIsActive(false);
         trainer1.setSpecialization(3L);
         trainerService.createTrainer(trainer1);
+
+        // Get trainee's training list
+        System.out.println("----t trainee's training list----");
+        System.out.println(traineeService.getTraineeTrainingList("Ivan.Ivanov", "12hU76gt5(",
+                "2000-01-01", "2030-01-01","Vladislav.Bekmeev"));
+
     }
 }

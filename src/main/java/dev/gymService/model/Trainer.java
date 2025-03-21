@@ -14,7 +14,7 @@ import java.util.List;
 public class Trainer extends User {
     @Column(name = "specialization", nullable = false)
     private Long specialization;
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
     private Long userId;
     @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
     private List<Trainee> trainees;

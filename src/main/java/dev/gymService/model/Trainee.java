@@ -22,7 +22,7 @@ public class Trainee extends User {
     private LocalDate dateOfBirth;
     @Column(name = "address")
     private String address;
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
     private Long userId;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "trainee", orphanRemoval = true, fetch = FetchType.LAZY)

@@ -41,33 +41,38 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public Trainer getTrainerById(Long id, String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerById(id);
-        //  Return trainer if the userName and password is matching
-        if (isAuthenticated(userName, password, trainer)) {
-            return trainer;
-        } else {
-            return null;
+        if (trainer != null) {
+            // Return trainer if authenticated successfully
+            if (isAuthenticated(userName, password, trainer)) {
+                return trainer;
+            }
         }
+        return null;
     }
 
     @Override
     public Trainer getTrainerByUserName(String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
-        //  Return trainer if the userName and password is matching
-        if (isAuthenticated(userName, password, trainer)) {
-            return trainer;
-        } else {
-            return null;
+        if (trainer != null) {
+            // Return trainer if authenticated successfully
+            if (isAuthenticated(userName, password, trainer)) {
+                return trainer;
+            }
         }
+        return null;
+
     }
 
     @Override
     @Transactional
     public void changeTrainerPassword(String userName, String oldPassword, String newPassword) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
-        //  Update trainer if the userName and password is matching
-        if (isAuthenticated(userName, oldPassword, trainer)) {
-            trainer.setPassword(newPassword);
-            trainerRepository.updateTrainer(trainer);
+        if (trainer != null) {
+            // Update trainer if authenticated successfully
+            if (isAuthenticated(userName, oldPassword, trainer)) {
+                trainer.setPassword(newPassword);
+                trainerRepository.updateTrainer(trainer);
+            }
         }
     }
 
@@ -75,42 +80,46 @@ public class TrainerServiceImpl implements TrainerService {
     @Transactional
     public Trainer updateTrainer(Trainer updatedTrainer, String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(updatedTrainer.getUserName());
-        //  Check userName and password matching
-        if (isAuthenticated(userName, password, trainer)) {
-            trainer.setFirstName(updatedTrainer.getFirstName());
-            trainer.setLastName(updatedTrainer.getLastName());
-            trainer.setPassword(updatedTrainer.getPassword());
-            trainer.setIsActive(updatedTrainer.getIsActive());
-            trainerRepository.updateTrainer(trainer);
-            logger.log(Level.INFO, "Trainer has been updated: " + userName);
-            return updatedTrainer;
-        } else {
-            return null;
+        if (trainer != null) {
+            // Update trainer if authenticated successfully
+            if (isAuthenticated(userName, password, trainer)) {
+                trainer.setFirstName(updatedTrainer.getFirstName());
+                trainer.setLastName(updatedTrainer.getLastName());
+                trainer.setPassword(updatedTrainer.getPassword());
+                trainer.setIsActive(updatedTrainer.getIsActive());
+                trainerRepository.updateTrainer(trainer);
+                logger.log(Level.INFO, "Trainer has been updated: " + userName);
+                return updatedTrainer;
+            }
         }
+        return null;
     }
 
     @Override
     @Transactional
     public void changeTrainerStatus(String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
-        //  Change trainee status if userName and password matching
-        if (isAuthenticated(userName, password, trainer)) {
-            // Toggle status
-            Boolean isActive = !trainer.getIsActive();
-            trainer.setIsActive(isActive);
-            trainerRepository.updateTrainer(trainer);
-            logger.log(Level.INFO, "Trainer status has been toggled");
+        if (trainer != null) {
+            // Update trainer if authenticated successfully
+            if (isAuthenticated(userName, password, trainer)) {
+                // Toggle status
+                Boolean isActive = !trainer.getIsActive();
+                trainer.setIsActive(isActive);
+                trainerRepository.updateTrainer(trainer);
+                logger.log(Level.INFO, "Trainer status has been toggled");
+            }
         }
     }
 
     @Override
     public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName) {
         Trainer trainer = trainerRepository.getTrainerByUserName(trainerName);
-        //  Return list of trainings if userName and password matching
-        if (isAuthenticated(trainerName, password, trainer)) {
-            return trainerRepository.getTrainerTrainingList(trainerName, fromDate, toDate, traineeName);
-        } else {
-            return null;
+        if (trainer != null) {
+            // Return trainer list if authenticated successfully
+            if (isAuthenticated(trainerName, password, trainer)) {
+                return trainerRepository.getTrainerTrainingList(trainerName, fromDate, toDate, traineeName);
+            }
         }
+        return null;
     }
 }

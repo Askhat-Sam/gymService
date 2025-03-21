@@ -35,7 +35,7 @@ CREATE TABLE `trainee` (
   `date_of_birth` date  DEFAULT NULL,
   `address` varchar(50)  DEFAULT NULL,
   `user_id` BIGINT  NOT NULL,
-   PRIMARY KEY (id),
+   PRIMARY KEY (user_id),
 KEY FK_TRAINEE_USER_ID_idx (`user_id`),
 CONSTRAINT FK_TRAINEE_USER_ID_idx
 FOREIGN KEY (`user_id`)
@@ -44,9 +44,9 @@ REFERENCES user (`id`)
 
 INSERT INTO `trainee`
 VALUES
-(1, '1990-02-01', 'Furmanova 1', 1),
-(2, '1989-03-04', 'Mailina 65', 2),
-(3, '1991-05-09', 'Akhmetova 3',3);
+('1990-02-01', 'Furmanova 1', 1),
+('1989-03-04', 'Mailina 65', 2),
+('1991-05-09', 'Akhmetova 3',3);
 
 CREATE TABLE `training_type` (
 `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -63,7 +63,7 @@ VALUES
 CREATE TABLE `trainer` (
 `specialization` BIGINT NOT NULL,
 `user_id` BIGINT NOT NULL,
-PRIMARY KEY (`id`),
+PRIMARY KEY (`user_id`),
 KEY `FK_TRAINER_USER_ID_idx` (`user_id`),
   CONSTRAINT `FK_TRAINER_USER_ID_idx`
   FOREIGN KEY (`user_id`)
@@ -76,9 +76,9 @@ KEY `FK_TRAINING_TYPE_idx` (`specialization`),
 
 INSERT INTO `trainer`
 VALUES
-(4, 1, 4),
-(5, 2, 5),
-(6, 3, 6);
+(1, 4),
+(2, 5),
+(3, 6);
 
 CREATE TABLE `trainee_trainer` (
 `trainee_id` BIGINT NOT NULL,
@@ -109,11 +109,11 @@ CREATE TABLE `training` (
 PRIMARY KEY (`id`),
   CONSTRAINT `FK_TRAINEE_ID_idx`
   FOREIGN KEY (`trainee_id`)
-  REFERENCES `trainee` (`id`) ON DELETE CASCADE,
+  REFERENCES `trainee` (`user_id`) ON DELETE CASCADE,
 
   CONSTRAINT `FK_TRAINER_ID_idx`
   FOREIGN KEY (`trainer_id`)
-  REFERENCES `trainer` (`id`) ON DELETE CASCADE,
+  REFERENCES `trainer` (`user_id`) ON DELETE CASCADE,
 
   CONSTRAINT `FK_TRAINING_TYPE_ID_idx`
   FOREIGN KEY (`training_type_id`)

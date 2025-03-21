@@ -30,7 +30,7 @@ public class TrainerServiceImpl implements TrainerService {
         long userNameSuffix = 1;
         String userName = trainer.getFirstName().concat(".").concat(trainer.getLastName());
         String originalUserName = userName;
-        while (this.getTrainerByUserName(userName, trainer.getPassword()) != null) {
+        while (trainerRepository.getTrainerByUserName(userName) != null) {
             userName = originalUserName.concat(String.valueOf(userNameSuffix++));
         }
         trainer.setPassword(UserInformationUtility.generatePassword());

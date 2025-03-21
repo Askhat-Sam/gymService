@@ -16,13 +16,13 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "trainee")
+@PrimaryKeyJoinColumn(name = "user_id")
 public class Trainee extends User {
-    private Long id;
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
     @Column(name = "address")
     private String address;
-    @Column(name = "user_id")
+    @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "trainee", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -39,7 +39,6 @@ public class Trainee extends User {
     @Override
     public String toString() {
         return "Trainee{" +
-                "id=" + id +
                 ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
                 ", userId=" + userId +

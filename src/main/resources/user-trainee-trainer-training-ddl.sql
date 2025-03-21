@@ -32,7 +32,6 @@ VALUES
 SET FOREIGN_KEY_CHECKS = 0;
 
 CREATE TABLE `trainee` (
-   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `date_of_birth` date  DEFAULT NULL,
   `address` varchar(50)  DEFAULT NULL,
   `user_id` BIGINT  NOT NULL,
@@ -62,7 +61,6 @@ VALUES
 (3, 'Cardio');
 
 CREATE TABLE `trainer` (
-`id` BIGINT NOT NULL AUTO_INCREMENT,
 `specialization` BIGINT NOT NULL,
 `user_id` BIGINT NOT NULL,
 PRIMARY KEY (`id`),
@@ -89,10 +87,10 @@ PRIMARY KEY (`trainee_id`, `trainer_id`),
 KEY `FK_TRAINEE_TRAINER_idx` (`trainee_id`),
   CONSTRAINT `FK_TRAINEE_TRAINER_idx`
   FOREIGN KEY (`trainee_id`)
-  REFERENCES `trainee` (`id`),
+  REFERENCES `trainee` (`user_id`),
   CONSTRAINT `FK_TRAINEr_TRAINEE_idx`
   FOREIGN KEY (`trainer_id`)
-  REFERENCES `trainer` (`id`)
+  REFERENCES `trainer` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 

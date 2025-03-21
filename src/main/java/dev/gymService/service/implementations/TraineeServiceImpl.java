@@ -32,7 +32,7 @@ public class TraineeServiceImpl implements TraineeService {
         String userName = trainee.getFirstName().concat(".").concat(trainee.getLastName());
         String originalUserName = userName;
 
-        while (this.getTraineeByUserName(userName, trainee.getPassword()) != null) {
+        while (traineeRepository.getTraineeByUserName(userName) != null) {
             userName = originalUserName.concat(String.valueOf(userNameSuffix++));
         }
         trainee.setPassword(UserInformationUtility.generatePassword());

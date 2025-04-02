@@ -8,8 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -27,6 +28,7 @@ public class HibernateConfig {
 
     @Value("${hibernate.hbm2ddl.auto}")
     private String hibernateHbm2ddl;
+
     @Bean
     public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -43,14 +45,14 @@ public class HibernateConfig {
     }
 
     @Bean
-
+    @Primary
     public SessionFactory getSessionFactory(LocalSessionFactoryBean localSessionFactoryBean) {
         return localSessionFactoryBean.getObject();
     }
 
     @Bean
-    public HibernateTransactionManager transactionManager(@Qualifier("getSessionFactory") SessionFactory sessionFactory) {
-        return new HibernateTransactionManager(sessionFactory);
+    public PlatformTransactionManager transactionManager(@Qualifier("getSessionFactory") SessionFactory sessionFactory) {
+        return new JpaTransactionManager(sessionFactory);
     }
 
 

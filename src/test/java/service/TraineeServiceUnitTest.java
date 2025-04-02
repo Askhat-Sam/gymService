@@ -172,17 +172,17 @@ public class TraineeServiceUnitTest {
         trainee.getTrainings().add(training2);
 
         when(traineeRepository.getTraineeTrainingList("Andrey.Andreyev", "2025-01-01",
-                "2025-01-01", "Denis.Denisov")).thenReturn(trainee.getTrainings());
+                "2025-01-01", "Denis.Denisov", 1L)).thenReturn(trainee.getTrainings());
         when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
 
         // When
         List<Training> retrievedTraineeTrainings = traineeServiceImpl.getTraineeTrainingList("Andrey.Andreyev", "1234567890", "2025-01-01",
-                "2025-01-01", "Denis.Denisov");
+                "2025-01-01", "Denis.Denisov", 1L);
 
         // Then
         assertEquals(2, retrievedTraineeTrainings.size());
         verify(traineeRepository, times(1)).getTraineeTrainingList("Andrey.Andreyev", "2025-01-01",
-                "2025-01-01", "Denis.Denisov");
+                "2025-01-01", "Denis.Denisov", 1L);
     }
 
     @Test

@@ -1,34 +1,23 @@
 package dev.gymService.service.implementations;
 
-import dev.gymService.dao.TrainingDAO;
 import dev.gymService.model.Training;
+import dev.gymService.repository.interfaces.TrainingRepository;
 import dev.gymService.service.interfaces.TrainingService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
-    @Autowired
-    private final TrainingDAO trainingDAO;
 
-    public TrainingServiceImpl(TrainingDAO trainingDAO) {
-        this.trainingDAO = trainingDAO;
+    private final TrainingRepository trainingRepository;
+
+    public TrainingServiceImpl(TrainingRepository trainingRepository) {
+        this.trainingRepository = trainingRepository;
     }
 
     @Override
-    public Training createTraining(Training training) {
-        return trainingDAO.create(training);
-    }
-
-    @Override
-    public Training getTrainingById(Long id) {
-        return trainingDAO.getById(id);
-    }
-
-    @Override
-    public List<Training> getAllTrainings() {
-        return trainingDAO.getAll();
+    @Transactional
+    public Training addTraining(Training training) {
+        return trainingRepository.addTraining(training);
     }
 }

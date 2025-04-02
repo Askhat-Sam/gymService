@@ -2,72 +2,66 @@ package dev.gymService;
 
 import dev.gymService.configuration.AppConfig;
 import dev.gymService.model.Trainee;
-import dev.gymService.model.User;
+import dev.gymService.model.Trainer;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
-import dev.gymService.service.interfaces.TrainingService;
-import dev.gymService.utills.UserInformationUtility;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.time.LocalDate;
-import java.util.stream.Collectors;
 
 public class Application {
-
     public static void main(String[] args) {
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         TraineeService traineeService = context.getBean("traineeServiceImpl", TraineeService.class);
         TrainerService trainerService = context.getBean("trainerServiceImpl", TrainerService.class);
-        TrainingService trainingService = context.getBean("trainingServiceImpl", TrainingService.class);
 
-        // Print the list of initial trainees, trainers, trainings
-        System.out.println("The list of initialized trainees: " + traineeService.getAllTrainee());
-        System.out.println("The list of initialized trainers: " +trainerService.getAllTrainers());
-        System.out.println("The list of initialized trainings: " +trainingService.getAllTrainings());
+        // Getting trainee by id
+        System.out.println("----Getting trainee by id----");
+        System.out.println("Getting trainee by id: " + traineeService.getTraineeById(1L, "Ivan.Ivanov", "12hU76gt5("));
 
-        // Add new trainee
+        // Create new trainee
+        System.out.println("----Creating new trainee----");
         Trainee trainee = new Trainee();
         trainee.setFirstName("Andrey");
-        trainee.setLastName("Andreyev");
-        trainee.setActive(true);
-        trainee.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee.setAddress("Furmanova 2");
+        trainee.setLastName("Oliya");
+        trainee.setIsActive(false);
+        trainee.setDateOfBirth(LocalDate.parse("2000-09-09"));
+        trainee.setAddress("Panfilova 139");
         traineeService.createTrainee(trainee);
 
-        // Get the created new trainee
-        System.out.println("Getting trainee with id 5:" + traineeService.getTraineeById(5L));
+        // Create new trainer
+        System.out.println("----Create new trainer----");
+        Trainer trainer = new Trainer();
+        trainer.setFirstName("Maksim");
+        trainer.setLastName("Avdeev");
+        trainer.setIsActive(false);
+        trainer.setSpecialization(3L);
+        trainerService.createTrainer(trainer);
 
-        // Add new trainee
-        Trainee trainee2 = new Trainee();
-        trainee2.setFirstName("Andrey");
-        trainee2.setLastName("Andreyev");
-        trainee2.setActive(true);
-        trainee2.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee2.setAddress("Furmanova 2");
-        traineeService.createTrainee(trainee2);
+        // Create new trainee with suffix 1
+        System.out.println("----Creating new trainee----");
+        Trainee trainee1 = new Trainee();
+        trainee1.setFirstName("Andrey");
+        trainee1.setLastName("Oliya");
+        trainee1.setIsActive(false);
+        trainee1.setDateOfBirth(LocalDate.parse("2000-09-09"));
+        trainee1.setAddress("Panfilova 139");
+        traineeService.createTrainee(trainee1);
 
-        // Add new trainee
-        Trainee trainee3 = new Trainee();
-        trainee3.setFirstName("Andrey");
-        trainee3.setLastName("Andreyev");
-        trainee3.setActive(true);
-        trainee3.setDateOfBirth(LocalDate.parse("2000-01-01"));
-        trainee3.setAddress("Furmanova 2");
-        traineeService.createTrainee(trainee3);
+        // Create new trainer with suffix 1
+        System.out.println("----Create new trainer----");
+        Trainer trainer1 = new Trainer();
+        trainer1.setFirstName("Maksim");
+        trainer1.setLastName("Avdeev");
+        trainer1.setIsActive(false);
+        trainer1.setSpecialization(3L);
+        trainerService.createTrainer(trainer1);
 
-        System.out.println();
-        System.out.println("All Trainee: " + traineeService.getAllTrainee());
+        // Get trainee's training list
+        System.out.println("----t trainee's training list----");
+        System.out.println(traineeService.getTraineeTrainingList("Ivan.Ivanov", "12hU76gt5(",
+                "2000-01-01", "2030-01-01","Vladislav.Bekmeev"));
 
-        // Update trainee with id 5
-        Trainee trainee1 = traineeService.getTraineeById(5L);
-        trainee1.setAddress("Furmanova 222");
-
-        traineeService.updateTrainee(trainee1);
-        System.out.println("Updated address: " + traineeService.getTraineeById(5L).getAddress());
-
-        // Delete trainee with id 5
-        traineeService.deleteTrainee(5L);
-        System.out.println("Getting trainee with id 5:" + traineeService.getTraineeById(5L));
     }
 }

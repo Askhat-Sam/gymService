@@ -1,14 +1,23 @@
 package dev.gymService.service.interfaces;
 
 import dev.gymService.model.Trainer;
+import dev.gymService.model.Training;
 
+import javax.swing.event.ListDataListener;
 import java.util.List;
 
-public interface TrainerService {
+public interface TrainerService extends UserService {
     Trainer createTrainer(Trainer trainer);
-    Trainer updateTrainer(Trainer trainer);
-    void deleteTrainer(Long id);
-    Trainer getTrainerById(Long id);
-    List<Trainer> getAllTrainers();
-    Trainer getTrainerByUserName(String userName);
+
+    Trainer getTrainerById(Long id, String userName, String password);
+
+    Trainer getTrainerByUserName(String userName, String password);
+
+    void changeTrainerPassword(String userName, String oldPassword, String newPassword);
+
+    Trainer updateTrainer(Trainer updatedTrainer, String userName, String password);
+
+    void changeTrainerStatus(String userName, String password);
+
+    List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName);
 }

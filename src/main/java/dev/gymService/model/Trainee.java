@@ -1,57 +1,47 @@
 package dev.gymService.model;
 
-import java.time.LocalDate;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
+@Data
+@Table(name = "trainee")
+@PrimaryKeyJoinColumn(name = "user_id")
 public class Trainee extends User {
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
+    @Column(name = "address")
     private String address;
+    @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
     private Long userId;
 
-    public Trainee() {
-        super();
-    }
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "trainee", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Training> trainings;
 
-    public Trainee(String firstName, String lastName, String userName, String password, Boolean isActive, LocalDate dateOfBirth, String address) {
-        super(firstName, lastName, userName, password, isActive);
-        this.dateOfBirth = dateOfBirth;
-        this.address = address;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "trainee_trainer",
+            joinColumns = @JoinColumn(name = "trainee_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainer_id")
+    )
+    private List<Trainer> trainers;
 
     @Override
     public String toString() {
         return "Trainee{" +
-                "userId='" + userId +
-                "', firstName='" + super.getFirstName() +
-                "', lastName='" + super.getLastName() +
-                "', userName='" + super.getUserName() +
-                "', password='" + super.getPassword() +
-                "', isActive='" + super.getActive() +
-                "', dateOfBirth='" + dateOfBirth +
-                "', address='" + address + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", address='" + address + '\'' +
+                ", userId=" + userId +
                 '}';
     }
 }

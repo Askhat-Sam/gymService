@@ -1,7 +1,7 @@
-package dev.gymService.service.interfaces;
+package dev.gymService.repository.interfaces;
 
 import dev.gymService.model.Training;
 
-public interface TrainingService {
+public interface TrainingRepository {
     Training addTraining(Training training);
 }

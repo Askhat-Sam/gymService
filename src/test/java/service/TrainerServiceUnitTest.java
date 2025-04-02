@@ -168,17 +168,17 @@ public class TrainerServiceUnitTest {
         trainer.getTrainings().add(training2);
 
         when(trainerRepository.getTrainerTrainingList("Andrey.Andreyev",  "2025-01-01",
-                "2025-01-01", "Denis.Denisov")).thenReturn(trainer.getTrainings());
+                "2025-01-01", "Denis.Denisov", 1L)).thenReturn(trainer.getTrainings());
         when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(trainer);
 
         // When
         List<Training> retrievedTrainerTrainings = trainerServiceImpl.getTrainerTrainingList("Andrey.Andreyev", "1234567890", "2025-01-01",
-                "2025-01-01", "Denis.Denisov");
+                "2025-01-01", "Denis.Denisov", 1L);
 
         // Then
         assertEquals(2, retrievedTrainerTrainings.size());
         verify(trainerRepository, times(1)).getTrainerTrainingList("Andrey.Andreyev", "2025-01-01",
-                "2025-01-01", "Denis.Denisov");
+                "2025-01-01", "Denis.Denisov", 1L);
     }
 
     @Test

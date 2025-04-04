@@ -13,11 +13,11 @@ public interface TrainerService extends UserService {
 
     Trainer getTrainerByUserName(String userName, String password);
 
-    void changeTrainerPassword(String userName, String oldPassword, String newPassword);
+    Boolean changeTrainerPassword(String userName, String oldPassword, String newPassword);
 
     Trainer updateTrainer(Trainer updatedTrainer, String userName, String password);
 
-    void changeTrainerStatus(String userName, String password);
+    Boolean changeTrainerStatus(String userName, String password);
 
-    List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName);
+    List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName, Long trainingTypeId);
 }

@@ -2,22 +2,21 @@ package dev.gymService.service.implementations;
 
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
-import dev.gymService.repository.implmentations.TraineeRepositoryImpl;
 import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.service.interfaces.TrainerService;
-import dev.gymService.utills.FileLogger;
 import dev.gymService.utills.UserInformationUtility;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.NoSuchElementException;
 
 
 @Service
 public class TrainerServiceImpl implements TrainerService {
-    private static final Logger logger = FileLogger.getLogger(TraineeRepositoryImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TrainerRepository trainerRepository;
 
     public TrainerServiceImpl(TrainerRepository trainerRepository) {
@@ -46,6 +45,9 @@ public class TrainerServiceImpl implements TrainerService {
             if (isAuthenticated(userName, password, trainer)) {
                 return trainer;
             }
+        }else {
+            logger.error("NoSuchElementException has been thrown");
+            throw new NoSuchElementException("User [" + userName +"] not found in DB");
         }
         return null;
     }
@@ -58,6 +60,9 @@ public class TrainerServiceImpl implements TrainerService {
             if (isAuthenticated(userName, password, trainer)) {
                 return trainer;
             }
+        } else {
+            logger.error("NoSuchElementException has been thrown");
+            throw new NoSuchElementException("User [" + userName +"] not found in DB");
         }
         return null;
 
@@ -65,15 +70,20 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional
-    public void changeTrainerPassword(String userName, String oldPassword, String newPassword) {
+    public Boolean changeTrainerPassword(String userName, String oldPassword, String newPassword) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         if (trainer != null) {
             // Update trainer if authenticated successfully
             if (isAuthenticated(userName, oldPassword, trainer)) {
                 trainer.setPassword(newPassword);
                 trainerRepository.updateTrainer(trainer);
+                return true;
             }
+        } else {
+            logger.error("NoSuchElementException has been thrown");
+            throw new NoSuchElementException("User [" + userName +"] not found in DB");
         }
+        return false;
     }
 
     @Override
@@ -87,17 +97,20 @@ public class TrainerServiceImpl implements TrainerService {
                 trainer.setLastName(updatedTrainer.getLastName());
                 trainer.setPassword(updatedTrainer.getPassword());
                 trainer.setIsActive(updatedTrainer.getIsActive());
+                logger.info("Trainer has been updated: " + userName);
                 trainerRepository.updateTrainer(trainer);
-                logger.log(Level.INFO, "Trainer has been updated: " + userName);
                 return updatedTrainer;
             }
+        } else {
+            logger.error("NoSuchElementException has been thrown");
+            throw new NoSuchElementException("User [" + userName +"] not found in DB");
         }
         return null;
     }
 
     @Override
     @Transactional
-    public void changeTrainerStatus(String userName, String password) {
+    public Boolean changeTrainerStatus(String userName, String password) {
         Trainer trainer = trainerRepository.getTrainerByUserName(userName);
         if (trainer != null) {
             // Update trainer if authenticated successfully
@@ -105,20 +118,28 @@ public class TrainerServiceImpl implements TrainerService {
                 // Toggle status
                 Boolean isActive = !trainer.getIsActive();
                 trainer.setIsActive(isActive);
+                logger.info("Trainer status has been toggled");
                 trainerRepository.updateTrainer(trainer);
-                logger.log(Level.INFO, "Trainer status has been toggled");
+                return true;
             }
+        } else {
+            logger.error("NoSuchElementException has been thrown");
+            throw new NoSuchElementException("User [" + userName +"] not found in DB");
         }
+        return false;
     }
 
     @Override
-    public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName) {
+    public List<Training> getTrainerTrainingList(String trainerName, String password, String fromDate, String toDate, String traineeName, Long trainingTypeId) {
         Trainer trainer = trainerRepository.getTrainerByUserName(trainerName);
         if (trainer != null) {
             // Return trainer list if authenticated successfully
             if (isAuthenticated(trainerName, password, trainer)) {
-                return trainerRepository.getTrainerTrainingList(trainerName, fromDate, toDate, traineeName);
+                return trainerRepository.getTrainerTrainingList(trainerName, fromDate, toDate, traineeName, trainingTypeId);
             }
+        } else {
+            logger.error("NoSuchElementException has been thrown");
+            throw new NoSuchElementException("User [" + trainerName +"] not found in DB");
         }
         return null;
     }

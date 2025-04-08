@@ -48,7 +48,8 @@ public class TraineeServiceImpl implements TraineeService {
                 return trainee;
             }
         } else {
-            logger.error("NoSuchElementException has been thrown");            throw new NoSuchElementException("User [" + userName + "] not found in DB");
+            logger.error("NoSuchElementException has been thrown");
+            throw new NoSuchElementException("User [" + userName + "] not found in DB");
         }
         return null;
     }

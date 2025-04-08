@@ -1,22 +1,18 @@
 package dev.gymService.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.NonNull;
 
-import java.time.LocalDate;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class TrainerProfileResponse {
-    @NonNull
+    @NotBlank
     private String firstName;
-    @NonNull
+    @NotBlank
     private String lastName;
-    @NonNull
+    @Positive(message = "Must be a positive number")
     private Long specialization;
     @NonNull
     private Boolean isActive;
@@ -28,5 +24,59 @@ public class TrainerProfileResponse {
         this.lastName = lastName;
         this.specialization = specialization;
         this.isActive = isActive;
+    }
+
+    public TrainerProfileResponse() {
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Long getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(Long specialization) {
+        this.specialization = specialization;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
+    }
+
+    public List<TraineeDTO> getTrainees() {
+        return trainees;
+    }
+
+    public void setTrainees(List<TraineeDTO> trainees) {
+        this.trainees = trainees;
+    }
+
+    @Override
+    public String toString() {
+        return "TrainerProfileResponse{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", specialization=" + specialization +
+                ", isActive=" + isActive +
+                ", trainees=" + trainees +
+                '}';
     }
 }

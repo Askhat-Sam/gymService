@@ -1,18 +1,56 @@
 package dev.gymService.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class TrainerRegistrationRequest extends AbstractRequest{
-    @NonNull
+    @NotBlank
     private String firstName;
-    @NonNull
+    @NotBlank
     private String lastName;
-    @NonNull
+    @Positive(message = "Must be a positive number")
     private Long specialization;
+
+    public TrainerRegistrationRequest(String firstName, String lastName, Long specialization) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.specialization = specialization;
+    }
+
+    public TrainerRegistrationRequest() {
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Long getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(Long specialization) {
+        this.specialization = specialization;
+    }
+
+    @Override
+    public String toString() {
+        return "TrainerRegistrationRequest{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", specialization=" + specialization +
+                '}';
+    }
 }

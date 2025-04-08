@@ -4,23 +4,22 @@ import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.model.dto.*;
 import dev.gymService.service.interfaces.TrainerService;
-import dev.gymService.utills.TraineeDTOMapper;
-import dev.gymService.utills.TrainingDTOMapper;
-import org.slf4j.MDC;
+import dev.gymService.utills.TraineeMapper;
+import dev.gymService.utills.TrainerMapper;
+import dev.gymService.utills.TrainingMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/gym-service/trainers")
 public class TrainerController {
     private final TrainerService trainerService;
-    private final Logger logger = Logger.getLogger("TrainerController");
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public TrainerController(TrainerService trainerService) {
         this.trainerService = trainerService;
@@ -38,33 +37,65 @@ public class TrainerController {
         // Persist the created trainer into DB
         Trainer createdTrainer = trainerService.createTrainer(trainer);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerRegistrationRequest + " Response: " + ResponseEntity.ok());
+        TrainerRegistrationResponse trainerRegistrationResponse = new TrainerRegistrationResponse(createdTrainer.getUserName(), createdTrainer.getPassword());
 
-        return new TrainerRegistrationResponse(createdTrainer.getUserName(), createdTrainer.getPassword());
+        // Prepare response entity
+        ResponseEntity<TrainerRegistrationResponse> responseEntity = ResponseEntity.ok().body(trainerRegistrationResponse);
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainerRegistrationRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return trainerRegistrationResponse;
     }
 
     @GetMapping("/loginTrainer")
     public ResponseEntity<?> loginTrainer(@RequestBody TrainerLoginRequest trainerLoginRequest) {
-        // Check if the user is exist in DB
-        Trainer trainer = trainerService.getTrainerByUserName(trainerLoginRequest.getUserName(), trainerLoginRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerLoginRequest + " Response: " + ResponseEntity.ok());
+        trainerService.getTrainerByUserName(trainerLoginRequest.getUserName(), trainerLoginRequest.getPassword());
 
-        // Return response
-        return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
+        // Prepare response entity
+        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainerLoginRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @PutMapping("/changePassword")
     public ResponseEntity<?> changePassword(@RequestBody TrainerPasswordChangeRequest trainerPasswordChangeRequest) {
         // Change user's password
-        Boolean isPasswordChanged = trainerService.changeTrainerPassword(trainerPasswordChangeRequest.getUserName(), trainerPasswordChangeRequest.getOldPassword(),
+        trainerService.changeTrainerPassword(trainerPasswordChangeRequest.getUserName(), trainerPasswordChangeRequest.getOldPassword(),
                 trainerPasswordChangeRequest.getNewPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerPasswordChangeRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
 
-        // Return response
-        return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainerPasswordChangeRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @GetMapping("/getTrainerByUsername")
@@ -73,31 +104,46 @@ public class TrainerController {
         Trainer trainer = trainerService.getTrainerByUserName(trainerProfileRequest.getUserName(), trainerProfileRequest.getPassword());
 
         // Create TraineeProfileResponse
-        TrainerProfileResponse trainerProfileResponse = new TrainerProfileResponse(
-                trainer.getFirstName(),
-                trainer.getLastName(),
-                trainer.getSpecialization(),
-                trainer.getIsActive()
-        );
+        TrainerProfileResponse trainerProfileResponse = TrainerMapper.INSTANCE.trainerToTrainerProfileResponseMapper(trainer);
 
         // Set trainees list into trainerProfileResponse
-        trainerProfileResponse.setTrainees(trainer.getTrainees().stream().map(TraineeDTOMapper::toTraineeDTO).collect(Collectors.toList()));
+        trainerProfileResponse.setTrainees(trainer.getTrainees().stream().map(TraineeMapper.INSTANCE::traineeToTraineeDTOMapper).collect(Collectors.toList()));
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerProfileRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<TrainerProfileResponse> responseEntity = ResponseEntity.ok().body(trainerProfileResponse);
 
-        // Return response
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainerProfileRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
         return trainerProfileResponse;
     }
 
     @PatchMapping("/toggleTrainerStatus")
     public ResponseEntity<?> toggleTrainerStatus(@RequestBody TrainerStatusToggleRequest trainerStatusToggleRequest) {
         // Change user's status
-        Boolean isTrainerStatusToggled = trainerService.changeTrainerStatus(trainerStatusToggleRequest.getUserName(), trainerStatusToggleRequest.getPassword());
+        trainerService.changeTrainerStatus(trainerStatusToggleRequest.getUserName(), trainerStatusToggleRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerStatusToggleRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
 
-        // Return response
-        return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainerStatusToggleRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @GetMapping("/getTrainerTrainings")
@@ -112,9 +158,20 @@ public class TrainerController {
                 , traineeName, trainingTypeId);
 
         // Map result to List<TrainingDTO>
-        List<TrainingDTO> result = trainings.stream().map(TrainingDTOMapper::toTrainingDTO).toList();
+        List<TrainingDTO> result = trainings.stream().map(TrainingMapper.INSTANCE::trainingToTrainingDTOMapper).toList();
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerTrainingsRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<List<TrainingDTO>> responseEntity = ResponseEntity.ok().body(result);
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainerTrainingsRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
 
         return result;
     }
@@ -136,17 +193,23 @@ public class TrainerController {
         Trainer updatedTrainer = trainerService.updateTrainer(trainer, trainerProfileUpdateRequest.getUserName(), trainerProfileUpdateRequest.getPassword());
 
         // Prepare response
-        TrainerProfileUpdateResponse trainerProfileUpdateResponse = new TrainerProfileUpdateResponse();
-        trainerProfileUpdateResponse.setUserName(updatedTrainer.getUserName());
-        trainerProfileUpdateResponse.setFirstName(updatedTrainer.getFirstName());
-        trainerProfileUpdateResponse.setLastName(updatedTrainer.getLastName());
-        trainerProfileUpdateResponse.setSpecialization(updatedTrainer.getSpecialization());
-        trainerProfileUpdateResponse.setIsActive(updatedTrainer.getIsActive());
-        trainerProfileUpdateResponse.setTrainers(updatedTrainer.getTrainees().stream().map(TraineeDTOMapper::toTraineeDTO).toList());
+        TrainerProfileUpdateResponse trainerProfileUpdateResponse = TrainerMapper.INSTANCE.trainerToTrainerProfileUpdateResponseMapper(updatedTrainer);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerProfileUpdateRequest + " Response: " + ResponseEntity.ok());
+        trainerProfileUpdateResponse.setTrainers(updatedTrainer.getTrainees().stream().map(TraineeMapper.INSTANCE::traineeToTraineeDTOMapper).toList());
 
-        // Return response
+        // Prepare response entity
+        ResponseEntity<TrainerProfileUpdateResponse> responseEntity = ResponseEntity.ok().body(trainerProfileUpdateResponse);
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainerProfileUpdateRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
         return trainerProfileUpdateResponse;
     }
 }

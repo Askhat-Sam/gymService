@@ -1,24 +1,92 @@
 package dev.gymService.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class TrainerTrainingsRequest extends AbstractRequest{
-    @NonNull
+    @NotBlank
     private String userName;
-    @NonNull
+    @NotBlank
     private String password;
-    @NonNull
+    @NotBlank
     private String fromDate;
-    @NonNull
+    @NotBlank
     private String toDate;
-    @NonNull
+    @NotBlank
     private String traineeName;
-    @NonNull
+    @Positive(message = "Must be a positive number")
     private Long trainingType;
+
+    public TrainerTrainingsRequest(String userName, String password, String fromDate, String toDate, String traineeName, Long trainingType) {
+        this.userName = userName;
+        this.password = password;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+        this.traineeName = traineeName;
+        this.trainingType = trainingType;
+    }
+
+    public TrainerTrainingsRequest() {
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getTraineeName() {
+        return traineeName;
+    }
+
+    public void setTraineeName(String traineeName) {
+        this.traineeName = traineeName;
+    }
+
+    public Long getTrainingType() {
+        return trainingType;
+    }
+
+    public void setTrainingType(Long trainingType) {
+        this.trainingType = trainingType;
+    }
+
+    @Override
+    public String toString() {
+        return "TrainerTrainingsRequest{" +
+                "userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", fromDate='" + fromDate + '\'' +
+                ", toDate='" + toDate + '\'' +
+                ", traineeName='" + traineeName + '\'' +
+                ", trainingType=" + trainingType +
+                '}';
+    }
 }

@@ -8,13 +8,11 @@ import dev.gymService.model.dto.TrainingAddRequest;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.service.interfaces.TrainingService;
-import org.slf4j.MDC;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/gym-service/trainings")
@@ -22,7 +20,7 @@ public class TrainingController {
     private final TrainingService trainingService;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
-    private final Logger logger = Logger.getLogger("TrainingController");
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public TrainingController(TrainingService trainingService, TraineeService traineeService, TrainerService trainerService) {
         this.trainingService = trainingService;
@@ -31,7 +29,7 @@ public class TrainingController {
     }
 
     @PostMapping("/addTraining")
-    public ResponseEntity<?> addTraining(@RequestBody TrainingAddRequest trainingAddRequest){
+    public ResponseEntity<?> addTraining(@RequestBody TrainingAddRequest trainingAddRequest) {
         // Get trainee/trainer by userName
         Trainee trainee = traineeService.getTraineeByUserName(trainingAddRequest.getTraineeUserName(), trainingAddRequest.getTraineePassword());
         Trainer trainer = trainerService.getTrainerByUserName(trainingAddRequest.getTrainerUsername(), trainingAddRequest.getTrainerPassword());
@@ -49,21 +47,43 @@ public class TrainingController {
         training.setTrainer(trainer);
 
         training = trainingService.addTraining(training);
+        ResponseEntity<String> responseEntity;
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainingAddRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         if (training != null) {
-            return ResponseEntity.ok().body("{\"message\": \"Training has been added successfully\"}");
+            responseEntity = ResponseEntity.ok().body("{\"message\": \"Training has been added successfully\"}");
+            ;
         } else {
-            return ResponseEntity.badRequest().body("{\"error\": \"Failure to add training\"}");
+            responseEntity = ResponseEntity.badRequest().body("{\"error\": \"Failure to add training\"}");
         }
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                trainingAddRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @GetMapping("/getTrainingTypes")
-    public List<TrainingType> getTrainingTypes(){
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + "No request body" + " Response: " + ResponseEntity.ok());
+    public List<TrainingType> getTrainingTypes() {
+        List<TrainingType> trainingTypes = trainingService.getTrainingTypes();
+        ResponseEntity<List<TrainingType>> responseEntity = ResponseEntity.ok().body(trainingTypes);
 
-        return trainingService.getTrainingTypes();
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                "Not request body required for this request",
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return trainingTypes;
     }
 }

@@ -5,23 +5,23 @@ import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.model.dto.*;
 import dev.gymService.service.interfaces.TraineeService;
-import dev.gymService.utills.TrainerDTOMapper;
-import dev.gymService.utills.TrainingDTOMapper;
+import dev.gymService.utills.TraineeMapper;
+import dev.gymService.utills.TrainerMapper;
+import dev.gymService.utills.TrainingMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.MDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/gym-service/trainees")
 public class TraineeController {
     private final TraineeService traineeService;
-    private final Logger logger = Logger.getLogger("TraineeController");
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public TraineeController(TraineeService traineeService) {
         this.traineeService = traineeService;
@@ -41,18 +41,41 @@ public class TraineeController {
         // Persist the created trainee into DB
         Trainee createdTrainee = traineeService.createTrainee(trainee);
         var traineeRegistrationResponse = new TraineeRegistrationResponse(createdTrainee.getUserName(), createdTrainee.getPassword());
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeRegistrationRequest + " Response: " + ResponseEntity.ok());
 
+        // Prepare response entity
+        ResponseEntity<TraineeRegistrationResponse> responseEntity = ResponseEntity.ok().body(traineeRegistrationResponse);
 
-        return ResponseEntity.ok().body(traineeRegistrationResponse);
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeRegistrationRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @GetMapping("/loginTrainee")
     public ResponseEntity<?> loginTrainee(@RequestBody TraineeLoginRequest traineeLoginRequest) {
         traineeService.getTraineeByUserName(traineeLoginRequest.getUserName(), traineeLoginRequest.getPassword());
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeLoginRequest + " Response: " + ResponseEntity.ok());
-        // Return response
-        return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
+
+        // Prepare response entity
+        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeLoginRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @PutMapping("/changePassword")
@@ -60,11 +83,21 @@ public class TraineeController {
         // Change user's password
         traineeService.changeTraineePassword(traineePasswordChangeRequest.getUserName(), traineePasswordChangeRequest.getOldPassword(),
                 traineePasswordChangeRequest.getNewPassword());
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineePasswordChangeRequest + " Response: " + ResponseEntity.ok());
 
-        // Return response
-        return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
+        // Prepare response entity
+        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
 
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineePasswordChangeRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @GetMapping("/getTraineeProfile")
@@ -73,20 +106,24 @@ public class TraineeController {
         Trainee trainee = traineeService.getTraineeByUserName(traineeProfileRequest.getUserName(), traineeProfileRequest.getPassword());
 
         // Create TraineeProfileResponse
-        TraineeProfileResponse traineeProfileResponse = new TraineeProfileResponse(
-                trainee.getFirstName(),
-                trainee.getLastName(),
-                trainee.getDateOfBirth(),
-                trainee.getAddress(),
-                trainee.getIsActive()
-        );
+        TraineeProfileResponse traineeProfileResponse = TraineeMapper.INSTANCE.traineeToTraineeProfileResponse(trainee);
 
         // Set trainers list into trainee
-        traineeProfileResponse.setTrainers(trainee.getTrainers().stream().map(TrainerDTOMapper::toTrainerDTO).collect(Collectors.toList()));
+        traineeProfileResponse.setTrainers(trainee.getTrainers().stream().map(TrainerMapper.INSTANCE::trainerToTrainerDTOMapper).collect(Collectors.toList()));
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeProfileRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<TraineeProfileResponse> responseEntity = ResponseEntity.ok().body(traineeProfileResponse);
 
-        // Return response
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeProfileRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
         return traineeProfileResponse;
     }
 
@@ -95,10 +132,20 @@ public class TraineeController {
         // Change user's status
         Boolean isTraineeStatusToggled = traineeService.changeTraineeStatus(traineeStatusToggleRequest.getUserName(), traineeStatusToggleRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeStatusToggleRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
 
-        // Return response
-        return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeStatusToggleRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @DeleteMapping("/deleteTrainee")
@@ -106,10 +153,20 @@ public class TraineeController {
         // Change user's status
         Boolean isTraineeDeleted = traineeService.deleteTraineeByUserName(traineeDeleteRequest.getUserName(), traineeDeleteRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeDeleteRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"User has been successfully deleted\"}");
 
-        // Return response
-        return ResponseEntity.ok().body("{\"message\": \"User has been successfully deleted\"}");
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeDeleteRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @GetMapping("/getTraineeTrainings")
@@ -124,10 +181,21 @@ public class TraineeController {
         List<Training> trainings = traineeService.getTraineeTrainingList(traineeTrainingsRequest.getUserName(), traineeTrainingsRequest.getPassword(), fromDate, toDate
                 , trainerName, trainingTypeId);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeTrainingsRequest + " Response: " + ResponseEntity.ok());
-
         // Map result to List<TrainingDTO>
-        List<TrainingDTO> result = trainings.stream().map(TrainingDTOMapper::toTrainingDTO).toList();
+        List<TrainingDTO> result = trainings.stream().map(TrainingMapper.INSTANCE::trainingToTrainingDTOMapper).toList();
+
+        // Prepare response entity
+        ResponseEntity<List<TrainingDTO>> responseEntity = ResponseEntity.ok().body(result);
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeTrainingsRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
 
         return result;
     }
@@ -152,18 +220,23 @@ public class TraineeController {
         Trainee updatedTrainee = traineeService.updateTrainee(trainee, traineeProfileUpdateRequest.getUserName(), traineeProfileUpdateRequest.getPassword());
 
         // Prepare response
-        TraineeProfileUpdateResponse traineeProfileUpdateResponse = new TraineeProfileUpdateResponse();
-        traineeProfileUpdateResponse.setUserName(updatedTrainee.getUserName());
-        traineeProfileUpdateResponse.setFirstName(updatedTrainee.getFirstName());
-        traineeProfileUpdateResponse.setLastName(updatedTrainee.getLastName());
-        traineeProfileUpdateResponse.setDateOfBirth(updatedTrainee.getDateOfBirth());
-        traineeProfileUpdateResponse.setAddress(updatedTrainee.getAddress());
-        traineeProfileUpdateResponse.setIsActive(updatedTrainee.getIsActive());
-        traineeProfileUpdateResponse.setTrainers(updatedTrainee.getTrainers().stream().map(TrainerDTOMapper::toTrainerDTO).toList());
+        TraineeProfileUpdateResponse traineeProfileUpdateResponse = TraineeMapper.INSTANCE.traineeToTraineeProfileUpdateResponse(updatedTrainee);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeProfileUpdateRequest + " Response: " + ResponseEntity.ok());
+        traineeProfileUpdateResponse.setTrainers(updatedTrainee.getTrainers().stream().map(TrainerMapper.INSTANCE::trainerToTrainerDTOMapper).toList());
 
-        // Return response
+        // Prepare response entity
+        ResponseEntity<TraineeProfileUpdateResponse> responseEntity = ResponseEntity.ok().body(traineeProfileUpdateResponse);
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeProfileUpdateRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
         return traineeProfileUpdateResponse;
     }
 
@@ -178,10 +251,22 @@ public class TraineeController {
         List<Trainer> trainers = traineeService.getTraineeByUserName(traineeTrainersListUpdateRequest.getUserName(),
                 traineeTrainersListUpdateRequest.getPassword()).getTrainers();
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeTrainersListUpdateRequest + " Response: " + ResponseEntity.ok());
+        TraineeTrainersListUpdateResponse traineeTrainersListUpdateResponse = new TraineeTrainersListUpdateResponse(trainers.stream().map(TrainerMapper.INSTANCE::trainerToTrainerDTOMapper).toList());
 
-        // Return response
-        return new TraineeTrainersListUpdateResponse(trainers.stream().map(TrainerDTOMapper::toTrainerDTO).toList());
+        // Prepare response entity
+        ResponseEntity<TraineeTrainersListUpdateResponse> responseEntity = ResponseEntity.ok().body(traineeTrainersListUpdateResponse);
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeTrainersListUpdateRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
+
+        return traineeTrainersListUpdateResponse;
     }
 
     @GetMapping("/getNotAssignedOnTraineeTrainers")
@@ -190,9 +275,20 @@ public class TraineeController {
         List<Trainer> trainers = traineeService.getNotAssignedTrainers(traineeNotAssignedTrainersRequest.getUserName(), traineeNotAssignedTrainersRequest.getPassword());
 
         // Map the trainers list to trainerDTO list
-        List<TrainerDTO> result = trainers.stream().map(TrainerDTOMapper::toTrainerDTO).toList();
+        List<TrainerDTO> result = trainers.stream().map(TrainerMapper.INSTANCE::trainerToTrainerDTOMapper).toList();
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeNotAssignedTrainersRequest + " Response: " + ResponseEntity.ok());
+        // Prepare response entity
+        ResponseEntity<List<TrainerDTO>> responseEntity = ResponseEntity.ok().body(result);
+
+        // Get method name
+        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+        // Log the rest call details: endpoint | request | service response | response message
+        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
+                "/gym-service/trainees/" + methodName,
+                traineeNotAssignedTrainersRequest,
+                responseEntity.getStatusCode(),
+                responseEntity.getBody());
 
         return result;
     }

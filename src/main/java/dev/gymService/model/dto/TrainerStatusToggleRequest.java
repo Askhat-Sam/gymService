@@ -1,18 +1,57 @@
 package dev.gymService.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.NonNull;
+import org.hibernate.validator.constraints.Length;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class TrainerStatusToggleRequest {
-    @NonNull
+    @NotBlank
     private String userName;
     @NonNull
     private Boolean isActive;
-    @NonNull
+    @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
     private String password;
+
+    public TrainerStatusToggleRequest(String userName, @NonNull Boolean isActive, String password) {
+        this.userName = userName;
+        this.isActive = isActive;
+        this.password = password;
+    }
+
+    public TrainerStatusToggleRequest() {
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "TrainerStatusToggleRequest{" +
+                "userName='" + userName + '\'' +
+                ", isActive=" + isActive +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

@@ -14,5 +14,5 @@ public interface TrainerRepository {
 
     Trainer updateTrainer(Trainer trainer);
 
-    List<Training> getTrainerTrainingList(String trainerName, String fromDate, String toDate, String traineeName);
+    List<Training> getTrainerTrainingList(String trainerName, String fromDate, String toDate, String traineeName, Long trainingTypeId);
 }

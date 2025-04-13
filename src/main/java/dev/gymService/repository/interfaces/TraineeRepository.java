@@ -17,7 +17,7 @@ public interface TraineeRepository {
 
     void deleteTraineeByUserName(String userName);
 
-    List<Training> getTraineeTrainingList(String traineeName, String fromDate, String toDate, String trainerName);
+    List<Training> getTraineeTrainingList(String traineeName, String fromDate, String toDate, String trainerName, Long trainingType);
 
     List<Trainer> getNotAssignedTrainers(String traineeUserName);
 

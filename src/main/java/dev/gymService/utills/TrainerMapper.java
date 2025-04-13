@@ -5,12 +5,11 @@ import dev.gymService.model.dto.TrainerDTO;
 import dev.gymService.model.dto.TrainerProfileResponse;
 import dev.gymService.model.dto.TrainerProfileUpdateResponse;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
 
-@Mapper
+@Mapper(componentModel = "spring")
+@Component
 public interface TrainerMapper {
-    TrainerMapper INSTANCE = Mappers.getMapper(TrainerMapper.class);
-
     TrainerDTO trainerToTrainerDTOMapper(Trainer trainer);
     TrainerProfileResponse trainerToTrainerProfileResponseMapper(Trainer trainer);
 

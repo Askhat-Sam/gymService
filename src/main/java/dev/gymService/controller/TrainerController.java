@@ -7,8 +7,11 @@ import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.utills.TraineeMapper;
 import dev.gymService.utills.TrainerMapper;
 import dev.gymService.utills.TrainingMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +22,31 @@ import java.util.stream.Collectors;
 @RequestMapping("/gym-service/trainers")
 public class TrainerController {
     private final TrainerService trainerService;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public TrainerController(TrainerService trainerService) {
+    private final TraineeMapper traineeMapper;
+    private final TrainerMapper trainerMapper;
+    private final TrainingMapper trainingMapper;
+    public TrainerController(TrainerService trainerService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper) {
         this.trainerService = trainerService;
+        this.traineeMapper = traineeMapper;
+        this.trainerMapper = trainerMapper;
+        this.trainingMapper = trainingMapper;
     }
 
     @PostMapping("/registerNewTrainer")
+    @Operation(summary = "Register new trainer",
+            description = "Registers new trainer in DB",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Trainer registration request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerRegistrationRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Trainer registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
     public TrainerRegistrationResponse registerNewTrainer(@RequestBody TrainerRegistrationRequest trainerRegistrationRequest) {
         // Create new trainer
         Trainer trainer = new Trainer();
@@ -37,116 +58,122 @@ public class TrainerController {
         // Persist the created trainer into DB
         Trainer createdTrainer = trainerService.createTrainer(trainer);
 
-        TrainerRegistrationResponse trainerRegistrationResponse = new TrainerRegistrationResponse(createdTrainer.getUserName(), createdTrainer.getPassword());
-
-        // Prepare response entity
-        ResponseEntity<TrainerRegistrationResponse> responseEntity = ResponseEntity.ok().body(trainerRegistrationResponse);
-
-        // Get method name
-        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-
-        // Log the rest call details: endpoint | request | service response | response message
-        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
-                "/gym-service/trainees/" + methodName,
-                trainerRegistrationRequest,
-                responseEntity.getStatusCode(),
-                responseEntity.getBody());
-
-        return trainerRegistrationResponse;
+        return new TrainerRegistrationResponse(createdTrainer.getUserName(), createdTrainer.getPassword());
     }
 
     @GetMapping("/loginTrainer")
+    @Operation(summary = "Login trainer",
+            description = "Logs in trainer using username and password",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Login credentials",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerLoginRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Trainer logs in successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> loginTrainer(@RequestBody TrainerLoginRequest trainerLoginRequest) {
 
         trainerService.getTrainerByUserName(trainerLoginRequest.getUserName(), trainerLoginRequest.getPassword());
 
-        // Prepare response entity
-        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
-
-        // Get method name
-        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-
-        // Log the rest call details: endpoint | request | service response | response message
-        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
-                "/gym-service/trainees/" + methodName,
-                trainerLoginRequest,
-                responseEntity.getStatusCode(),
-                responseEntity.getBody());
-
-        return responseEntity;
+        return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
     }
 
     @PutMapping("/changePassword")
+    @Operation(summary = "Change password",
+            description = "Changes trainer's password",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Password change request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerPasswordChangeRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> changePassword(@RequestBody TrainerPasswordChangeRequest trainerPasswordChangeRequest) {
         // Change user's password
         trainerService.changeTrainerPassword(trainerPasswordChangeRequest.getUserName(), trainerPasswordChangeRequest.getOldPassword(),
                 trainerPasswordChangeRequest.getNewPassword());
 
-        // Prepare response entity
-        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
-
-        // Get method name
-        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-
-        // Log the rest call details: endpoint | request | service response | response message
-        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
-                "/gym-service/trainees/" + methodName,
-                trainerPasswordChangeRequest,
-                responseEntity.getStatusCode(),
-                responseEntity.getBody());
-
-        return responseEntity;
+        return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
     }
 
     @GetMapping("/getTrainerByUsername")
+    @Operation(summary = "Get trainer profile",
+            description = "Obtains the trainer by username",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Get trainer profile request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerProfileRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public TrainerProfileResponse getTrainerProfile(@RequestBody TrainerProfileRequest trainerProfileRequest) {
         // Get user by userName
         Trainer trainer = trainerService.getTrainerByUserName(trainerProfileRequest.getUserName(), trainerProfileRequest.getPassword());
 
         // Create TraineeProfileResponse
-        TrainerProfileResponse trainerProfileResponse = TrainerMapper.INSTANCE.trainerToTrainerProfileResponseMapper(trainer);
+        TrainerProfileResponse trainerProfileResponse = trainerMapper.trainerToTrainerProfileResponseMapper(trainer);
 
         // Set trainees list into trainerProfileResponse
-        trainerProfileResponse.setTrainees(trainer.getTrainees().stream().map(TraineeMapper.INSTANCE::traineeToTraineeDTOMapper).collect(Collectors.toList()));
-
-        // Prepare response entity
-        ResponseEntity<TrainerProfileResponse> responseEntity = ResponseEntity.ok().body(trainerProfileResponse);
-
-        // Get method name
-        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-
-        // Log the rest call details: endpoint | request | service response | response message
-        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
-                "/gym-service/trainees/" + methodName,
-                trainerProfileRequest,
-                responseEntity.getStatusCode(),
-                responseEntity.getBody());
+        trainerProfileResponse.setTrainees(trainer.getTrainees().stream().map(traineeMapper::traineeToTraineeDTOMapper).collect(Collectors.toList()));
 
         return trainerProfileResponse;
     }
 
     @PatchMapping("/toggleTrainerStatus")
+    @Operation(summary = "Toggle trainer status",
+            description = "Toggles trainer status to opposite",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Toggle trainer status request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerStatusToggleRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> toggleTrainerStatus(@RequestBody TrainerStatusToggleRequest trainerStatusToggleRequest) {
         // Change user's status
         trainerService.changeTrainerStatus(trainerStatusToggleRequest.getUserName(), trainerStatusToggleRequest.getPassword());
 
-        // Prepare response entity
-        ResponseEntity<String> responseEntity = ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
-
-        // Get method name
-        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-
-        // Log the rest call details: endpoint | request | service response | response message
-        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
-                "/gym-service/trainees/" + methodName,
-                trainerStatusToggleRequest,
-                responseEntity.getStatusCode(),
-                responseEntity.getBody());
-
-        return responseEntity;
+        return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
     }
 
     @GetMapping("/getTrainerTrainings")
+    @Operation(summary = "Get trainer trainings",
+            description = "Get trainer trainings",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Get trainer trainings request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerTrainingsRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public List<TrainingDTO> getTraineeTrainings(@RequestBody TrainerTrainingsRequest trainerTrainingsRequest) {
         // Handle optional parameters
         String fromDate = trainerTrainingsRequest.getFromDate() != null ? trainerTrainingsRequest.getFromDate() : "1990-01-01";
@@ -157,26 +184,24 @@ public class TrainerController {
         List<Training> trainings = trainerService.getTrainerTrainingList(trainerTrainingsRequest.getUserName(), trainerTrainingsRequest.getPassword(), fromDate, toDate
                 , traineeName, trainingTypeId);
 
-        // Map result to List<TrainingDTO>
-        List<TrainingDTO> result = trainings.stream().map(TrainingMapper.INSTANCE::trainingToTrainingDTOMapper).toList();
-
-        // Prepare response entity
-        ResponseEntity<List<TrainingDTO>> responseEntity = ResponseEntity.ok().body(result);
-
-        // Get method name
-        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-
-        // Log the rest call details: endpoint | request | service response | response message
-        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
-                "/gym-service/trainees/" + methodName,
-                trainerTrainingsRequest,
-                responseEntity.getStatusCode(),
-                responseEntity.getBody());
-
-        return result;
+        return trainings.stream().map(trainingMapper::trainingToTrainingDTOMapper).toList();
     }
 
     @PutMapping("/updateTrainer")
+    @Operation(summary = "Update trainer",
+            description = "Updates trainer profile",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Update trainer request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerProfileUpdateRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public TrainerProfileUpdateResponse getTrainerProfile(@RequestBody TrainerProfileUpdateRequest trainerProfileUpdateRequest) {
         // Get user by userName
         Trainer trainer = trainerService.getTrainerByUserName(trainerProfileUpdateRequest.getUserName(), trainerProfileUpdateRequest.getPassword());
@@ -193,22 +218,9 @@ public class TrainerController {
         Trainer updatedTrainer = trainerService.updateTrainer(trainer, trainerProfileUpdateRequest.getUserName(), trainerProfileUpdateRequest.getPassword());
 
         // Prepare response
-        TrainerProfileUpdateResponse trainerProfileUpdateResponse = TrainerMapper.INSTANCE.trainerToTrainerProfileUpdateResponseMapper(updatedTrainer);
+        TrainerProfileUpdateResponse trainerProfileUpdateResponse = trainerMapper.trainerToTrainerProfileUpdateResponseMapper(updatedTrainer);
 
-        trainerProfileUpdateResponse.setTrainers(updatedTrainer.getTrainees().stream().map(TraineeMapper.INSTANCE::traineeToTraineeDTOMapper).toList());
-
-        // Prepare response entity
-        ResponseEntity<TrainerProfileUpdateResponse> responseEntity = ResponseEntity.ok().body(trainerProfileUpdateResponse);
-
-        // Get method name
-        String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-
-        // Log the rest call details: endpoint | request | service response | response message
-        logger.info(" | Endpoint: {} | Request: {} | Response status: {} | Response message: {}",
-                "/gym-service/trainees/" + methodName,
-                trainerProfileUpdateRequest,
-                responseEntity.getStatusCode(),
-                responseEntity.getBody());
+        trainerProfileUpdateResponse.setTrainers(updatedTrainer.getTrainees().stream().map(traineeMapper::traineeToTraineeDTOMapper).toList());
 
         return trainerProfileUpdateResponse;
     }

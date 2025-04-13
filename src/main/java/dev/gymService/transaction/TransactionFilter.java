@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Component
-@WebFilter("/")
+@WebFilter("/*")
 public class TransactionFilter implements Filter {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -35,13 +35,20 @@ public class TransactionFilter implements Filter {
             // Add the transactionId to MDC for logging
             MDC.put("transactionId", transactionId);
 
-            // Continue with the request processing
+            // Log the rest call details: URL | request type
+            logger.info(" | URL: {} | Request type: {}",
+                    httpRequest.getRequestURL(),
+                    httpRequest.getMethod());
+
+                    // Continue with the request processing
             filterChain.doFilter(servletRequest, servletResponse);
 
-            // Clean up MDC after the request is processed
-            MDC.remove("transactionId");
+
         } catch (IOException | ServletException | IllegalArgumentException e) {
             logger.error("IllegalArgumentException exception has been thrown " + e.getMessage());
+        } finally {
+            // Clean up MDC after the request is processed
+            MDC.remove("transactionId");
         }
     }
 

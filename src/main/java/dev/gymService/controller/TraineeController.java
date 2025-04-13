@@ -5,114 +5,196 @@ import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.model.dto.*;
 import dev.gymService.service.interfaces.TraineeService;
-import dev.gymService.utills.TrainerDTOMapper;
-import dev.gymService.utills.TrainingDTOMapper;
+import dev.gymService.utills.TraineeMapper;
+import dev.gymService.utills.TrainerMapper;
+import dev.gymService.utills.TrainingMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.MDC;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/gym-service/trainees")
 public class TraineeController {
     private final TraineeService traineeService;
-    private final Logger logger = Logger.getLogger("TraineeController");
+    private final TraineeMapper traineeMapper;
+    private final TrainerMapper trainerMapper;
+    private final TrainingMapper trainingMapper;
 
-    public TraineeController(TraineeService traineeService) {
+    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper) {
         this.traineeService = traineeService;
+        this.traineeMapper = traineeMapper;
+        this.trainerMapper = trainerMapper;
+        this.trainingMapper = trainingMapper;
     }
 
     @PostMapping("/registerNewTrainee")
-    @Operation(summary = "Register new trainee")
+    @Operation(summary = "Register new trainee",
+            description = "Registers new trainee in DB",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Trainee registration request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeRegistrationRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Trainee registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
     public ResponseEntity<?> registerNewTrainee(@RequestBody TraineeRegistrationRequest traineeRegistrationRequest) {
         // Create new trainee
-        Trainee trainee = new Trainee();
-        trainee.setFirstName(traineeRegistrationRequest.getFirstName());
-        trainee.setLastName(traineeRegistrationRequest.getLastName());
-        trainee.setDateOfBirth(traineeRegistrationRequest.getDateOfBirth() != null ? traineeRegistrationRequest.getDateOfBirth() : null);
-        trainee.setAddress(traineeRegistrationRequest.getAddress() != null ? traineeRegistrationRequest.getAddress() : null);
+        Trainee trainee = traineeMapper.traineeRegistrationRequestToTrainee(traineeRegistrationRequest);
         trainee.setIsActive(true);
 
         // Persist the created trainee into DB
         Trainee createdTrainee = traineeService.createTrainee(trainee);
         var traineeRegistrationResponse = new TraineeRegistrationResponse(createdTrainee.getUserName(), createdTrainee.getPassword());
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeRegistrationRequest + " Response: " + ResponseEntity.ok());
-
 
         return ResponseEntity.ok().body(traineeRegistrationResponse);
     }
 
     @GetMapping("/loginTrainee")
+    @Operation(summary = "Login trainee",
+            description = "Logs in trainee using username and password",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Login credentials",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeLoginRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Trainee logs in successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> loginTrainee(@RequestBody TraineeLoginRequest traineeLoginRequest) {
         traineeService.getTraineeByUserName(traineeLoginRequest.getUserName(), traineeLoginRequest.getPassword());
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeLoginRequest + " Response: " + ResponseEntity.ok());
-        // Return response
+
         return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
     }
 
     @PutMapping("/changePassword")
+    @Operation(summary = "Change password",
+            description = "Changes trainee's password",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Password change request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineePasswordChangeRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> changePassword(@RequestBody TraineePasswordChangeRequest traineePasswordChangeRequest) {
         // Change user's password
         traineeService.changeTraineePassword(traineePasswordChangeRequest.getUserName(), traineePasswordChangeRequest.getOldPassword(),
                 traineePasswordChangeRequest.getNewPassword());
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineePasswordChangeRequest + " Response: " + ResponseEntity.ok());
 
-        // Return response
         return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
-
     }
 
     @GetMapping("/getTraineeProfile")
+    @Operation(summary = "Get trainee profile",
+            description = "Obtains the trainee by username",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Get trainee profile request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeProfileRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public TraineeProfileResponse getTraineeProfile(@RequestBody TraineeProfileRequest traineeProfileRequest) {
         // Get user by userName
         Trainee trainee = traineeService.getTraineeByUserName(traineeProfileRequest.getUserName(), traineeProfileRequest.getPassword());
 
         // Create TraineeProfileResponse
-        TraineeProfileResponse traineeProfileResponse = new TraineeProfileResponse(
-                trainee.getFirstName(),
-                trainee.getLastName(),
-                trainee.getDateOfBirth(),
-                trainee.getAddress(),
-                trainee.getIsActive()
-        );
+        TraineeProfileResponse traineeProfileResponse = traineeMapper.traineeToTraineeProfileResponse(trainee);
 
         // Set trainers list into trainee
-        traineeProfileResponse.setTrainers(trainee.getTrainers().stream().map(TrainerDTOMapper::toTrainerDTO).collect(Collectors.toList()));
+        traineeProfileResponse.setTrainers(trainee.getTrainers().stream().map(trainerMapper::trainerToTrainerDTOMapper).collect(Collectors.toList()));
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeProfileRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         return traineeProfileResponse;
     }
 
     @PatchMapping("/toggleTraineeStatus")
+    @Operation(summary = "Toggle trainee status",
+            description = "Toggles trainee status to opposite",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Toggle trainee status request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeStatusToggleRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> toggleTraineeStatus(@RequestBody TraineeStatusToggleRequest traineeStatusToggleRequest) {
         // Change user's status
-        Boolean isTraineeStatusToggled = traineeService.changeTraineeStatus(traineeStatusToggleRequest.getUserName(), traineeStatusToggleRequest.getPassword());
+        traineeService.changeTraineeStatus(traineeStatusToggleRequest.getUserName(), traineeStatusToggleRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeStatusToggleRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
     }
 
     @DeleteMapping("/deleteTrainee")
+    @Operation(summary = "Delete trainee",
+            description = "Delete trainee",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Delete trainee request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeDeleteRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> deleteTrainee(@RequestBody TraineeDeleteRequest traineeDeleteRequest) {
-        // Change user's status
-        Boolean isTraineeDeleted = traineeService.deleteTraineeByUserName(traineeDeleteRequest.getUserName(), traineeDeleteRequest.getPassword());
+        // Delete trainee
+        traineeService.deleteTraineeByUserName(traineeDeleteRequest.getUserName(), traineeDeleteRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeDeleteRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         return ResponseEntity.ok().body("{\"message\": \"User has been successfully deleted\"}");
     }
 
     @GetMapping("/getTraineeTrainings")
+    @Operation(summary = "Get trainee trainings",
+            description = "Get trainee trainings",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Get trainee trainings request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeTrainingsRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public List<TrainingDTO> getTraineeTrainings(@RequestBody TraineeTrainingsRequest traineeTrainingsRequest) {
         // Handle optional parameters
         String fromDate = traineeTrainingsRequest.getFromDate() != null ? traineeTrainingsRequest.getFromDate() : "1990-01-01";
@@ -124,15 +206,24 @@ public class TraineeController {
         List<Training> trainings = traineeService.getTraineeTrainingList(traineeTrainingsRequest.getUserName(), traineeTrainingsRequest.getPassword(), fromDate, toDate
                 , trainerName, trainingTypeId);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeTrainingsRequest + " Response: " + ResponseEntity.ok());
-
-        // Map result to List<TrainingDTO>
-        List<TrainingDTO> result = trainings.stream().map(TrainingDTOMapper::toTrainingDTO).toList();
-
-        return result;
+        return trainings.stream().map(trainingMapper::trainingToTrainingDTOMapper).toList();
     }
 
     @PutMapping("/updateTrainee")
+    @Operation(summary = "Update trainee",
+            description = "Updates trainee profile",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Update trainee request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeProfileUpdateRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public TraineeProfileUpdateResponse updateTrainee(@RequestBody TraineeProfileUpdateRequest traineeProfileUpdateRequest) {
         // Get user by userName
         Trainee trainee = traineeService.getTraineeByUserName(traineeProfileUpdateRequest.getUserName(), traineeProfileUpdateRequest.getPassword());
@@ -152,23 +243,29 @@ public class TraineeController {
         Trainee updatedTrainee = traineeService.updateTrainee(trainee, traineeProfileUpdateRequest.getUserName(), traineeProfileUpdateRequest.getPassword());
 
         // Prepare response
-        TraineeProfileUpdateResponse traineeProfileUpdateResponse = new TraineeProfileUpdateResponse();
-        traineeProfileUpdateResponse.setUserName(updatedTrainee.getUserName());
-        traineeProfileUpdateResponse.setFirstName(updatedTrainee.getFirstName());
-        traineeProfileUpdateResponse.setLastName(updatedTrainee.getLastName());
-        traineeProfileUpdateResponse.setDateOfBirth(updatedTrainee.getDateOfBirth());
-        traineeProfileUpdateResponse.setAddress(updatedTrainee.getAddress());
-        traineeProfileUpdateResponse.setIsActive(updatedTrainee.getIsActive());
-        traineeProfileUpdateResponse.setTrainers(updatedTrainee.getTrainers().stream().map(TrainerDTOMapper::toTrainerDTO).toList());
+        TraineeProfileUpdateResponse traineeProfileUpdateResponse = traineeMapper.traineeToTraineeProfileUpdateResponse(updatedTrainee);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeProfileUpdateRequest + " Response: " + ResponseEntity.ok());
+        traineeProfileUpdateResponse.setTrainers(updatedTrainee.getTrainers().stream().map(trainerMapper::trainerToTrainerDTOMapper).toList());
 
-        // Return response
         return traineeProfileUpdateResponse;
     }
 
 
     @PutMapping("/updateTraineeTrainers")
+    @Operation(summary = "Update trainee trainers",
+            description = "Updates trainee trainers list",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Update trainee trainers request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeTrainersListUpdateRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public TraineeTrainersListUpdateResponse updateTraineeTrainers(@RequestBody TraineeTrainersListUpdateRequest traineeTrainersListUpdateRequest) {
         // Get user by userName
         traineeService.updateTrainersList(traineeTrainersListUpdateRequest.getUserName(), traineeTrainersListUpdateRequest.getPassword(),
@@ -178,22 +275,28 @@ public class TraineeController {
         List<Trainer> trainers = traineeService.getTraineeByUserName(traineeTrainersListUpdateRequest.getUserName(),
                 traineeTrainersListUpdateRequest.getPassword()).getTrainers();
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeTrainersListUpdateRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
-        return new TraineeTrainersListUpdateResponse(trainers.stream().map(TrainerDTOMapper::toTrainerDTO).toList());
+        return new TraineeTrainersListUpdateResponse(trainers.stream().map(trainerMapper::trainerToTrainerDTOMapper).toList());
     }
 
     @GetMapping("/getNotAssignedOnTraineeTrainers")
+    @Operation(summary = "Get not assigned on trainee trainers",
+            description = "Obtains the list of trainers not assigned to concerned trainee",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Get not assigned on trainee trainers request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TraineeNotAssignedTrainersRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public List<TrainerDTO> getNotAssignedOnTraineeTrainers(@RequestBody TraineeNotAssignedTrainersRequest traineeNotAssignedTrainersRequest) {
         // Get list of trainers not assigned to trainee
         List<Trainer> trainers = traineeService.getNotAssignedTrainers(traineeNotAssignedTrainersRequest.getUserName(), traineeNotAssignedTrainersRequest.getPassword());
 
-        // Map the trainers list to trainerDTO list
-        List<TrainerDTO> result = trainers.stream().map(TrainerDTOMapper::toTrainerDTO).toList();
-
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + traineeNotAssignedTrainersRequest + " Response: " + ResponseEntity.ok());
-
-        return result;
+        return trainers.stream().map(trainerMapper::trainerToTrainerDTOMapper).toList();
     }
 }

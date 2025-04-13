@@ -3,7 +3,6 @@ package dev.gymService.service.interfaces;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 
-import javax.swing.event.ListDataListener;
 import java.util.List;
 
 public interface TrainerService extends UserService {

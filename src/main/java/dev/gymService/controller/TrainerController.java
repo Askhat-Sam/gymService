@@ -4,29 +4,49 @@ import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.model.dto.*;
 import dev.gymService.service.interfaces.TrainerService;
-import dev.gymService.utills.TraineeDTOMapper;
-import dev.gymService.utills.TrainingDTOMapper;
-import org.slf4j.MDC;
+import dev.gymService.utills.TraineeMapper;
+import dev.gymService.utills.TrainerMapper;
+import dev.gymService.utills.TrainingMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/gym-service/trainers")
 public class TrainerController {
     private final TrainerService trainerService;
-    private final Logger logger = Logger.getLogger("TrainerController");
-
-
-    public TrainerController(TrainerService trainerService) {
+    private final TraineeMapper traineeMapper;
+    private final TrainerMapper trainerMapper;
+    private final TrainingMapper trainingMapper;
+    public TrainerController(TrainerService trainerService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper) {
         this.trainerService = trainerService;
+        this.traineeMapper = traineeMapper;
+        this.trainerMapper = trainerMapper;
+        this.trainingMapper = trainingMapper;
     }
 
     @PostMapping("/registerNewTrainer")
+    @Operation(summary = "Register new trainer",
+            description = "Registers new trainer in DB",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Trainer registration request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerRegistrationRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Trainer registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
     public TrainerRegistrationResponse registerNewTrainer(@RequestBody TrainerRegistrationRequest trainerRegistrationRequest) {
         // Create new trainer
         Trainer trainer = new Trainer();
@@ -38,69 +58,122 @@ public class TrainerController {
         // Persist the created trainer into DB
         Trainer createdTrainer = trainerService.createTrainer(trainer);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerRegistrationRequest + " Response: " + ResponseEntity.ok());
-
         return new TrainerRegistrationResponse(createdTrainer.getUserName(), createdTrainer.getPassword());
     }
 
     @GetMapping("/loginTrainer")
+    @Operation(summary = "Login trainer",
+            description = "Logs in trainer using username and password",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Login credentials",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerLoginRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Trainer logs in successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> loginTrainer(@RequestBody TrainerLoginRequest trainerLoginRequest) {
-        // Check if the user is exist in DB
-        Trainer trainer = trainerService.getTrainerByUserName(trainerLoginRequest.getUserName(), trainerLoginRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerLoginRequest + " Response: " + ResponseEntity.ok());
+        trainerService.getTrainerByUserName(trainerLoginRequest.getUserName(), trainerLoginRequest.getPassword());
 
-        // Return response
         return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
     }
 
     @PutMapping("/changePassword")
+    @Operation(summary = "Change password",
+            description = "Changes trainer's password",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Password change request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerPasswordChangeRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> changePassword(@RequestBody TrainerPasswordChangeRequest trainerPasswordChangeRequest) {
         // Change user's password
-        Boolean isPasswordChanged = trainerService.changeTrainerPassword(trainerPasswordChangeRequest.getUserName(), trainerPasswordChangeRequest.getOldPassword(),
+        trainerService.changeTrainerPassword(trainerPasswordChangeRequest.getUserName(), trainerPasswordChangeRequest.getOldPassword(),
                 trainerPasswordChangeRequest.getNewPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerPasswordChangeRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
-
     }
 
     @GetMapping("/getTrainerByUsername")
+    @Operation(summary = "Get trainer profile",
+            description = "Obtains the trainer by username",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Get trainer profile request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerProfileRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public TrainerProfileResponse getTrainerProfile(@RequestBody TrainerProfileRequest trainerProfileRequest) {
         // Get user by userName
         Trainer trainer = trainerService.getTrainerByUserName(trainerProfileRequest.getUserName(), trainerProfileRequest.getPassword());
 
         // Create TraineeProfileResponse
-        TrainerProfileResponse trainerProfileResponse = new TrainerProfileResponse(
-                trainer.getFirstName(),
-                trainer.getLastName(),
-                trainer.getSpecialization(),
-                trainer.getIsActive()
-        );
+        TrainerProfileResponse trainerProfileResponse = trainerMapper.trainerToTrainerProfileResponseMapper(trainer);
 
         // Set trainees list into trainerProfileResponse
-        trainerProfileResponse.setTrainees(trainer.getTrainees().stream().map(TraineeDTOMapper::toTraineeDTO).collect(Collectors.toList()));
+        trainerProfileResponse.setTrainees(trainer.getTrainees().stream().map(traineeMapper::traineeToTraineeDTOMapper).collect(Collectors.toList()));
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerProfileRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         return trainerProfileResponse;
     }
 
     @PatchMapping("/toggleTrainerStatus")
+    @Operation(summary = "Toggle trainer status",
+            description = "Toggles trainer status to opposite",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Toggle trainer status request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerStatusToggleRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<?> toggleTrainerStatus(@RequestBody TrainerStatusToggleRequest trainerStatusToggleRequest) {
         // Change user's status
-        Boolean isTrainerStatusToggled = trainerService.changeTrainerStatus(trainerStatusToggleRequest.getUserName(), trainerStatusToggleRequest.getPassword());
+        trainerService.changeTrainerStatus(trainerStatusToggleRequest.getUserName(), trainerStatusToggleRequest.getPassword());
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerStatusToggleRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
     }
 
     @GetMapping("/getTrainerTrainings")
+    @Operation(summary = "Get trainer trainings",
+            description = "Get trainer trainings",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Get trainer trainings request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerTrainingsRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public List<TrainingDTO> getTraineeTrainings(@RequestBody TrainerTrainingsRequest trainerTrainingsRequest) {
         // Handle optional parameters
         String fromDate = trainerTrainingsRequest.getFromDate() != null ? trainerTrainingsRequest.getFromDate() : "1990-01-01";
@@ -111,15 +184,24 @@ public class TrainerController {
         List<Training> trainings = trainerService.getTrainerTrainingList(trainerTrainingsRequest.getUserName(), trainerTrainingsRequest.getPassword(), fromDate, toDate
                 , traineeName, trainingTypeId);
 
-        // Map result to List<TrainingDTO>
-        List<TrainingDTO> result = trainings.stream().map(TrainingDTOMapper::toTrainingDTO).toList();
-
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerTrainingsRequest + " Response: " + ResponseEntity.ok());
-
-        return result;
+        return trainings.stream().map(trainingMapper::trainingToTrainingDTOMapper).toList();
     }
 
     @PutMapping("/updateTrainer")
+    @Operation(summary = "Update trainer",
+            description = "Updates trainer profile",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Update trainer request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainerProfileUpdateRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public TrainerProfileUpdateResponse getTrainerProfile(@RequestBody TrainerProfileUpdateRequest trainerProfileUpdateRequest) {
         // Get user by userName
         Trainer trainer = trainerService.getTrainerByUserName(trainerProfileUpdateRequest.getUserName(), trainerProfileUpdateRequest.getPassword());
@@ -136,17 +218,10 @@ public class TrainerController {
         Trainer updatedTrainer = trainerService.updateTrainer(trainer, trainerProfileUpdateRequest.getUserName(), trainerProfileUpdateRequest.getPassword());
 
         // Prepare response
-        TrainerProfileUpdateResponse trainerProfileUpdateResponse = new TrainerProfileUpdateResponse();
-        trainerProfileUpdateResponse.setUserName(updatedTrainer.getUserName());
-        trainerProfileUpdateResponse.setFirstName(updatedTrainer.getFirstName());
-        trainerProfileUpdateResponse.setLastName(updatedTrainer.getLastName());
-        trainerProfileUpdateResponse.setSpecialization(updatedTrainer.getSpecialization());
-        trainerProfileUpdateResponse.setIsActive(updatedTrainer.getIsActive());
-        trainerProfileUpdateResponse.setTrainers(updatedTrainer.getTrainees().stream().map(TraineeDTOMapper::toTraineeDTO).toList());
+        TrainerProfileUpdateResponse trainerProfileUpdateResponse = trainerMapper.trainerToTrainerProfileUpdateResponseMapper(updatedTrainer);
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainerProfileUpdateRequest + " Response: " + ResponseEntity.ok());
+        trainerProfileUpdateResponse.setTrainers(updatedTrainer.getTrainees().stream().map(traineeMapper::traineeToTraineeDTOMapper).toList());
 
-        // Return response
         return trainerProfileUpdateResponse;
     }
 }

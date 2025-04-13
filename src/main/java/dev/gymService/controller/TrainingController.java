@@ -8,13 +8,15 @@ import dev.gymService.model.dto.TrainingAddRequest;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.service.interfaces.TrainingService;
-import org.slf4j.MDC;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/gym-service/trainings")
@@ -22,7 +24,6 @@ public class TrainingController {
     private final TrainingService trainingService;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
-    private final Logger logger = Logger.getLogger("TrainingController");
 
     public TrainingController(TrainingService trainingService, TraineeService traineeService, TrainerService trainerService) {
         this.trainingService = trainingService;
@@ -31,7 +32,21 @@ public class TrainingController {
     }
 
     @PostMapping("/addTraining")
-    public ResponseEntity<?> addTraining(@RequestBody TrainingAddRequest trainingAddRequest){
+    @Operation(summary = "Add new training",
+            description = "Creates new training",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Add new training request",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TrainingAddRequest.class)
+                    )
+            ))
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Training added successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
+    public ResponseEntity<?> addTraining(@RequestBody TrainingAddRequest trainingAddRequest) {
         // Get trainee/trainer by userName
         Trainee trainee = traineeService.getTraineeByUserName(trainingAddRequest.getTraineeUserName(), trainingAddRequest.getTraineePassword());
         Trainer trainer = trainerService.getTrainerByUserName(trainingAddRequest.getTrainerUsername(), trainingAddRequest.getTrainerPassword());
@@ -49,21 +64,28 @@ public class TrainingController {
         training.setTrainer(trainer);
 
         training = trainingService.addTraining(training);
+        ResponseEntity<String> responseEntity;
 
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + trainingAddRequest + " Response: " + ResponseEntity.ok());
-
-        // Return response
         if (training != null) {
-            return ResponseEntity.ok().body("{\"message\": \"Training has been added successfully\"}");
+            responseEntity = ResponseEntity.ok().body("{\"message\": \"Training has been added successfully\"}");
+            ;
         } else {
-            return ResponseEntity.badRequest().body("{\"error\": \"Failure to add training\"}");
+            responseEntity = ResponseEntity.badRequest().body("{\"error\": \"Failure to add training\"}");
         }
+
+        return responseEntity;
     }
 
     @GetMapping("/getTrainingTypes")
-    public List<TrainingType> getTrainingTypes(){
-        logger.log(Level.INFO, MDC.get("transactionId") + " Request method: " + "No request body" + " Response: " + ResponseEntity.ok());
-
+    @Operation(
+            summary = "Get training types",
+            description = "Obtains training types"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful retrieval"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
+    public List<TrainingType> getTrainingTypes() {
         return trainingService.getTrainingTypes();
     }
 }

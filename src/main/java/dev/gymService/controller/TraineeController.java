@@ -8,6 +8,8 @@ import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.utills.TraineeMapper;
 import dev.gymService.utills.TrainerMapper;
 import dev.gymService.utills.TrainingMapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,12 +28,16 @@ public class TraineeController {
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
+    private final Counter loginCallCounter;
 
-    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper) {
+    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, MeterRegistry meterRegistry) {
         this.traineeService = traineeService;
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
         this.trainingMapper = trainingMapper;
+        this.loginCallCounter = Counter.builder("login_call_counter")
+                .description("Number of logins")
+                .register(meterRegistry);
     }
 
     @PostMapping("/registerNewTrainee")
@@ -78,6 +84,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<?> loginTrainee(@RequestBody TraineeLoginRequest traineeLoginRequest) {
+        loginCallCounter.increment();
         traineeService.getTraineeByUserName(traineeLoginRequest.getUserName(), traineeLoginRequest.getPassword());
 
         return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");

@@ -10,6 +10,8 @@ import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.utills.TraineeMapper;
 import dev.gymService.utills.TrainerMapper;
 import dev.gymService.utills.TrainingMapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,12 +35,19 @@ public class TraineeController {
     private final AuthenticationController authenticationController;
 
     public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService, @Lazy AuthenticationController authenticationController) {
+
+    private final Counter loginCallCounter;
+
+    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, MeterRegistry meterRegistry) {
         this.traineeService = traineeService;
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
         this.trainingMapper = trainingMapper;
         this.jwtService = jwtService;
         this.authenticationController = authenticationController;
+        this.loginCallCounter = Counter.builder("login_call_counter")
+                .description("Number of logins")
+                .register(meterRegistry);
     }
 
     @PostMapping("/registerNewTrainee")

@@ -5,11 +5,9 @@ import jakarta.validation.constraints.Positive;
 import org.hibernate.validator.constraints.Length;
 
 
-public class TraineeTrainingsRequest extends AbstractRequest{
+public class TraineeTrainingsRequest extends AbstractRequest {
     @NotBlank
     private String userName;
-    @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
-    private String password;
     @NotBlank
     private String fromDate;
     @NotBlank
@@ -19,9 +17,8 @@ public class TraineeTrainingsRequest extends AbstractRequest{
     @Positive(message = "Must be a positive number")
     private Long trainingType;
 
-    public TraineeTrainingsRequest(String userName, String password, String fromDate, String toDate, String trainerName, Long trainingType) {
+    public TraineeTrainingsRequest(String userName, String fromDate, String toDate, String trainerName, Long trainingType) {
         this.userName = userName;
-        this.password = password;
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.trainerName = trainerName;
@@ -37,14 +34,6 @@ public class TraineeTrainingsRequest extends AbstractRequest{
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFromDate() {
@@ -83,7 +72,6 @@ public class TraineeTrainingsRequest extends AbstractRequest{
     public String toString() {
         return "TraineeTrainingsRequest{" +
                 "userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
                 ", fromDate='" + fromDate + '\'' +
                 ", toDate='" + toDate + '\'' +
                 ", trainerName='" + trainerName + '\'' +

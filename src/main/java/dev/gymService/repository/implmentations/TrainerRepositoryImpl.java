@@ -2,6 +2,7 @@ package dev.gymService.repository.implmentations;
 
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
+import dev.gymService.model.User;
 import dev.gymService.repository.interfaces.TrainerRepository;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -27,33 +28,37 @@ public class TrainerRepositoryImpl implements TrainerRepository {
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
-    public Trainer create(Trainer trainer) {
+
+    public Trainer create(User user) {
         return sessionFactory.fromTransaction(session -> {
-            session.persist(trainer);
-            logger.info("Trainer has been created: " + trainer.getUserName());
-            return trainer;
+            session.persist(user);
+            logger.info("Trainer has been created: " + user.getUserName());
+            return (Trainer) user;
         });
     }
 
     @Override
-    public Trainer getTrainerById(Long id) {
+    public Trainer getById(Long id) {
         return sessionFactory.fromTransaction(session -> session.get(Trainer.class, id));
     }
 
     @Override
-    public Trainer getTrainerByUserName(String userName) {
+    public Trainer getByUserName(String userName) {
         return sessionFactory.fromTransaction(session -> session.createQuery(SELECT_BY_USERNAME, Trainer.class)
                 .setParameter("userName", userName)
                 .uniqueResult());
     }
 
+    @Override
+    public void deleteByUserName(String userName) {
+    }
+
 
     @Override
-    public Trainer updateTrainer(Trainer trainer) {
+    public Trainer update(User user) {
         return sessionFactory.fromTransaction(session -> {
-            session.merge(trainer);
-            return trainer;
+            session.merge(user);
+            return (Trainer) user;
         });
     }
 

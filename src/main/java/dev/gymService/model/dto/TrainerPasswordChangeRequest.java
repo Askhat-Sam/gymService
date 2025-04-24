@@ -9,14 +9,10 @@ public class TrainerPasswordChangeRequest extends AbstractRequest {
     private String userName;
     @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
 
-    private String oldPassword;
-    @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
-
     private String newPassword;
 
-    public TrainerPasswordChangeRequest(String userName, String oldPassword, String newPassword) {
+    public TrainerPasswordChangeRequest(String userName, String newPassword) {
         this.userName = userName;
-        this.oldPassword = oldPassword;
         this.newPassword = newPassword;
     }
 
@@ -31,14 +27,6 @@ public class TrainerPasswordChangeRequest extends AbstractRequest {
         this.userName = userName;
     }
 
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
     public String getNewPassword() {
         return newPassword;
     }
@@ -51,7 +39,6 @@ public class TrainerPasswordChangeRequest extends AbstractRequest {
     public String toString() {
         return "TrainerPasswordChangeRequest{" +
                 "userName='" + userName + '\'' +
-                ", oldPassword='" + oldPassword + '\'' +
                 ", newPassword='" + newPassword + '\'' +
                 '}';
     }

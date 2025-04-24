@@ -2,6 +2,7 @@ package controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.gymService.Application;
+import dev.gymService.model.Role;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -52,6 +54,7 @@ public class TraineeControllerTest {
         trainer.setTrainings(List.of(new Training()));
         trainer.setUserId(2L);
         trainer.setIsActive(true);
+        trainer.setRole(Role.TRAINER);
         List<Trainer> trainers = new ArrayList<>();
         trainers.add(trainer);
 
@@ -74,6 +77,7 @@ public class TraineeControllerTest {
         trainee.setTrainers(trainers);
         trainee.setTrainings(List.of(training));
         trainee.setIsActive(false);
+        trainee.setRole(Role.TRAINEE);
 
         // Create trainings
         List<Training> trainings = new ArrayList<>();
@@ -90,6 +94,8 @@ public class TraineeControllerTest {
         traineeRegistrationRequest.setDateOfBirth(LocalDate.parse("1990-02-03"));
 
         String requestBody = objectMapper.writeValueAsString(traineeRegistrationRequest);
+
+        // When
         when(traineeService.createTrainee(any(Trainee.class))).thenReturn(trainee);
 
         // When and then
@@ -97,39 +103,43 @@ public class TraineeControllerTest {
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userName").value("Ivan.Ivanov"));
+                .andExpect(jsonPath("$.userName").value("Ivan.Ivanov"))
+                .andExpect(jsonPath("$.token").exists())
+                .andDo(print());
     }
 
     @Test
     public void shouldLoginTrainee() throws Exception {
         // Given
-        TraineeLoginRequest traineeLoginRequest = new TraineeLoginRequest("Ivan.Ivanov", "1234567890");
+        UserLoginRequest traineeLoginRequest = new UserLoginRequest("Ivan.Ivanov", "1234567890");
 
         String requestBody = objectMapper.writeValueAsString(traineeLoginRequest);
 
-        when(traineeService.getTraineeByUserName("Ivan.Ivanov", "1234567890")).thenReturn(trainee);
+        when(traineeService.getTraineeByUserName("Ivan.Ivanov")).thenReturn(trainee);
 
         // When and then
-        mockMvc.perform(get("/gym-service/trainees/loginTrainee")
+        mockMvc.perform(post("/gym-service/authentication/login")
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Login successful"))
+                .andExpect(jsonPath("$.username").value("Ivan.Ivanov"))
+                .andExpect(jsonPath("$.role").value("TRAINEE"))
+                .andExpect(jsonPath("$.token").exists())
                 .andDo(print());
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldChangePassword() throws Exception {
         // Given
         TraineePasswordChangeRequest traineePasswordChangeRequest = new TraineePasswordChangeRequest();
         traineePasswordChangeRequest.setUserName("Ivan.Ivanov");
-        traineePasswordChangeRequest.setOldPassword("1234567890");
         traineePasswordChangeRequest.setNewPassword("0989837495");
 
 
         String requestBody = objectMapper.writeValueAsString(traineePasswordChangeRequest);
 
-        when(traineeService.changeTraineePassword("Ivan.Ivanov", "1234567890", "0989837495")).thenReturn(true);
+        when(traineeService.changeTraineePassword("Ivan.Ivanov", "1234567890")).thenReturn(true);
 
         // When and then
         mockMvc.perform(MockMvcRequestBuilders.put("/gym-service/trainees/changePassword")
@@ -141,15 +151,15 @@ public class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldGetTraineeProfile() throws Exception {
         // Given
         TraineeProfileRequest traineeProfileRequest = new TraineeProfileRequest();
         traineeProfileRequest.setUserName("Ivan.Ivanov");
-        traineeProfileRequest.setPassword("1234567890");
 
         String requestBody = objectMapper.writeValueAsString(traineeProfileRequest);
 
-        when(traineeService.getTraineeByUserName("Ivan.Ivanov", "1234567890")).thenReturn(trainee);
+        when(traineeService.getTraineeByUserName("Ivan.Ivanov")).thenReturn(trainee);
 
         // When and then
         mockMvc.perform(get("/gym-service/trainees/getTraineeProfile")
@@ -161,16 +171,16 @@ public class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldToggleTraineeStatus() throws Exception {
         // Given
         TraineeStatusToggleRequest traineeStatusToggleRequest = new TraineeStatusToggleRequest();
         traineeStatusToggleRequest.setUserName("Ivan.Ivanov");
-        traineeStatusToggleRequest.setPassword("1234567890");
         traineeStatusToggleRequest.setIsActive(true);
 
         String requestBody = objectMapper.writeValueAsString(traineeStatusToggleRequest);
 
-        when(traineeService.changeTraineeStatus("Ivan.Ivanov", "1234567890")).thenReturn(true);
+        when(traineeService.changeTraineeStatus("Ivan.Ivanov")).thenReturn(true);
 
         // When and then
         mockMvc.perform(patch("/gym-service/trainees/toggleTraineeStatus")
@@ -182,15 +192,15 @@ public class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldDeleteTrainee() throws Exception {
         // Given
         TraineeDeleteRequest traineeDeleteRequest = new TraineeDeleteRequest();
         traineeDeleteRequest.setUserName("Ivan.Ivanov");
-        traineeDeleteRequest.setPassword("1234567890");
 
         String requestBody = objectMapper.writeValueAsString(traineeDeleteRequest);
 
-        when(traineeService.deleteTraineeByUserName("Ivan.Ivanov", "1234567890")).thenReturn(true);
+        when(traineeService.deleteTraineeByUserName("Ivan.Ivanov")).thenReturn(true);
 
         // When and then
         mockMvc.perform(delete("/gym-service/trainees/deleteTrainee")
@@ -202,11 +212,11 @@ public class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldGetTraineeTrainings() throws Exception {
         // Given
         TraineeTrainingsRequest traineeTrainingsRequest = new TraineeTrainingsRequest();
         traineeTrainingsRequest.setUserName("Ivan.Ivanov");
-        traineeTrainingsRequest.setPassword("1234567890");
         traineeTrainingsRequest.setFromDate("2025-01-01");
         traineeTrainingsRequest.setToDate("2025-02-01");
         traineeTrainingsRequest.setTrainerName("Vladislav.Bekmeev");
@@ -228,7 +238,7 @@ public class TraineeControllerTest {
 
         // Mock the service method to return the list of trainings
         when(traineeService.getTraineeTrainingList(
-                any(), any(), any(), any(), any(), any()))
+                any(), any(), any(), any(), any()))
                 .thenReturn(trainings);
 
         // Then
@@ -241,11 +251,11 @@ public class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldUpdateTrainee() throws Exception {
         // Given
         TraineeTrainingsRequest traineeTrainingsRequest = new TraineeTrainingsRequest();
         traineeTrainingsRequest.setUserName("Ivan.Ivanov");
-        traineeTrainingsRequest.setPassword("1234567890");
         traineeTrainingsRequest.setFromDate("2025-01-01");
         traineeTrainingsRequest.setToDate("2025-02-01");
         traineeTrainingsRequest.setTrainerName("Vladislav.Bekmeev");
@@ -257,7 +267,7 @@ public class TraineeControllerTest {
 
         // Mock the service method to return the list of trainings
         when(traineeService.getTraineeTrainingList(
-                any(), any(), any(), any(), any(), any()))
+                any(), any(), any(), any(), any()))
                 .thenReturn(trainee.getTrainings());
 
         // When and Then
@@ -270,11 +280,12 @@ public class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldUpdateTraineeTrainers() throws Exception {
         // Given
+
         TraineeTrainersListUpdateRequest traineeTrainersListUpdateRequest = new TraineeTrainersListUpdateRequest();
         traineeTrainersListUpdateRequest.setUserName("Ivan.Ivanov");
-        traineeTrainersListUpdateRequest.setPassword("1234567890");
         traineeTrainersListUpdateRequest.setTrainers(trainee.getTrainers());
 
         String requestBody = objectMapper.writeValueAsString(traineeTrainersListUpdateRequest);
@@ -283,8 +294,8 @@ public class TraineeControllerTest {
         traineeTrainersListUpdateRequest.setTrainers(trainee.getTrainers());
 
         // Mock the service methods
-        when(traineeService.getTraineeByUserName(any(), any())).thenReturn(trainee);
-        when(traineeService.updateTrainersList(any(), any(), any())).thenReturn(trainee.getTrainers());
+        when(traineeService.getTraineeByUserName(any())).thenReturn(trainee);
+        when(traineeService.updateTrainersList(any(), any())).thenReturn(trainee.getTrainers());
 
 
         // When and Then
@@ -297,17 +308,17 @@ public class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldGetNotAssignedOnTraineeTrainers() throws Exception {
         // Given
         TraineeNotAssignedTrainersRequest traineeNotAssignedTrainersRequest = new TraineeNotAssignedTrainersRequest();
         traineeNotAssignedTrainersRequest.setUserName("Ivan.Ivanov");
-        traineeNotAssignedTrainersRequest.setPassword("1234567890");
 
         // Convert to JSON
         String requestBody = objectMapper.writeValueAsString(traineeNotAssignedTrainersRequest);
 
         // Mock the service methods
-        when(traineeService.getNotAssignedTrainers(any(), any())).thenReturn(trainee.getTrainers());
+        when(traineeService.getNotAssignedTrainers(any())).thenReturn(trainee.getTrainers());
 
         // When and Then
         mockMvc.perform(get("/gym-service/trainees/getNotAssignedOnTraineeTrainers")

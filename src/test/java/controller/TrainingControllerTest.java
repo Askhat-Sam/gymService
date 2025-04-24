@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -81,6 +82,7 @@ public class TrainingControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Vladislav.Bekmeev", roles = "TRAINER")
     public void shouldAddTraining() throws Exception {
         // Given
         TrainingAddRequest trainingAddRequest = new TrainingAddRequest();
@@ -89,13 +91,11 @@ public class TrainingControllerTest {
         trainingAddRequest.setTrainerUsername("Vladislav.Bekmeev");
         trainingAddRequest.setTrainingDate(LocalDate.parse("2025-01-01"));
         trainingAddRequest.setTrainingDuration(23L);
-        trainingAddRequest.setTraineePassword("123456789");
-        trainingAddRequest.setTrainerPassword("123456789");
 
         String requestBody = objectMapper.writeValueAsString(trainingAddRequest);
         when(trainingService.addTraining(any())).thenReturn(training);
-        when(traineeService.getTraineeByUserName(any(), any())).thenReturn(trainee);
-        when(trainerService.getTrainerByUserName(any(), any())).thenReturn(trainer);
+        when(traineeService.getTraineeByUserName(any())).thenReturn(trainee);
+        when(trainerService.getTrainerByUserName(any())).thenReturn(trainer);
         when(trainingService.getTrainingTypeIdByTrainingName(any())).thenReturn(new TrainingType());
 
         // then
@@ -107,6 +107,7 @@ public class TrainingControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "Ivan.Ivanov", roles = "TRAINEE")
     public void shouldGetTrainingTypes() throws Exception {
         // Given
         when(trainingService.getTrainingTypes()).thenReturn(List.of(trainingType));

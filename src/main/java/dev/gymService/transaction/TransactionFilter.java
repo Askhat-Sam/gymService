@@ -43,7 +43,6 @@ public class TransactionFilter implements Filter {
             // Continue with the request processing
             filterChain.doFilter(servletRequest, servletResponse);
 
-
         } catch (IOException | ServletException | IllegalArgumentException e) {
             logger.error("IllegalArgumentException exception has been thrown " + e.getMessage());
         } finally {

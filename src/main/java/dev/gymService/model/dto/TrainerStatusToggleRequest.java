@@ -2,7 +2,6 @@ package dev.gymService.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.Length;
 
 
 public class TrainerStatusToggleRequest {
@@ -10,13 +9,10 @@ public class TrainerStatusToggleRequest {
     private String userName;
     @NonNull
     private Boolean isActive;
-    @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
-    private String password;
 
-    public TrainerStatusToggleRequest(String userName, @NonNull Boolean isActive, String password) {
+    public TrainerStatusToggleRequest(String userName, @NonNull Boolean isActive) {
         this.userName = userName;
         this.isActive = isActive;
-        this.password = password;
     }
 
     public TrainerStatusToggleRequest() {
@@ -38,20 +34,12 @@ public class TrainerStatusToggleRequest {
         isActive = active;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Override
     public String toString() {
         return "TrainerStatusToggleRequest{" +
                 "userName='" + userName + '\'' +
                 ", isActive=" + isActive +
-                ", password='" + password + '\'' +
                 '}';
     }
 }

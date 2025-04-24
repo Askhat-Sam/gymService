@@ -3,27 +3,26 @@ package dev.gymService.service.interfaces;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
-
 import java.util.List;
 
-public interface TraineeService extends UserService{
+public interface TraineeService{
     Trainee createTrainee(Trainee trainee);
 
-    Trainee getTraineeById(Long id, String userName, String password);
+    Trainee getTraineeById(Long id);
 
-    Trainee getTraineeByUserName(String userName, String password);
+    Trainee getTraineeByUserName(String userName);
 
-    Boolean changeTraineePassword(String userName, String oldPassword, String newPassword);
+    Boolean changeTraineePassword(String userName, String newPassword);
 
-    Boolean deleteTraineeByUserName(String userName, String password);
+    Boolean deleteTraineeByUserName(String userName);
 
-    Boolean changeTraineeStatus(String userName, String password);
+    Boolean changeTraineeStatus(String userName);
 
-    List<Training> getTraineeTrainingList(String traineeName, String password, String fromDate, String toDate, String trainerName, Long trainingTypeId);
+    List<Training> getTraineeTrainingList(String traineeName, String fromDate, String toDate, String trainerName, Long trainingTypeId);
 
-    Trainee updateTrainee(Trainee updatedTrainee, String userName, String password);
+    Trainee updateTrainee(Trainee updatedTrainee, String userName);
 
-    List<Trainer> getNotAssignedTrainers(String traineeUserName, String password);
+    List<Trainer> getNotAssignedTrainers(String traineeUserName);
 
-    List<Trainer> updateTrainersList(String traineeUserName, String password, List<Trainer> trainers);
+    List<Trainer> updateTrainersList(String traineeUserName, List<Trainer> trainers);
 }

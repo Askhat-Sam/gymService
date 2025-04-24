@@ -10,6 +10,16 @@ public class TraineeRegistrationResponse {
     @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
     private String password;
 
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public TraineeRegistrationResponse(String userName, String password) {
         this.userName = userName;
         this.password = password;
@@ -39,6 +49,7 @@ public class TraineeRegistrationResponse {
         return "TraineeRegistrationResponse{" +
                 "userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
+                ", token='" + token + '\'' +
                 '}';
     }
 }

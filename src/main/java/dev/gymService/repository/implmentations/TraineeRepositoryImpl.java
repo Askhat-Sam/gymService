@@ -3,6 +3,7 @@ package dev.gymService.repository.implmentations;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
+import dev.gymService.model.User;
 import dev.gymService.repository.interfaces.TraineeRepository;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -36,28 +37,28 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     }
 
     @Override
-    public Trainee create(Trainee trainee) {
+    public Trainee create(User trainee) {
         return sessionFactory.fromTransaction(session -> {
             session.persist(trainee);
             logger.info("Trainee has been created: " + trainee.getUserName());
-            return trainee;
+            return (Trainee) trainee;
         });
     }
 
     @Override
-    public Trainee getTraineeById(Long id) {
+    public Trainee getById(Long id) {
         return sessionFactory.fromTransaction(session -> session.get(Trainee.class, id));
     }
 
     @Override
-    public Trainee getTraineeByUserName(String userName) {
+    public Trainee getByUserName(String userName) {
         return sessionFactory.fromTransaction(session -> session.createQuery(SELECT_BY_USERNAME, Trainee.class)
                 .setParameter("userName", userName)
                 .uniqueResult());
     }
 
     @Override
-    public void deleteTraineeByUserName(String userName) {
+    public void deleteByUserName(String userName) {
         sessionFactory.inTransaction(session -> {
             session.createMutationQuery(DELETE_BY_USERNAME)
                     .setParameter("userName", userName)
@@ -97,10 +98,10 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
 
     @Override
-    public Trainee updateTrainee(Trainee trainee) {
+    public Trainee update(User trainee) {
         return sessionFactory.fromTransaction(session -> {
             session.merge(trainee);
-            return trainee;
+            return (Trainee) trainee;
         });
     }
 
@@ -110,6 +111,4 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 .setParameter("traineeUserName", traineeUserName)
                 .getResultList());
     }
-
-
 }

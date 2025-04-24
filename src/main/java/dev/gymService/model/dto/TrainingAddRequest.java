@@ -3,11 +3,10 @@ package dev.gymService.model.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
-public class TrainingAddRequest extends AbstractRequest{
+public class TrainingAddRequest extends AbstractRequest {
     @NotBlank
     private String traineeUserName;
     @NotBlank
@@ -18,19 +17,14 @@ public class TrainingAddRequest extends AbstractRequest{
     private LocalDate trainingDate;
     @Positive(message = "Must be a positive number")
     private Long trainingDuration;
-    @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
-    private String traineePassword;
-    @Length(min = 10, max = 10, message = "Password must be exactly 10 characters long")
-    private String trainerPassword;
 
-    public TrainingAddRequest(String traineeUserName, String trainerUsername, String trainingName, @NonNull LocalDate trainingDate, Long trainingDuration, String traineePassword, String trainerPassword) {
+    public TrainingAddRequest(String traineeUserName, String trainerUsername, String trainingName, @NonNull LocalDate trainingDate, Long trainingDuration) {
         this.traineeUserName = traineeUserName;
         this.trainerUsername = trainerUsername;
         this.trainingName = trainingName;
         this.trainingDate = trainingDate;
         this.trainingDuration = trainingDuration;
-        this.traineePassword = traineePassword;
-        this.trainerPassword = trainerPassword;
+
     }
 
     public TrainingAddRequest() {
@@ -76,22 +70,6 @@ public class TrainingAddRequest extends AbstractRequest{
         this.trainingDuration = trainingDuration;
     }
 
-    public String getTraineePassword() {
-        return traineePassword;
-    }
-
-    public void setTraineePassword(String traineePassword) {
-        this.traineePassword = traineePassword;
-    }
-
-    public String getTrainerPassword() {
-        return trainerPassword;
-    }
-
-    public void setTrainerPassword(String trainerPassword) {
-        this.trainerPassword = trainerPassword;
-    }
-
     @Override
     public String toString() {
         return "TrainingAddRequest{" +
@@ -100,8 +78,6 @@ public class TrainingAddRequest extends AbstractRequest{
                 ", trainingName='" + trainingName + '\'' +
                 ", trainingDate=" + trainingDate +
                 ", trainingDuration=" + trainingDuration +
-                ", traineePassword='" + traineePassword + '\'' +
-                ", trainerPassword='" + trainerPassword + '\'' +
                 '}';
     }
 }

@@ -6,16 +6,7 @@ import dev.gymService.model.Training;
 
 import java.util.List;
 
-public interface TraineeRepository {
-    Trainee create(Trainee trainee);
-
-    Trainee updateTrainee(Trainee trainee);
-
-    Trainee getTraineeById(Long id);
-
-    Trainee getTraineeByUserName(String userName);
-
-    void deleteTraineeByUserName(String userName);
+public interface TraineeRepository extends UserRepository<Trainee> {
 
     List<Training> getTraineeTrainingList(String traineeName, String fromDate, String toDate, String trainerName, Long trainingType);
 

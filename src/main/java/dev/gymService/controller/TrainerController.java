@@ -1,8 +1,10 @@
 package dev.gymService.controller;
 
+import dev.gymService.model.Role;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.model.dto.*;
+import dev.gymService.security.JwtService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.utills.TraineeMapper;
 import dev.gymService.utills.TrainerMapper;
@@ -25,11 +27,15 @@ public class TrainerController {
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
-    public TrainerController(TrainerService trainerService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper) {
+    private final JwtService jwtService;
+
+
+    public TrainerController(TrainerService trainerService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService) {
         this.trainerService = trainerService;
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
         this.trainingMapper = trainingMapper;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/registerNewTrainer")
@@ -47,41 +53,24 @@ public class TrainerController {
             @ApiResponse(responseCode = "201", description = "Trainer registered successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
-    public TrainerRegistrationResponse registerNewTrainer(@RequestBody TrainerRegistrationRequest trainerRegistrationRequest) {
+    public ResponseEntity<?> registerNewTrainer(@RequestBody TrainerRegistrationRequest trainerRegistrationRequest) {
         // Create new trainer
         Trainer trainer = new Trainer();
         trainer.setFirstName(trainerRegistrationRequest.getFirstName());
         trainer.setLastName(trainerRegistrationRequest.getLastName());
         trainer.setSpecialization(trainerRegistrationRequest.getSpecialization());
         trainer.setIsActive(true);
+        trainer.setRole(Role.TRAINER);
 
         // Persist the created trainer into DB
         Trainer createdTrainer = trainerService.createTrainer(trainer);
 
-        return new TrainerRegistrationResponse(createdTrainer.getUserName(), createdTrainer.getPassword());
-    }
+        var trainerRegistrationResponse = new TrainerRegistrationResponse(createdTrainer.getUserName(), createdTrainer.getPassword());
 
-    @GetMapping("/loginTrainer")
-    @Operation(summary = "Login trainer",
-            description = "Logs in trainer using username and password",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Login credentials",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TrainerLoginRequest.class)
-                    )
-            ))
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Trainer logs in successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    public ResponseEntity<?> loginTrainer(@RequestBody TrainerLoginRequest trainerLoginRequest) {
-
-        trainerService.getTrainerByUserName(trainerLoginRequest.getUserName(), trainerLoginRequest.getPassword());
-
-        return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
+        // Generate and add token to response
+        var jwtToken = jwtService.generateToken(createdTrainer);
+        trainerRegistrationResponse.setToken(jwtToken);
+        return ResponseEntity.ok().body(trainerRegistrationResponse);
     }
 
     @PutMapping("/changePassword")
@@ -102,7 +91,7 @@ public class TrainerController {
     })
     public ResponseEntity<?> changePassword(@RequestBody TrainerPasswordChangeRequest trainerPasswordChangeRequest) {
         // Change user's password
-        trainerService.changeTrainerPassword(trainerPasswordChangeRequest.getUserName(), trainerPasswordChangeRequest.getOldPassword(),
+        trainerService.changeTrainerPassword(trainerPasswordChangeRequest.getUserName(),
                 trainerPasswordChangeRequest.getNewPassword());
 
         return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
@@ -126,7 +115,7 @@ public class TrainerController {
     })
     public TrainerProfileResponse getTrainerProfile(@RequestBody TrainerProfileRequest trainerProfileRequest) {
         // Get user by userName
-        Trainer trainer = trainerService.getTrainerByUserName(trainerProfileRequest.getUserName(), trainerProfileRequest.getPassword());
+        Trainer trainer = trainerService.getTrainerByUserName(trainerProfileRequest.getUserName());
 
         // Create TraineeProfileResponse
         TrainerProfileResponse trainerProfileResponse = trainerMapper.trainerToTrainerProfileResponseMapper(trainer);
@@ -154,7 +143,7 @@ public class TrainerController {
     })
     public ResponseEntity<?> toggleTrainerStatus(@RequestBody TrainerStatusToggleRequest trainerStatusToggleRequest) {
         // Change user's status
-        trainerService.changeTrainerStatus(trainerStatusToggleRequest.getUserName(), trainerStatusToggleRequest.getPassword());
+        trainerService.changeTrainerStatus(trainerStatusToggleRequest.getUserName());
 
         return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
     }
@@ -181,7 +170,7 @@ public class TrainerController {
         String traineeName = trainerTrainingsRequest.getTraineeName() != null ? trainerTrainingsRequest.getTraineeName() : "";
         Long trainingTypeId = trainerTrainingsRequest.getTrainingType() != null ? trainerTrainingsRequest.getTrainingType() : 0;
         // Get trainings list for user
-        List<Training> trainings = trainerService.getTrainerTrainingList(trainerTrainingsRequest.getUserName(), trainerTrainingsRequest.getPassword(), fromDate, toDate
+        List<Training> trainings = trainerService.getTrainerTrainingList(trainerTrainingsRequest.getUserName(), fromDate, toDate
                 , traineeName, trainingTypeId);
 
         return trainings.stream().map(trainingMapper::trainingToTrainingDTOMapper).toList();
@@ -204,7 +193,7 @@ public class TrainerController {
     })
     public TrainerProfileUpdateResponse getTrainerProfile(@RequestBody TrainerProfileUpdateRequest trainerProfileUpdateRequest) {
         // Get user by userName
-        Trainer trainer = trainerService.getTrainerByUserName(trainerProfileUpdateRequest.getUserName(), trainerProfileUpdateRequest.getPassword());
+        Trainer trainer = trainerService.getTrainerByUserName(trainerProfileUpdateRequest.getUserName());
 
         // Update existing trainee
         trainer.setFirstName(trainerProfileUpdateRequest.getFirstName());
@@ -215,7 +204,7 @@ public class TrainerController {
         trainer.setIsActive(trainerProfileUpdateRequest.getIsActive());
 
         // Update user
-        Trainer updatedTrainer = trainerService.updateTrainer(trainer, trainerProfileUpdateRequest.getUserName(), trainerProfileUpdateRequest.getPassword());
+        Trainer updatedTrainer = trainerService.updateTrainer(trainer, trainerProfileUpdateRequest.getUserName());
 
         // Prepare response
         TrainerProfileUpdateResponse trainerProfileUpdateResponse = trainerMapper.trainerToTrainerProfileUpdateResponseMapper(updatedTrainer);

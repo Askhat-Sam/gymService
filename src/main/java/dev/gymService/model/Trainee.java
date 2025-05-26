@@ -2,25 +2,24 @@ package dev.gymService.model;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "trainee")
 @PrimaryKeyJoinColumn(name = "user_id")
-public class Trainee extends User {
+public class Trainee extends User implements UserDetails {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
     @Column(name = "address")
     private String address;
     @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
     private Long userId;
-
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "trainee", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Training> trainings;
 
@@ -83,12 +82,32 @@ public class Trainee extends User {
         this.trainers = trainers;
     }
 
+    public Role getRole() {
+        return super.getRole();
+    }
+
+    public void setRole(Role role) {
+        super.setRole(role);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(getRole().name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return getUserName();
+    }
+
     @Override
     public String toString() {
         return "Trainee{" +
+                "username=" + getUsername() +
                 ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
                 ", userId=" + userId +
+                ", password=" + getPassword() +
                 '}';
     }
 }

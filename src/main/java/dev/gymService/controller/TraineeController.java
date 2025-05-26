@@ -1,9 +1,11 @@
 package dev.gymService.controller;
 
+import dev.gymService.model.Role;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
 import dev.gymService.model.dto.*;
+import dev.gymService.security.JwtService;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.utills.TraineeMapper;
 import dev.gymService.utills.TrainerMapper;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,11 @@ public class TraineeController {
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
+    private final JwtService jwtService;
+    private final AuthenticationController authenticationController;
+
+    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService, @Lazy AuthenticationController authenticationController) {
+
     private final Counter loginCallCounter;
 
     public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, MeterRegistry meterRegistry) {
@@ -35,6 +43,8 @@ public class TraineeController {
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
         this.trainingMapper = trainingMapper;
+        this.jwtService = jwtService;
+        this.authenticationController = authenticationController;
         this.loginCallCounter = Counter.builder("login_call_counter")
                 .description("Number of logins")
                 .register(meterRegistry);
@@ -59,35 +69,18 @@ public class TraineeController {
         // Create new trainee
         Trainee trainee = traineeMapper.traineeRegistrationRequestToTrainee(traineeRegistrationRequest);
         trainee.setIsActive(true);
+        trainee.setRole(Role.TRAINEE);
 
         // Persist the created trainee into DB
         Trainee createdTrainee = traineeService.createTrainee(trainee);
+
         var traineeRegistrationResponse = new TraineeRegistrationResponse(createdTrainee.getUserName(), createdTrainee.getPassword());
 
+        // Generate and add token to response
+        var jwtToken = jwtService.generateToken(trainee);
+        traineeRegistrationResponse.setToken(jwtToken);
+
         return ResponseEntity.ok().body(traineeRegistrationResponse);
-    }
-
-    @GetMapping("/loginTrainee")
-    @Operation(summary = "Login trainee",
-            description = "Logs in trainee using username and password",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Login credentials",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TraineeLoginRequest.class)
-                    )
-            ))
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Trainee logs in successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    public ResponseEntity<?> loginTrainee(@RequestBody TraineeLoginRequest traineeLoginRequest) {
-        loginCallCounter.increment();
-        traineeService.getTraineeByUserName(traineeLoginRequest.getUserName(), traineeLoginRequest.getPassword());
-
-        return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
     }
 
     @PutMapping("/changePassword")
@@ -108,7 +101,7 @@ public class TraineeController {
     })
     public ResponseEntity<?> changePassword(@RequestBody TraineePasswordChangeRequest traineePasswordChangeRequest) {
         // Change user's password
-        traineeService.changeTraineePassword(traineePasswordChangeRequest.getUserName(), traineePasswordChangeRequest.getOldPassword(),
+        traineeService.changeTraineePassword(traineePasswordChangeRequest.getUserName(),
                 traineePasswordChangeRequest.getNewPassword());
 
         return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
@@ -132,7 +125,7 @@ public class TraineeController {
     })
     public TraineeProfileResponse getTraineeProfile(@RequestBody TraineeProfileRequest traineeProfileRequest) {
         // Get user by userName
-        Trainee trainee = traineeService.getTraineeByUserName(traineeProfileRequest.getUserName(), traineeProfileRequest.getPassword());
+        Trainee trainee = traineeService.getTraineeByUserName(traineeProfileRequest.getUserName());
 
         // Create TraineeProfileResponse
         TraineeProfileResponse traineeProfileResponse = traineeMapper.traineeToTraineeProfileResponse(trainee);
@@ -160,7 +153,7 @@ public class TraineeController {
     })
     public ResponseEntity<?> toggleTraineeStatus(@RequestBody TraineeStatusToggleRequest traineeStatusToggleRequest) {
         // Change user's status
-        traineeService.changeTraineeStatus(traineeStatusToggleRequest.getUserName(), traineeStatusToggleRequest.getPassword());
+        traineeService.changeTraineeStatus(traineeStatusToggleRequest.getUserName());
 
         return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
     }
@@ -182,7 +175,7 @@ public class TraineeController {
     })
     public ResponseEntity<?> deleteTrainee(@RequestBody TraineeDeleteRequest traineeDeleteRequest) {
         // Delete trainee
-        traineeService.deleteTraineeByUserName(traineeDeleteRequest.getUserName(), traineeDeleteRequest.getPassword());
+        traineeService.deleteTraineeByUserName(traineeDeleteRequest.getUserName());
 
         return ResponseEntity.ok().body("{\"message\": \"User has been successfully deleted\"}");
     }
@@ -210,8 +203,7 @@ public class TraineeController {
         Long trainingTypeId = traineeTrainingsRequest.getTrainingType() != null ? traineeTrainingsRequest.getTrainingType() : 0;
 
         // Get trainings list for user
-        List<Training> trainings = traineeService.getTraineeTrainingList(traineeTrainingsRequest.getUserName(), traineeTrainingsRequest.getPassword(), fromDate, toDate
-                , trainerName, trainingTypeId);
+        List<Training> trainings = traineeService.getTraineeTrainingList(traineeTrainingsRequest.getUserName(), fromDate, toDate, trainerName, trainingTypeId);
 
         return trainings.stream().map(trainingMapper::trainingToTrainingDTOMapper).toList();
     }
@@ -233,7 +225,7 @@ public class TraineeController {
     })
     public TraineeProfileUpdateResponse updateTrainee(@RequestBody TraineeProfileUpdateRequest traineeProfileUpdateRequest) {
         // Get user by userName
-        Trainee trainee = traineeService.getTraineeByUserName(traineeProfileUpdateRequest.getUserName(), traineeProfileUpdateRequest.getPassword());
+        Trainee trainee = traineeService.getTraineeByUserName(traineeProfileUpdateRequest.getUserName());
 
         // Update existing trainee
         trainee.setFirstName(traineeProfileUpdateRequest.getFirstName());
@@ -247,7 +239,7 @@ public class TraineeController {
         trainee.setIsActive(traineeProfileUpdateRequest.getIsActive());
 
         // Update user
-        Trainee updatedTrainee = traineeService.updateTrainee(trainee, traineeProfileUpdateRequest.getUserName(), traineeProfileUpdateRequest.getPassword());
+        Trainee updatedTrainee = traineeService.updateTrainee(trainee, traineeProfileUpdateRequest.getUserName());
 
         // Prepare response
         TraineeProfileUpdateResponse traineeProfileUpdateResponse = traineeMapper.traineeToTraineeProfileUpdateResponse(updatedTrainee);
@@ -275,12 +267,10 @@ public class TraineeController {
     })
     public TraineeTrainersListUpdateResponse updateTraineeTrainers(@RequestBody TraineeTrainersListUpdateRequest traineeTrainersListUpdateRequest) {
         // Get user by userName
-        traineeService.updateTrainersList(traineeTrainersListUpdateRequest.getUserName(), traineeTrainersListUpdateRequest.getPassword(),
-                traineeTrainersListUpdateRequest.getTrainers());
+        traineeService.updateTrainersList(traineeTrainersListUpdateRequest.getUserName(), traineeTrainersListUpdateRequest.getTrainers());
 
         // Get trainers list
-        List<Trainer> trainers = traineeService.getTraineeByUserName(traineeTrainersListUpdateRequest.getUserName(),
-                traineeTrainersListUpdateRequest.getPassword()).getTrainers();
+        List<Trainer> trainers = traineeService.getTraineeByUserName(traineeTrainersListUpdateRequest.getUserName()).getTrainers();
 
         return new TraineeTrainersListUpdateResponse(trainers.stream().map(trainerMapper::trainerToTrainerDTOMapper).toList());
     }
@@ -302,7 +292,7 @@ public class TraineeController {
     })
     public List<TrainerDTO> getNotAssignedOnTraineeTrainers(@RequestBody TraineeNotAssignedTrainersRequest traineeNotAssignedTrainersRequest) {
         // Get list of trainers not assigned to trainee
-        List<Trainer> trainers = traineeService.getNotAssignedTrainers(traineeNotAssignedTrainersRequest.getUserName(), traineeNotAssignedTrainersRequest.getPassword());
+        List<Trainer> trainers = traineeService.getNotAssignedTrainers(traineeNotAssignedTrainersRequest.getUserName());
 
         return trainers.stream().map(trainerMapper::trainerToTrainerDTOMapper).toList();
     }

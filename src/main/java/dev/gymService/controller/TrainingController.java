@@ -48,8 +48,8 @@ public class TrainingController {
     })
     public ResponseEntity<?> addTraining(@RequestBody TrainingAddRequest trainingAddRequest) {
         // Get trainee/trainer by userName
-        Trainee trainee = traineeService.getTraineeByUserName(trainingAddRequest.getTraineeUserName(), trainingAddRequest.getTraineePassword());
-        Trainer trainer = trainerService.getTrainerByUserName(trainingAddRequest.getTrainerUsername(), trainingAddRequest.getTrainerPassword());
+        Trainee trainee = traineeService.getTraineeByUserName(trainingAddRequest.getTraineeUserName());
+        Trainer trainer = trainerService.getTrainerByUserName(trainingAddRequest.getTrainerUsername());
         TrainingType trainingType = trainingService.getTrainingTypeIdByTrainingName(trainingAddRequest.getTrainingName());
 
         // Create training object

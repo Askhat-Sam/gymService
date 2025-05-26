@@ -45,8 +45,8 @@ public class TraineeServiceUnitTest {
     @Test
     public void shouldCreateNewTraineeWithUserNameWithoutSuffix() {
         // Given
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(null);
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(null);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(null);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(null);
         when(traineeRepository.create(trainee)).thenReturn(trainee);
 
         // When
@@ -55,14 +55,14 @@ public class TraineeServiceUnitTest {
         // Then
         assertNotNull(createdTrainee);
         assertEquals("Andrey.Andreyev", createdTrainee.getUserName());
-        assertEquals(10, createdTrainee.getPassword().length());
+        assertEquals(60, createdTrainee.getPassword().length());
         verify(traineeRepository, times(1)).create(trainee);
     }
 
     @Test
     public void shouldCreateNewTraineeWithUserNameWithSuffix1() {
         // Given
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainee);
         when(traineeRepository.create(trainee)).thenReturn(trainee);
 
         // When
@@ -71,7 +71,7 @@ public class TraineeServiceUnitTest {
         // Then
         assertNotNull(createdTrainee);
         assertEquals("Andrey.Andreyev1", createdTrainee.getUserName());
-        assertEquals(10, createdTrainee.getPassword().length());
+        assertEquals(60, createdTrainee.getPassword().length());
         verify(traineeRepository, times(1)).create(trainee);
     }
 
@@ -98,9 +98,9 @@ public class TraineeServiceUnitTest {
         newTrainee.setUserId(1L);
 
         // Simulating that "Andrey.Andreyev" and "Andrey.Andreyev1" already exist in DB
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(existingTrainee1);
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev1")).thenReturn(existingTrainee2);
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev2")).thenReturn(null);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(existingTrainee1);
+        when(traineeRepository.getByUserName("Andrey.Andreyev1")).thenReturn(existingTrainee2);
+        when(traineeRepository.getByUserName("Andrey.Andreyev2")).thenReturn(null);
         when(traineeRepository.create(newTrainee)).thenReturn(newTrainee);
 
         // When
@@ -109,49 +109,49 @@ public class TraineeServiceUnitTest {
         // Then
         assertNotNull(createdTrainee);
         assertEquals("Andrey.Andreyev2", createdTrainee.getUserName());
-        assertEquals(10, createdTrainee.getPassword().length());
+        assertEquals(60, createdTrainee.getPassword().length());
         verify(traineeRepository, times(1)).create(newTrainee);
     }
 
     @Test
     public void shouldUpdateTrainee() {
         // Given
-        when(traineeRepository.updateTrainee(trainee)).thenReturn(trainee);
-        when(traineeRepository.getTraineeByUserName(trainee.getUserName())).thenReturn(trainee);
+        when(traineeRepository.update(trainee)).thenReturn(trainee);
+        when(traineeRepository.getByUserName(trainee.getUserName())).thenReturn(trainee);
 
         // When
-        Trainee updatedTrainee = traineeServiceImpl.updateTrainee(trainee, "Andrey.Andreyev", "1234567890");
+        Trainee updatedTrainee = traineeServiceImpl.updateTrainee(trainee, "Andrey.Andreyev");
 
         // Then
         assertNotNull(updatedTrainee);
         assertEquals("Furmanova 2", updatedTrainee.getAddress());
         assertEquals("Andrey.Andreyev", updatedTrainee.getUserName());
         assertEquals(10, updatedTrainee.getPassword().length());
-        verify(traineeRepository, times(1)).updateTrainee(trainee);
+        verify(traineeRepository, times(1)).update(trainee);
     }
 
     @Test
     public void shouldDeleteTrainee() {
         // Given
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainee);
 
         // When
-        traineeServiceImpl.deleteTraineeByUserName("Andrey.Andreyev", "1234567890");
+        traineeServiceImpl.deleteTraineeByUserName("Andrey.Andreyev");
 
         // Then
-        verify(traineeRepository, times(1)).deleteTraineeByUserName("Andrey.Andreyev");
+        verify(traineeRepository, times(1)).deleteByUserName("Andrey.Andreyev");
     }
 
     @Test
     public void shouldChangeTraineeStatus() {
         // Given
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainee);
         // When
-        traineeServiceImpl.changeTraineeStatus("Andrey.Andreyev", "1234567890");
+        traineeServiceImpl.changeTraineeStatus("Andrey.Andreyev");
 
         // Then
-        verify(traineeRepository, times(1)).updateTrainee(any());
+        verify(traineeRepository, times(1)).update(any());
     }
 
     @Test
@@ -173,10 +173,10 @@ public class TraineeServiceUnitTest {
 
         when(traineeRepository.getTraineeTrainingList("Andrey.Andreyev", "2025-01-01",
                 "2025-01-01", "Denis.Denisov", 1L)).thenReturn(trainee.getTrainings());
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainee);
 
         // When
-        List<Training> retrievedTraineeTrainings = traineeServiceImpl.getTraineeTrainingList("Andrey.Andreyev", "1234567890", "2025-01-01",
+        List<Training> retrievedTraineeTrainings = traineeServiceImpl.getTraineeTrainingList("Andrey.Andreyev", "2025-01-01",
                 "2025-01-01", "Denis.Denisov", 1L);
 
         // Then
@@ -188,19 +188,19 @@ public class TraineeServiceUnitTest {
     @Test
     public void shouldChangeTraineePassword() {
         // Given
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainee);
         // When
-        traineeServiceImpl.changeTraineePassword("Andrey.Andreyev", "1234567890", "987654321");
+        traineeServiceImpl.changeTraineePassword("Andrey.Andreyev", "987654321");
 
         // Then
-        verify(traineeRepository, times(1)).updateTrainee(any());
+        verify(traineeRepository, times(1)).update(any());
     }
 
     @Test
     public void shouldGetNotAssignedTrainers() {
-        when(traineeRepository.getTraineeByUserName("Andrey.Andreyev")).thenReturn(trainee);
+        when(traineeRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainee);
         // When
-        traineeServiceImpl.getNotAssignedTrainers("Andrey.Andreyev", "1234567890");
+        traineeServiceImpl.getNotAssignedTrainers("Andrey.Andreyev");
 
         // Then
         verify(traineeRepository, times(1)).getNotAssignedTrainers("Andrey.Andreyev");

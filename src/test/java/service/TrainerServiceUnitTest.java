@@ -52,8 +52,8 @@ public class TrainerServiceUnitTest {
         trainer.setUserId(1L);
 
         // Mocking getTraineeByUserName to simulate existing user
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(null);
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(null);
+        when(trainerRepository.getByUserName("Andrey.Andreyev")).thenReturn(null);
+        when(trainerRepository.getByUserName("Andrey.Andreyev")).thenReturn(null);
         when(trainerRepository.create(trainer)).thenReturn(trainer);
 
         // When
@@ -62,14 +62,14 @@ public class TrainerServiceUnitTest {
         // Then
         assertNotNull(createdTrainee);
         assertEquals("Andrey.Andreyev", createdTrainee.getUserName());
-        assertEquals(10, createdTrainee.getPassword().length());
+        assertEquals(60, createdTrainee.getPassword().length());
         verify(trainerRepository, times(1)).create(trainer);
     }
 
     @Test
     public void shouldCreateNewTrainerWithUserNameWithSuffix1() {
         // Given
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(trainer);
+        when(trainerRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainer);
         when(trainerRepository.create(trainer)).thenReturn(trainer);
 
         // When
@@ -78,7 +78,7 @@ public class TrainerServiceUnitTest {
         // Then
         assertNotNull(createdTrainee);
         assertEquals("Andrey.Andreyev1", createdTrainee.getUserName());
-        assertEquals(10, createdTrainee.getPassword().length());
+        assertEquals(60, createdTrainee.getPassword().length());
         verify(trainerRepository, times(1)).create(trainer);
     }
 
@@ -102,9 +102,9 @@ public class TrainerServiceUnitTest {
         newTrainer.setPassword("1234567890");
 
         // Simulating that "Andrey.Andreyev" and "Andrey.Andreyev1" already exist in DB
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(existingTrainer1);
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev1")).thenReturn(existingTrainer2);
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev2")).thenReturn(null);
+        when(trainerRepository.getByUserName("Andrey.Andreyev")).thenReturn(existingTrainer1);
+        when(trainerRepository.getByUserName("Andrey.Andreyev1")).thenReturn(existingTrainer2);
+        when(trainerRepository.getByUserName("Andrey.Andreyev2")).thenReturn(null);
         when(trainerRepository.create(newTrainer)).thenReturn(newTrainer);
 
         // When
@@ -113,38 +113,38 @@ public class TrainerServiceUnitTest {
         // Then
         assertNotNull(createdTrainer);
         assertEquals("Andrey.Andreyev2", createdTrainer.getUserName());
-        assertEquals(10, createdTrainer.getPassword().length());
+        assertEquals(60, createdTrainer.getPassword().length());
         verify(trainerRepository, times(1)).create(newTrainer);
     }
 
     @Test
     public void shouldUpdateTrainer() {
         // Given
-        when(trainerRepository.updateTrainer(trainer)).thenReturn(trainer);
-        when(trainerRepository.getTrainerByUserName(trainer.getUserName())).thenReturn(trainer);
+        when(trainerRepository.update(trainer)).thenReturn(trainer);
+        when(trainerRepository.getByUserName(trainer.getUserName())).thenReturn(trainer);
 
         // When
-        Trainer updatedTrainer = trainerServiceImpl.updateTrainer(trainer, "Andrey.Andreyev", "1234567890");
+        Trainer updatedTrainer = trainerServiceImpl.updateTrainer(trainer, "Andrey.Andreyev");
 
         // Then
         assertNotNull(updatedTrainer);
         assertEquals(true, updatedTrainer.getIsActive());
         assertEquals("Andrey.Andreyev", updatedTrainer.getUserName());
         assertEquals(10, updatedTrainer.getPassword().length());
-        verify(trainerRepository, times(1)).updateTrainer(trainer);
+        verify(trainerRepository, times(1)).update(trainer);
     }
 
 
     @Test
     public void shouldChangeTrainerStatus() {
         // Given
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(trainer);
+        when(trainerRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainer);
 
         // When
-        trainerServiceImpl.changeTrainerStatus("Andrey.Andreyev", "1234567890");
+        trainerServiceImpl.changeTrainerStatus("Andrey.Andreyev");
 
         // Then
-        verify(trainerRepository, times(1)).updateTrainer(any());
+        verify(trainerRepository, times(1)).update(any());
     }
 
     @Test
@@ -169,10 +169,10 @@ public class TrainerServiceUnitTest {
 
         when(trainerRepository.getTrainerTrainingList("Andrey.Andreyev",  "2025-01-01",
                 "2025-01-01", "Denis.Denisov", 1L)).thenReturn(trainer.getTrainings());
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(trainer);
+        when(trainerRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainer);
 
         // When
-        List<Training> retrievedTrainerTrainings = trainerServiceImpl.getTrainerTrainingList("Andrey.Andreyev", "1234567890", "2025-01-01",
+        List<Training> retrievedTrainerTrainings = trainerServiceImpl.getTrainerTrainingList("Andrey.Andreyev",  "2025-01-01",
                 "2025-01-01", "Denis.Denisov", 1L);
 
         // Then
@@ -184,12 +184,12 @@ public class TrainerServiceUnitTest {
     @Test
     public void shouldChangeTrainerPassword() {
         // Given
-        when(trainerRepository.getTrainerByUserName("Andrey.Andreyev")).thenReturn(trainer);
+        when(trainerRepository.getByUserName("Andrey.Andreyev")).thenReturn(trainer);
 
         // When
-        trainerServiceImpl.changeTrainerPassword("Andrey.Andreyev", "1234567890", "987654321");
+        trainerServiceImpl.changeTrainerPassword("Andrey.Andreyev", "987654321");
 
         // Then
-        verify(trainerRepository, times(1)).updateTrainer(any());
+        verify(trainerRepository, times(1)).update(any());
     }
 }

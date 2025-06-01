@@ -35,7 +35,6 @@ public class TrainerServiceImpl implements TrainerService {
             userName = originalUserName.concat(String.valueOf(userNameSuffix++));
         }
         String password = UserInformationUtility.generatePassword();
-        System.out.println(password);
         trainer.setPassword(new BCryptPasswordEncoder().encode(password));
         trainer.setRole(Role.TRAINER);
         return trainerRepository.create(trainer);

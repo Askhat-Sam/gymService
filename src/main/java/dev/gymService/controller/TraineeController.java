@@ -10,11 +10,14 @@ import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.utills.TraineeMapper;
 import dev.gymService.utills.TrainerMapper;
 import dev.gymService.utills.TrainingMapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +34,7 @@ public class TraineeController {
     private final JwtService jwtService;
 
     public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService) {
+
         this.traineeService = traineeService;
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;

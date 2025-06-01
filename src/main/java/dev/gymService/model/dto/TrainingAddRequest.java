@@ -1,6 +1,8 @@
 package dev.gymService.model.dto;
 
+import dev.gymService.model.ActionType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.NonNull;
 
@@ -17,17 +19,27 @@ public class TrainingAddRequest extends AbstractRequest {
     private LocalDate trainingDate;
     @Positive(message = "Must be a positive number")
     private Long trainingDuration;
+    @NotNull
+    private ActionType actionType;
 
-    public TrainingAddRequest(String traineeUserName, String trainerUsername, String trainingName, @NonNull LocalDate trainingDate, Long trainingDuration) {
+    public TrainingAddRequest(String traineeUserName, String trainerUsername, String trainingName, @NonNull LocalDate trainingDate, Long trainingDuration, ActionType actionType) {
         this.traineeUserName = traineeUserName;
         this.trainerUsername = trainerUsername;
         this.trainingName = trainingName;
         this.trainingDate = trainingDate;
         this.trainingDuration = trainingDuration;
-
+        this.actionType = actionType;
     }
 
     public TrainingAddRequest() {
+    }
+
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
     }
 
     public String getTraineeUserName() {
@@ -78,6 +90,7 @@ public class TrainingAddRequest extends AbstractRequest {
                 ", trainingName='" + trainingName + '\'' +
                 ", trainingDate=" + trainingDate +
                 ", trainingDuration=" + trainingDuration +
+                ", actionType='" + actionType + '\'' +
                 '}';
     }
 }

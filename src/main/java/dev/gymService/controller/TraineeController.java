@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,15 +29,13 @@ public class TraineeController {
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
     private final JwtService jwtService;
-    private final AuthenticationController authenticationController;
 
-    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService, @Lazy AuthenticationController authenticationController) {
+    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService) {
         this.traineeService = traineeService;
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
         this.trainingMapper = trainingMapper;
         this.jwtService = jwtService;
-        this.authenticationController = authenticationController;
     }
 
     @PostMapping("/registerNewTrainee")

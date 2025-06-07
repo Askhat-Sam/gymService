@@ -1,7 +1,6 @@
 package dev.gymService.utills;
 
 import dev.gymService.model.Training;
-import dev.gymService.model.dto.TrainingAddRequest;
 import dev.gymService.model.dto.TrainingDTO;
 import dev.gymService.model.dto.TrainingWorkloadRequest;
 import org.mapstruct.Mapper;
@@ -17,5 +16,5 @@ public interface TrainingMapper {
     @Mapping(target = "trainerLastName", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "actionType", ignore = true)
-    TrainingWorkloadRequest trainingAddRequestToWorkloadRequest(TrainingAddRequest request);
+    TrainingWorkloadRequest trainingToWorkloadRequest(Training training);
 }

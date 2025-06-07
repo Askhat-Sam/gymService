@@ -6,9 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-public class TrainingWorkloadRequest extends TrainingWorkloadRequestAbstract{
+public class TrainingWorkloadRequest{
     @NotBlank
     private String trainerUsername;
     @NotBlank

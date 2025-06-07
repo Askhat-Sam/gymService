@@ -36,6 +36,7 @@ public class TrainerServiceImpl implements TrainerService {
         }
         String password = UserInformationUtility.generatePassword();
         trainer.setPassword(new BCryptPasswordEncoder().encode(password));
+        trainer.setUserName(userName);
         trainer.setRole(Role.TRAINER);
         return trainerRepository.create(trainer);
     }

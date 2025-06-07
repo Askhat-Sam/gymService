@@ -19,16 +19,19 @@ public class TrainingAddRequest extends AbstractRequest {
     private LocalDate trainingDate;
     @Positive(message = "Must be a positive number")
     private Long trainingDuration;
+
     @NotNull
     private ActionType actionType;
 
     public TrainingAddRequest(String traineeUserName, String trainerUsername, String trainingName, @NonNull LocalDate trainingDate, Long trainingDuration, ActionType actionType) {
+
         this.traineeUserName = traineeUserName;
         this.trainerUsername = trainerUsername;
         this.trainingName = trainingName;
         this.trainingDate = trainingDate;
         this.trainingDuration = trainingDuration;
         this.actionType = actionType;
+
     }
 
     public TrainingAddRequest() {

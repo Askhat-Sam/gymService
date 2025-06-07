@@ -43,5 +43,4 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         return sessionFactory.fromSession(session -> session.createQuery(SELECT_TRAINING_TYPES, TrainingType.class)
                 .getResultList());
     }
-
 }

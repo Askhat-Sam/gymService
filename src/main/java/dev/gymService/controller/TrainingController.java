@@ -1,20 +1,21 @@
 package dev.gymService.controller;
 
-import dev.gymService.model.Trainee;
-import dev.gymService.model.Trainer;
-import dev.gymService.model.Training;
-import dev.gymService.model.TrainingType;
+import com.netflix.discovery.EurekaClient;
+import dev.gymService.model.*;
 import dev.gymService.model.dto.TrainingAddRequest;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.service.interfaces.TrainingService;
+import dev.gymService.utills.TrainingMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -24,11 +25,17 @@ public class TrainingController {
     private final TrainingService trainingService;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
+    private final EurekaClient eurekaClient;
+    private final RestTemplate restTemplate;
+    private final TrainingMapper trainingMapper;
 
-    public TrainingController(TrainingService trainingService, TraineeService traineeService, TrainerService trainerService) {
+    public TrainingController(TrainingService trainingService, TraineeService traineeService, TrainerService trainerService, EurekaClient eurekaClient, RestTemplate restTemplate, TrainingMapper trainingMapper) {
         this.trainingService = trainingService;
         this.traineeService = traineeService;
         this.trainerService = trainerService;
+        this.eurekaClient = eurekaClient;
+        this.restTemplate = restTemplate;
+        this.trainingMapper = trainingMapper;
     }
 
     @PostMapping("/addTraining")
@@ -46,12 +53,11 @@ public class TrainingController {
             @ApiResponse(responseCode = "201", description = "Training added successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
-    public ResponseEntity<?> addTraining(@RequestBody TrainingAddRequest trainingAddRequest) {
+    public ResponseEntity<?> addTraining(@RequestBody TrainingAddRequest trainingAddRequest, HttpServletRequest httpServletRequest) {
         // Get trainee/trainer by userName
         Trainee trainee = traineeService.getTraineeByUserName(trainingAddRequest.getTraineeUserName());
         Trainer trainer = trainerService.getTrainerByUserName(trainingAddRequest.getTrainerUsername());
         TrainingType trainingType = trainingService.getTrainingTypeIdByTrainingName(trainingAddRequest.getTrainingName());
-
         // Create training object
         Training training = new Training();
         training.setTraineeId(trainee.getId());
@@ -63,9 +69,12 @@ public class TrainingController {
         training.setTrainee(trainee);
         training.setTrainer(trainer);
 
-        training = trainingService.addTraining(training);
-        ResponseEntity<String> responseEntity;
+        // Get action type
+        ActionType actionType = trainingAddRequest.getActionType();
 
+        training = trainingService.addTraining(training, actionType, trainee, trainer, httpServletRequest);
+        // Add body to response entity
+        ResponseEntity<String> responseEntity;
         if (training != null) {
             responseEntity = ResponseEntity.ok().body("{\"message\": \"Training has been added successfully\"}");
             ;
@@ -87,5 +96,10 @@ public class TrainingController {
     })
     public List<TrainingType> getTrainingTypes() {
         return trainingService.getTrainingTypes();
+    }
+
+    @PostMapping("/getWorkloadSummary")
+    public TrainingWorkload getMonthlyWorkload(@RequestParam String username, HttpServletRequest httpServletRequest) {
+        return trainingService.getWorkloadSummary(username, httpServletRequest);
     }
 }

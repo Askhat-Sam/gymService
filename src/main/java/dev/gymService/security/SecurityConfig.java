@@ -40,7 +40,8 @@ public class SecurityConfig {
                         "/gym-service/trainees/registerNewTrainee",
                         "/gym-service/trainers/registerNewTrainer",
                         "/gym-service/authentication/login",
-                        "/gym-service/authentication/logout"
+                        "/gym-service/authentication/logout",
+                       "/actuator/health"
                 ).permitAll()
                 .requestMatchers("/gym-service/trainees/**").hasRole("TRAINEE")
                 .requestMatchers("/gym-service/trainers/**").hasRole("TRAINER")

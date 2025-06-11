@@ -7,8 +7,8 @@ import dev.gymService.model.dto.TrainingWorkloadRequest;
 import dev.gymService.service.interfaces.WorkloadCircuitBreakerService;
 import dev.gymService.service.interfaces.WorkloadServiceClient;
 import dev.gymService.utills.TrainingMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.MDC;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -28,7 +28,7 @@ public class RestWorkloadServiceClient implements WorkloadServiceClient {
     }
 
     @Override
-    public String updateMicroservice(Training training, ActionType actionType, Trainee trainee, Trainer trainer, HttpServletRequest httpServletRequest) {
+    public String updateMicroservice(Training training, ActionType actionType, Trainee trainee, Trainer trainer) {
         // Create TrainingWorkloadRequest object
         TrainingWorkloadRequest trainingWorkloadRequest = trainingMapper.trainingToWorkloadRequest(training);
         trainingWorkloadRequest.setTrainerUsername(trainer.getUsername());
@@ -50,15 +50,15 @@ public class RestWorkloadServiceClient implements WorkloadServiceClient {
         // Get current transaction id from httpServletRequest
         String transactionId = MDC.get("transactionId");
 
-        // Extract the original JWT token from the Authorization header
-        String jwtToken = httpServletRequest.getHeader("Authorization");
+        // Extract the original JWT token from the SecurityContextHolder
+        String jwtToken = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 
         // Make call to "Workload" microservice using circuit breaker
        return workloadCircuitBreakerService.updateMicroserviceWithCircuitBreaker(url, trainingWorkloadRequest, transactionId, jwtToken);
     }
 
     @Override
-    public TrainingWorkload getWorkloadSummary(@RequestParam String username, HttpServletRequest httpServletRequest) {
+    public TrainingWorkload getWorkloadSummary(@RequestParam String username) {
         // Create TrainingWorkloadRequest object
         TrainingWorkloadRequest trainingWorkloadRequest = new TrainingWorkloadRequest();
         trainingWorkloadRequest.setTrainerUsername(username);
@@ -76,10 +76,10 @@ public class RestWorkloadServiceClient implements WorkloadServiceClient {
         // Get current transaction id from httpServletRequest
         String transactionId = MDC.get("transactionId");
 
-        // Extract the original JWT token from the Authorization header
-        String jwtToken = httpServletRequest.getHeader("Authorization");
+        // Extract the original JWT token from the SecurityContextHolder
+        String jwtToken = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 
-        // Make call to "Workload" microservice using circuit breakqer
+        // Make call to "Workload" microservice using circuit breaker
         return workloadCircuitBreakerService.getWorkloadSummaryWithCircuitBreaker(url, trainingWorkloadRequest, transactionId, jwtToken);
     }
 

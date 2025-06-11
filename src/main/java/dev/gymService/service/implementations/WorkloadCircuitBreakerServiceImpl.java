@@ -32,7 +32,7 @@ public class WorkloadCircuitBreakerServiceImpl implements WorkloadCircuitBreaker
         }
 
         if (jwtToken != null && !jwtToken.isBlank()) {
-            headers.set("Authorization", jwtToken);
+            headers.set("Authorization", "Bearer " + jwtToken);
         }
 
         HttpEntity<TrainingWorkloadRequest> httpEntity = new HttpEntity<>(trainingWorkloadRequest, headers);
@@ -56,7 +56,7 @@ public class WorkloadCircuitBreakerServiceImpl implements WorkloadCircuitBreaker
         }
 
         if (jwtToken != null && !jwtToken.isBlank()) {
-            headers.set("Authorization", jwtToken);
+            headers.set("Authorization", "Bearer " + jwtToken);
         }
 
         HttpEntity<TrainingWorkloadRequest> httpEntity = new HttpEntity<>(trainingWorkloadRequest, headers);

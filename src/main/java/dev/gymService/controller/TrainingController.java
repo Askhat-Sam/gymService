@@ -1,9 +1,6 @@
 package dev.gymService.controller;
 
-import dev.gymService.model.Trainee;
-import dev.gymService.model.Trainer;
-import dev.gymService.model.Training;
-import dev.gymService.model.TrainingType;
+import dev.gymService.model.*;
 import dev.gymService.model.dto.TrainingAddRequest;
 import dev.gymService.service.interfaces.TraineeService;
 import dev.gymService.service.interfaces.TrainerService;
@@ -24,6 +21,7 @@ public class TrainingController {
     private final TrainingService trainingService;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
+
 
     public TrainingController(TrainingService trainingService, TraineeService traineeService, TrainerService trainerService) {
         this.trainingService = trainingService;
@@ -63,12 +61,15 @@ public class TrainingController {
         training.setTrainee(trainee);
         training.setTrainer(trainer);
 
-        training = trainingService.addTraining(training);
-        ResponseEntity<String> responseEntity;
+        // Get action type
+        ActionType actionType = trainingAddRequest.getActionType();
 
+        training = trainingService.addTraining(training, actionType, trainee, trainer);
+
+        // Add body to response entity
+        ResponseEntity<String> responseEntity;
         if (training != null) {
             responseEntity = ResponseEntity.ok().body("{\"message\": \"Training has been added successfully\"}");
-            ;
         } else {
             responseEntity = ResponseEntity.badRequest().body("{\"error\": \"Failure to add training\"}");
         }
@@ -87,5 +88,10 @@ public class TrainingController {
     })
     public List<TrainingType> getTrainingTypes() {
         return trainingService.getTrainingTypes();
+    }
+
+    @PostMapping("/getWorkloadSummary")
+    public TrainingWorkload getMonthlyWorkload(@RequestParam String username) {
+        return trainingService.getWorkloadSummary(username);
     }
 }

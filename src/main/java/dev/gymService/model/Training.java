@@ -95,6 +95,7 @@ public class Training {
         this.trainingDate = trainingDate;
     }
 
+
     public Long getTrainingDuration() {
         return trainingDuration;
     }

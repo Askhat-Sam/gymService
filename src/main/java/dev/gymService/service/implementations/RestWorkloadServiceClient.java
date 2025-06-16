@@ -8,13 +8,14 @@ import dev.gymService.service.interfaces.WorkloadCircuitBreakerService;
 import dev.gymService.service.interfaces.WorkloadServiceClient;
 import dev.gymService.utills.TrainingMapper;
 import org.slf4j.MDC;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
+@Profile("rest")
 @Service
 public class RestWorkloadServiceClient implements WorkloadServiceClient {
     private final TrainingMapper trainingMapper;

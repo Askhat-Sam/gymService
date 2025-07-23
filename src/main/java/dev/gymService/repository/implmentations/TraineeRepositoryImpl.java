@@ -96,7 +96,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         return queryObj;
     }
 
-
     @Override
     public Trainee update(User trainee) {
         return sessionFactory.fromTransaction(session -> {

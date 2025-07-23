@@ -1,4 +1,4 @@
-package service;
+package unit.service;
 
 import dev.gymService.repository.interfaces.TrainingRepository;
 import dev.gymService.model.Training;
@@ -36,7 +36,7 @@ public class TrainingServiceUnitTest {
         when(trainingRepository.addTraining(training)).thenReturn(training);
 
         // When
-        Training createdTraining = trainingServiceImpl.addTraining(training);
+        Training createdTraining = trainingServiceImpl.addTraining(training, any(),any(),any());
 
         // Then
         assertNotNull(createdTraining);

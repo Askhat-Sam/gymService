@@ -1,4 +1,4 @@
-package service;
+package unit.service;
 
 import dev.gymService.repository.interfaces.TrainerRepository;
 import dev.gymService.model.Trainee;

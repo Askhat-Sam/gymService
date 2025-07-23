@@ -90,7 +90,7 @@ public class TrainingController {
         return trainingService.getTrainingTypes();
     }
 
-    @PostMapping("/getWorkloadSummary")
+    @GetMapping("/getWorkloadSummary")
     public TrainingWorkload getMonthlyWorkload(@RequestParam String username) {
         return trainingService.getWorkloadSummary(username);
     }

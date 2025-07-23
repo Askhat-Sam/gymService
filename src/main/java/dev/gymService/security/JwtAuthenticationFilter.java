@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.error("Invalid token for user: " + userName);
             }
         } else {
-            logger.error("sername not found in token or already authenticated.");
+            logger.error("Username not found in token or already authenticated.");
         }
         filterChain.doFilter(request, response);
     }

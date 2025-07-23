@@ -1,8 +1,7 @@
-package controller;
+package unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.gymService.Application;
-import dev.gymService.controller.TrainingController;
 import dev.gymService.model.Trainee;
 import dev.gymService.model.Trainer;
 import dev.gymService.model.Training;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,7 +60,7 @@ public class TrainingControllerTest {
         trainee.setIsActive(false);
 
         // Create trainer
-         trainer = new Trainer();
+        trainer = new Trainer();
         trainer.setUserName("Vladislav.Bekmeev");
 
         //Create TrainingType
@@ -70,7 +68,7 @@ public class TrainingControllerTest {
         trainingType.setId(3L);
 
         // Create training
-         training = new Training();
+        training = new Training();
         training.setTraineeId(1L);
         training.setTrainerId(2L);
         training.setTrainingName("Yoga");
@@ -93,7 +91,7 @@ public class TrainingControllerTest {
         trainingAddRequest.setTrainingDuration(23L);
 
         String requestBody = objectMapper.writeValueAsString(trainingAddRequest);
-        when(trainingService.addTraining(any())).thenReturn(training);
+        when(trainingService.addTraining(any(), any(), any(), any())).thenReturn(training);
         when(traineeService.getTraineeByUserName(any())).thenReturn(trainee);
         when(trainerService.getTrainerByUserName(any())).thenReturn(trainer);
         when(trainingService.getTrainingTypeIdByTrainingName(any())).thenReturn(new TrainingType());

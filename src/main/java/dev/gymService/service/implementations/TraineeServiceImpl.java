@@ -70,7 +70,7 @@ public class TraineeServiceImpl implements TraineeService {
     public Boolean changeTraineePassword(String userName,  String newPassword) {
         Trainee trainee = traineeRepository.getByUserName(userName);
         if (trainee != null) {
-                trainee.setPassword(newPassword);
+                trainee.setPassword(new BCryptPasswordEncoder().encode(newPassword));
                 traineeRepository.update(trainee);
                 return true;
         } else {

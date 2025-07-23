@@ -4,13 +4,10 @@ import dev.gymService.model.*;
 import dev.gymService.model.dto.TrainingWorkloadRequest;
 import dev.gymService.service.interfaces.WorkloadServiceClient;
 import dev.gymService.utills.TrainingMapper;
-
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-@Profile("dev")
 @Service
 public class MessagingWorkloadServiceClient implements WorkloadServiceClient {
     private final RabbitTemplate rabbitTemplate;

@@ -29,7 +29,6 @@ public class TrainerController {
     private final TrainingMapper trainingMapper;
     private final JwtService jwtService;
 
-
     public TrainerController(TrainerService trainerService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService) {
         this.trainerService = trainerService;
         this.traineeMapper = traineeMapper;
@@ -97,7 +96,7 @@ public class TrainerController {
         return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
     }
 
-    @GetMapping("/getTrainerByUsername")
+    @PostMapping("/getTrainerByUsername")
     @Operation(summary = "Get trainer profile",
             description = "Obtains the trainer by username",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -148,7 +147,7 @@ public class TrainerController {
         return ResponseEntity.ok().body("{\"message\": \"User status has been successfully changed\"}");
     }
 
-    @GetMapping("/getTrainerTrainings")
+    @PostMapping("/getTrainerTrainings")
     @Operation(summary = "Get trainer trainings",
             description = "Get trainer trainings",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -163,7 +162,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public List<TrainingDTO> getTraineeTrainings(@RequestBody TrainerTrainingsRequest trainerTrainingsRequest) {
+    public List<TrainingDTO> getTrainerTrainings(@RequestBody TrainerTrainingsRequest trainerTrainingsRequest) {
         // Handle optional parameters
         String fromDate = trainerTrainingsRequest.getFromDate() != null ? trainerTrainingsRequest.getFromDate() : "1990-01-01";
         String toDate = trainerTrainingsRequest.getToDate() != null ? trainerTrainingsRequest.getToDate() : "9999-01-01";

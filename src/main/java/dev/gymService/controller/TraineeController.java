@@ -7,17 +7,15 @@ import dev.gymService.model.Training;
 import dev.gymService.model.dto.*;
 import dev.gymService.security.JwtService;
 import dev.gymService.service.interfaces.TraineeService;
+import dev.gymService.service.interfaces.TrainerService;
 import dev.gymService.utills.TraineeMapper;
 import dev.gymService.utills.TrainerMapper;
 import dev.gymService.utills.TrainingMapper;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,14 +26,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/gym-service/trainees")
 public class TraineeController {
     private final TraineeService traineeService;
+    private final TrainerService trainerService;
     private final TraineeMapper traineeMapper;
     private final TrainerMapper trainerMapper;
     private final TrainingMapper trainingMapper;
     private final JwtService jwtService;
 
-    public TraineeController(TraineeService traineeService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService) {
+    public TraineeController(TraineeService traineeService, TrainerService trainerService, TraineeMapper traineeMapper, TrainerMapper trainerMapper, TrainingMapper trainingMapper, JwtService jwtService) {
 
         this.traineeService = traineeService;
+        this.trainerService = trainerService;
         this.traineeMapper = traineeMapper;
         this.trainerMapper = trainerMapper;
         this.trainingMapper = trainingMapper;
@@ -99,7 +99,7 @@ public class TraineeController {
         return ResponseEntity.ok().body("{\"message\": \"Password has been successfully changed\"}");
     }
 
-    @GetMapping("/getTraineeProfile")
+    @PostMapping("/getTraineeProfile")
     @Operation(summary = "Get trainee profile",
             description = "Obtains the trainee by username",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -172,7 +172,7 @@ public class TraineeController {
         return ResponseEntity.ok().body("{\"message\": \"User has been successfully deleted\"}");
     }
 
-    @GetMapping("/getTraineeTrainings")
+    @PostMapping("/getTraineeTrainings")
     @Operation(summary = "Get trainee trainings",
             description = "Get trainee trainings",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -259,8 +259,13 @@ public class TraineeController {
     })
     public TraineeTrainersListUpdateResponse updateTraineeTrainers(@RequestBody TraineeTrainersListUpdateRequest traineeTrainersListUpdateRequest) {
         // Get user by userName
-        traineeService.updateTrainersList(traineeTrainersListUpdateRequest.getUserName(), traineeTrainersListUpdateRequest.getTrainers());
+        List<Trainer> managedTrainers = traineeTrainersListUpdateRequest.getTrainers().stream()
+                .map(trainerDTO -> trainerService.getTrainerByUserName(trainerDTO.getUserName()))
+                .toList();
 
+        traineeService.updateTrainersList(
+                traineeTrainersListUpdateRequest.getUserName(),
+                managedTrainers);
         // Get trainers list
         List<Trainer> trainers = traineeService.getTraineeByUserName(traineeTrainersListUpdateRequest.getUserName()).getTrainers();
 

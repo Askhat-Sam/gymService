@@ -82,7 +82,6 @@ public class Trainer extends User implements UserDetails {
         return "Trainer{" +
                 "specialization=" + specialization +
                 ", userId=" + userId +
-                ", userName=" + getUsername() +
                 '}';
     }
 }

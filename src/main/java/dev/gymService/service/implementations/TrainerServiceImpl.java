@@ -68,7 +68,7 @@ public class TrainerServiceImpl implements TrainerService {
     public Boolean changeTrainerPassword(String userName, String newPassword) {
         Trainer trainer = trainerRepository.getByUserName(userName);
         if (trainer != null) {
-            trainer.setPassword(newPassword);
+            trainer.setPassword(new BCryptPasswordEncoder().encode(newPassword));
             trainerRepository.update(trainer);
             return true;
         } else {

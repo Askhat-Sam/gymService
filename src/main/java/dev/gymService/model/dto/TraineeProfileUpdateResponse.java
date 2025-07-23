@@ -1,5 +1,6 @@
 package dev.gymService.model.dto;
 
+import dev.gymService.model.Trainer;
 import jakarta.validation.constraints.NotBlank;
 import lombok.NonNull;
 
